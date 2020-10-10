@@ -26,9 +26,9 @@
         "R_SHOES2": 24
     },
     "LEDPARTS": {
-        "LED_CHEST": 25,
-        "LED_R_SHOE": 26,
-        "LED_L_SHOE": 27,
-        "LED_FAN": 28
+        "LED_CHEST": 1,
+        "LED_R_SHOE": 2,
+        "LED_L_SHOE": 3,
+        "LED_FAN": 4
     }
 }                                  
