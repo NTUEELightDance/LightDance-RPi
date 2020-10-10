@@ -40,6 +40,14 @@ bool RPiMgr::setDancer()
         if (it.key() == "LEDPARTS")
             _LEDparts = it.value();
     }
+    uint8_t strips = _LEDparts.size();
+    uint16_t* nLEDs = new uint16_t[strips];
+    for (json::iterator it = _LEDparts.begin(); it != _LEDparts.end(); ++it) {
+	nLEDs[(int)(it.value()["id"])] = uint16_t(it.value()["len"]);
+    	cout << it.value()["len"] << " ";
+    }
+    cout << (int)strips << endl;
+    led_strip = new LED_Strip(strips, nLEDs);
     return true;
 }
 
@@ -276,11 +284,22 @@ void RPiMgr::lightOneStatus(const json &status) const
         {
             temp = _LEDparts.find(it.key());
             if (temp != _LEDparts.end())
-            { //LEDparts
-                cout << "LEDlightName: " << it.key() << ", "
+            { 
+		//LEDparts
+		uint8_t id = temp.value()["id"];
+		size_t len = LEDJson[string(it.value()["src"])].size();
+		uint8_t* color = new uint8_t[len];
+		cout << "id: " << (int)id << endl;
+		cout << "len: " << (int)len << endl;
+		for (int i = 0; i < len; ++i) {
+			color[i] = uint8_t(LEDJson[string(it.value()["src"])][i]);
+			cout << (int)color[i] << endl;
+		}
+                led_strip->sendToStrip(id, color);
+		cout << "LEDlightName: " << it.key() << ", "
                      << "alpha: " << (it.value()["alpha"]) << ", "
-                     << "number: " << temp.value() << ", "
-                     << "src: " << (it.value()["src"]) << endl;
+                     << "number: " << temp.value()["id"] << ", "
+                     << "src: " << (it.value()["src"]) << LEDJson[string(it.value()["src"])] << endl;
             }
             else
                 cerr << "Error: lightName " << it.key() << " not found!" << endl;
