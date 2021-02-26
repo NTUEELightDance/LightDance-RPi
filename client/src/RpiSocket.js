@@ -2,7 +2,6 @@ const WebSocket = require("ws");
 const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const boardInfo = require("../board_config.json");
 const os = require("os");
 const ip = require("ip");
 const shell = require("shelljs");
@@ -14,6 +13,7 @@ class RpiSocket {
         this.controller = null;  //c++ child process
         this.cmdFromServer = null;
         this.cppResponse = null;
+        this.musicPlaying = false;
         this.init();
     }
     init = () => {
@@ -33,11 +33,10 @@ class RpiSocket {
     listeningServer = () => {
         this.wsClient.onopen = () => {
             console.log("Websocket connected.");
-            this.sendDataToServer(["boardInfo", {
-                name: boardInfo.name,
-                board_type: boardInfo.board_type,
-                hostname: os.hostname(),
-                ip: ip.address()
+            this.sendDataToServer(["boardInfo", {  //send boardInfo while connected to server
+                name: os.hostname(),
+                OK: true,
+                msg: "Success"
             }]);
         }
         this.wsClient.onmessage = (mes) => {
@@ -72,7 +71,7 @@ class RpiSocket {
                 const whenToPlay = payload.whenToPlay;  //Rpi從此確切時間開始播放
                 this.cppErrorHandle(this.sendDataToCpp(`RPIPLay ${startTime} ${whenToPlay}`));
                 break;
-            }
+            }  //back to server的部分還未確定
             case "pause":{  //pause playing
                 this.controller.kill("SIGINT");
                 break;
@@ -86,33 +85,99 @@ class RpiSocket {
                 break;
             }
             case "terminate":{  //terminate c++ file
-                this.controller.kill("SIGKILL");
+                if(this.controller !== null) this.controller.kill("SIGKILL");
+                this.sendDataToServer([
+                    "terminate",
+                    {
+                        OK: true,
+                        msg: "terminated"
+                    }
+                ]);
+                break;
+            }
+            case "lightCurrentStatus":{
+                this.cppErrorHandle(this.sendDataToCpp([
+                    //data structure待訂，payload會有一個.json
+                ]));
                 break;
             }
             //above are commands sending to clientApp(controller.cpp)
-            case "kick": {
+            case "kick": {  //reconnect to websocket server
+                this.wsClient.close();
+                this.wsClient.onclose = (e) => {
+                    console.log("Websocket client is closed.")
+                }
+                this.connectWebsocket();
 
+                if (this.controller !== null) this.controller.kill("SIGKILL");
+                this.controller = null;
+                this.cmdFromServer = null;
+                this.cppResponse = null;
+                this.musicPlaying = false;
                 break;
             }
             case "uploadControl":{  //load timeline.json to local storage(./current)
-                console.log(payload);
-                if (!fs.existsSync(path.join(__dirname, "./control"))) fs.mkdirSync(path.join(__dirname, "./control"));
-                fs.writeFileSync(
-                    path.join(__dirname, "./control/timeline.json"),
-                    JSON.stringify(payload)
+                //console.log(payload);
+                if (!fs.existsSync(path.join(__dirname, "../../data"))) fs.mkdirSync(path.join(__dirname, "../../data"));
+                fs.writeFile(
+                    path.join(__dirname, "../../data/control.json"),
+                    JSON.stringify(payload),
+                    (err) => {
+                        if (err){
+                            console.log("Upload control file failed.");
+                            this.sendDataToServer([
+                                "uploadControl",
+                                {
+                                    OK: false,
+                                    msg: "upload failed"
+                                }
+                            ]);
+                            throw err;
+                        }
+                        else {
+                            console.log("Upload control file success.");
+                            this.sendDataToServer([
+                                "uploadControl",
+                                {
+                                    OK: true,
+                                    msg: "upload success"
+                                }
+                            ]);
+                        }
+                    }
                 );
-                console.log("Timeline file saved.")
                 break;
             }
             case "uploadLED":{  //load led picture files to ./control/LED
-                if (!fs.existsSync(path.join(__dirname, "./control/LED"))) fs.mkdir(fs.existsSync(path.join(__dirname, "./control/LED")));
+                if (!fs.existsSync(path.join(__dirname, "../../asset"))) fs.mkdir(fs.existsSync(path.join(__dirname, "../../asset")));
                 for (let i = 0; i < payload.length; i++){  //led files
-                    //const controlLEDFile = JSON.stringify(payload[i]);
-                    fs.writeFileSync(
-                        path.join(__dirname, "./control/LED", payload[i].name) + ".json",
+                    fs.writeFile(
+                        path.join(__dirname, "../../asset", payload[i].name) + ".json",
                         JSON.stringify(payload[i].data),
+                        (err) => {
+                            if (err){
+                                console.log(`Upload ${payload[i].name} failed.`);
+                                this.sendDataToServer([
+                                    "uploadLED",
+                                    {
+                                        OK: false,
+                                        msg: "upload failed"
+                                    }
+                                ]);
+                                throw err;
+                            }
+                            else {
+                                console.log(`Upload ${payload[i].name} success.`);
+                                this.sendDataToServer([
+                                    "uploadLED",
+                                    {
+                                        OK: true,
+                                        msg: "upload success"
+                                    }
+                                ]);
+                            }
+                        }
                     );
-                    console.log(`${payload[i].name} saved.`);
                 }
                 break;
             }
@@ -124,6 +189,10 @@ class RpiSocket {
                 shell.exec("reboot -h 0");
                 break;
             }
+            case "sync":{  //payload 至少會有時間，將Rpi的時間與電腦同步\
+
+                break;
+            }
         }
     }
     parseCppData = (mes) => {
@@ -131,16 +200,65 @@ class RpiSocket {
         const message = mes.toString().split(" ");
         this.cppResponse = message[0];
         switch (this.cppResponse){
-            case "Success":{
-                this.sendDataToServer(["Success", this.cmdFromServer]);
+            case "start":{
+                this.sendDataToServer([
+                    "start",
+                    {
+                        OK: (message[1] === "1") ? true : false,
+                        message: `start ${(message[1] === "1") ? "success" : "failed"}`
+                    }
+                ]);
                 break;
             }
-            case "Error":{
-                this.sendDataToServer(["Error", this.cmdFromServer]);
+            case "load":{
+                this.sendDataToServer([
+                    "load",
+                    {
+                        OK: (message[1] === "1") ? true : false,
+                        message: `load ${(message[1] === "1") ? "success" : "failed"}`
+                    }
+                ]);
                 break;
             }
-            case "Other":{
-                console.log(message);
+            case "play":{
+                this.sendDataToServer([  //暫定，可能會再改
+                    "play",
+                    {
+                        OK: (message[1] === "1") ? true : false,
+                        message: `play ${(message[1] === "1") ? "success" : "failed"}`
+                    }
+                ]);
+                this.musicPlaying = (message[i] === "1");
+                break;
+            }
+            case "pause":{
+                this.sendDataToServer([
+                    "pause",
+                    {
+                        OK: (message[1] === "1") ? true : false,
+                        message: `pause ${(message[1] === "1") ? "success" : "failed"}`
+                    }
+                ]);
+                break;
+            }
+            case "stop":{
+                this.sendDataToServer([
+                    "stop",
+                    {
+                        OK: (message[1] === "1") ? true : false,
+                        message: `stop ${(message[1] === "1") ? "success" : "failed"}`
+                    }
+                ]);
+                break;
+            }
+            case "lightCurrentStatus":{
+                this.sendDataToServer([
+                    "lightCurrentStatus",
+                    {
+                        OK: (message[1] === "1") ? true : false,
+                        message: `lightCurrentStatus ${(message[1] === "1") ? "success" : "failed"}`
+                    }
+                ]);
                 break;
             }
         }

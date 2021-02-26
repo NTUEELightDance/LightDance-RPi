@@ -9,6 +9,7 @@ const wss = new Websocket.Server({server});
 class RouterSocket {
     constructor(ws){
         this.ws = null;
+        this.clientIp = null;
         this.init(ws);
     }
     init = (ws) => {
@@ -17,12 +18,25 @@ class RouterSocket {
     handleMessage = () => {
         this.ws.onmessage = (message) => {
             const [task, payload] = JSON.parse(message.data);
-            console.log('Task: ' + task + ', payload: ' + payload);
+            console.log('Client response: ', task, '\nPayload: ', payload);
+            switch (task){
+                case "boardInfo":{
+                    this.getClientIp();
+                    break;
+                } 
+            }
         }
     }
     sendDataToRpiSocket = (data) => {
         if (this.ws !== null) this.ws.send(JSON.stringify(data));
     }
+    getClientIp = () => {
+        if (this.ws !== null){
+            console.log(this.ws._socket.remoteAddress);
+            this.clientIp = this.ws._socket.remoteAddress;
+        }
+    }
+    //below are functions for editor server to use
     start = () => {
         this.sendDataToRpiSocket(["start"]);
     }
@@ -50,10 +64,10 @@ class RouterSocket {
     kick = () => {
         this.sendDataToRpiSocket(["kick"]);
     }
-    uploadControl = (timelineFile) => {  //needs to be json file
+    uploadControl = (controlFile) => {  //needs to be json file
         this.sendDataToRpiSocket([
             "uploadControl",
-            timelineFile
+            controlFile
         ]);
     }
     uploadLED = (LEDPic = []) => {
@@ -68,6 +82,12 @@ class RouterSocket {
     reboot = () => {
         this.sendDataToRpiSocket(["reboot"]);
     }
+    lightCurrentStatus = (currentStatus) => {
+        this.sendDataToRpiSocket([
+            "lightCurrentStatus",
+            currentStatus
+        ])
+    }
 }
 
 //below are for testing
@@ -81,6 +101,7 @@ const rl = readline.createInterface({
 wss.on('connection', (ws) => {
     const routerSocket = new RouterSocket(ws);
     routerSocket.handleMessage();
+
     //below are for testing
     rl.on("line", (input) => {
         console.log(`Your input: ${input}`);
