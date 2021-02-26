@@ -1,19 +1,27 @@
 {
-  "name": "2021-lightdance-rpi",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node src/RouterSocket.js",
-    "test-server": "node src/RpiSocket.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "richiefu",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.17.1",
-    "ip": "^1.1.5",
-    "shelljs": "^0.8.4",
-    "ws": "^7.4.1"
-  }
+    "name": "2021-lightdance-rpi",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node src/RouterSocket.js",
+        "test-server": "node src/RpiSocket.js",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format": "npx prettier --write ."
+    },
+    "author": "richiefu",
+    "license": "ISC",
+    "dependencies": {
+        "eslint": "^7.20.0",
+        "express": "^4.17.1",
+        "ip": "^1.1.5",
+        "shelljs": "^0.8.4",
+        "ws": "^7.4.1"
+    },
+    "devDependencies": {
+        "eslint-config-airbnb": "^18.2.1",
+        "eslint-config-prettier": "^8.1.0",
+        "eslint-plugin-prettier": "^3.3.1",
+        "prettier": "^2.2.1"
+    }
 }

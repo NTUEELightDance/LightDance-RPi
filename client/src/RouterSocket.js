@@ -1,111 +1,103 @@
-const http = require('http');
-const express = require('express');
-const Websocket = require('ws');
+const http = require("http");
+const express = require("express");
+const Websocket = require("ws");
 
 const app = express();
 const server = http.createServer(app);
-const wss = new Websocket.Server({server});
+const wss = new Websocket.Server({ server });
 
 class RouterSocket {
-    constructor(ws){
+    constructor(ws) {
         this.ws = null;
         this.clientIp = null;
         this.init(ws);
     }
     init = (ws) => {
         this.ws = ws;
-    }
+    };
     handleMessage = () => {
         this.ws.onmessage = (message) => {
             const [task, payload] = JSON.parse(message.data);
-            console.log('Client response: ', task, '\nPayload: ', payload);
-            switch (task){
-                case "boardInfo":{
+            console.log("Client response: ", task, "\nPayload: ", payload);
+            switch (task) {
+                case "boardInfo": {
                     this.getClientIp();
                     break;
-                } 
+                }
             }
-        }
-    }
+        };
+    };
     sendDataToRpiSocket = (data) => {
         if (this.ws !== null) this.ws.send(JSON.stringify(data));
-    }
+    };
     getClientIp = () => {
-        if (this.ws !== null){
+        if (this.ws !== null) {
             console.log(this.ws._socket.remoteAddress);
             this.clientIp = this.ws._socket.remoteAddress;
         }
-    }
+    };
     //below are functions for editor server to use
     start = () => {
         this.sendDataToRpiSocket(["start"]);
-    }
+    };
     play = (startTime = 0, whenToPlay = 0) => {
         this.sendDataToRpiSocket([
             "play",
             {
                 startTime: startTime,
-                whenToPlay: whenToPlay
-            }
+                whenToPlay: whenToPlay,
+            },
         ]);
-    }
+    };
     pause = () => {
         this.sendDataToRpiSocket(["pause"]);
-    }
+    };
     stop = () => {
         this.sendDataToRpiSocket(["stop"]);
-    }
+    };
     load = () => {
         this.sendDataToRpiSocket(["load"]);
-    }
+    };
     terminate = () => {
         this.sendDataToRpiSocket(["terminate"]);
-    }
+    };
     kick = () => {
         this.sendDataToRpiSocket(["kick"]);
-    }
-    uploadControl = (controlFile) => {  //needs to be json file
-        this.sendDataToRpiSocket([
-            "uploadControl",
-            controlFile
-        ]);
-    }
+    };
+    uploadControl = (controlFile) => {
+        //needs to be json file
+        this.sendDataToRpiSocket(["uploadControl", controlFile]);
+    };
     uploadLED = (LEDPic = []) => {
-        this.sendDataToRpiSocket([
-            "uploadLED",
-            LEDPic
-        ]);
-    }
+        this.sendDataToRpiSocket(["uploadLED", LEDPic]);
+    };
     shutDown = () => {
         this.sendDataToRpiSocket(["shutDown"]);
-    }
+    };
     reboot = () => {
         this.sendDataToRpiSocket(["reboot"]);
-    }
+    };
     lightCurrentStatus = (currentStatus) => {
-        this.sendDataToRpiSocket([
-            "lightCurrentStatus",
-            currentStatus
-        ])
-    }
+        this.sendDataToRpiSocket(["lightCurrentStatus", currentStatus]);
+    };
 }
 
 //below are for testing
 const readline = require("readline");
 const rl = readline.createInterface({
     input: process.stdin,
-    output:  process.stdout
-})
+    output: process.stdout,
+});
 //above are for testing
 
-wss.on('connection', (ws) => {
+wss.on("connection", (ws) => {
     const routerSocket = new RouterSocket(ws);
     routerSocket.handleMessage();
 
     //below are for testing
     rl.on("line", (input) => {
         console.log(`Your input: ${input}`);
-        switch(input){
+        switch (input) {
             case "start":
                 routerSocket.start();
                 break;
@@ -124,15 +116,16 @@ wss.on('connection', (ws) => {
             case "terminate":
                 routerSocket.terminate();
                 break;
-            case "kick": 
+            case "kick":
                 routerSocket.kick();
                 break;
             case "uploadControl":
-                routerSocket.uploadControl({  //testing json file
+                routerSocket.uploadControl({
+                    //testing json file
                     testing: 1,
                     filename: "test",
                     currenttime: 1111111,
-                    data: "asdfasdfasdfa"
+                    data: "asdfasdfasdfa",
                 });
                 break;
             case "uploadLed":
