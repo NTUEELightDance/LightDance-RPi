@@ -80,6 +80,9 @@ class RouterSocket {
     lightCurrentStatus = (currentStatus) => {
         this.sendDataToRpiSocket(["lightCurrentStatus", currentStatus]);
     };
+    getBoardInfo = () => {
+        this.sendDataToRpiSocket(["boardInfo"]);
+    }
 }
 
 //below are for testing
@@ -136,6 +139,9 @@ wss.on("connection", (ws) => {
                 break;
             case "reboot":
                 routerSocket.reboot();
+                break;
+            case "boardInfo":
+                routerSocket.getBoardInfo();
                 break;
         }
     });

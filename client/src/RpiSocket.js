@@ -241,6 +241,18 @@ class RpiSocket {
 
                 break;
             }
+            case "boardInfo":{
+                this.sendDataToServer([
+                    "boardInfo",
+                    {
+                        //send boardInfo while connected to server
+                        name: os.hostname(),
+                        OK: true,
+                        msg: "Success",
+                    },
+                ]);
+                break;
+            }
         }
     };
     parseCppData = (mes) => {
