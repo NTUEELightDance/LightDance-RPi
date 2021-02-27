@@ -2,6 +2,7 @@ const http = require("http");
 const express = require("express");
 const Websocket = require("ws");
 
+const fs = require("fs");
 const app = express();
 const server = http.createServer(app);
 const wss = new Websocket.Server({ server });
@@ -10,26 +11,58 @@ class RouterSocket {
     constructor(ws) {
         this.ws = null;
         this.clientIp = null;
+        this.wsClient = null;
         this.init(ws);
     }
     init = (ws) => {
         this.ws = ws;
+        this.wsClient = new Websocket("http://localhost:8080"); // websocket to commandClient
     };
     handleMessage = () => {
         this.ws.onmessage = (message) => {
             const [task, payload] = JSON.parse(message.data);
             console.log("Client response: ", task, "\nPayload: ", payload);
+
+            // read board_config.json, get reference_table
+            // const boardConfig = fs.readFileSync("board_config.json") // need to modify detail
+
             switch (task) {
+                case ("kill", "reboot", "shutdown"):
+                    break;
                 case "boardInfo": {
                     this.getClientIp();
+                    this.sendDataToCommandClient([
+                        task,
+                        {
+                            // from:dancer_name from config,
+
+                            hostname: payload.name,
+                            ip: this.clientIp,
+                        },
+                    ]);
                     break;
                 }
+                default:
+                    this.sendDataToCommandClient([
+                        task,
+                        {
+                            // from:dancer_name from config,
+                            ...payload,
+                        },
+                    ]);
+                    break;
             }
         };
     };
+
+    sendDataToCommandClient = (data) => {
+        if (this.wsClient !== null) this.wsClient.send(JSON.stringify(data));
+    };
+
     sendDataToRpiSocket = (data) => {
         if (this.ws !== null) this.ws.send(JSON.stringify(data));
     };
+
     getClientIp = () => {
         if (this.ws !== null) {
             console.log(this.ws._socket.remoteAddress);
