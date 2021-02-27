@@ -2,7 +2,7 @@ const http = require("http");
 const express = require("express");
 const Websocket = require("ws");
 
-const fs = require("fs")
+const fs = require("fs");
 const app = express();
 const server = http.createServer(app);
 const wss = new Websocket.Server({ server });
@@ -22,36 +22,35 @@ class RouterSocket {
         this.ws.onmessage = (message) => {
             const [task, payload] = JSON.parse(message.data);
             console.log("Client response: ", task, "\nPayload: ", payload);
-            
+
             // read board_config.json, get reference_table
             // const boardConfig = fs.readFileSync("board_config.json") // need to modify detail
 
-            
             switch (task) {
                 case ("kill", "reboot", "shutdown"):
                     break;
                 case "boardInfo": {
                     this.getClientIp();
-                     this.sendDataToCommandClient([
-                        task,{
+                    this.sendDataToCommandClient([
+                        task,
+                        {
                             // from:dancer_name from config,
-                            
-                                hostname:payload.name,
-                                ip: this.clientIp
-                            
-                        }
-                    ])
+
+                            hostname: payload.name,
+                            ip: this.clientIp,
+                        },
+                    ]);
                     break;
+                }
                 default:
                     this.sendDataToCommandClient([
                         task,
                         {
-                          // from:dancer_name from config,
-                            ...payload
-                        }
-                    ])
+                            // from:dancer_name from config,
+                            ...payload,
+                        },
+                    ]);
                     break;
-                }
             }
         };
     };
