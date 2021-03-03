@@ -1,0 +1,8 @@
+dbread test1.json
+dbpri
+dbpri Ric
+dbSu
+dbco
+dofile do2.txt
+ddd
+dbpri Ric
