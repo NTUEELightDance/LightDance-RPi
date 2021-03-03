@@ -91,7 +91,7 @@ class RpiSocket {
                 const startTime = payload.startTime; //從整首歌的第幾秒播放
                 const whenToPlay = payload.whenToPlay; //Rpi從此確切時間開始播放
                 this.cppErrorHandle(
-                    this.sendDataToCpp(`RPIPLay ${startTime} ${whenToPlay}`)
+                    this.sendDataToCpp(`PLay ${startTime} ${whenToPlay}`)
                 );
                 break;
             } //back to server的部分還未確定
@@ -102,12 +102,12 @@ class RpiSocket {
             }
             case "stop": {
                 //stop playing(prepare to start time)
-                this.cppErrorHandle(this.sendDataToCpp("RPTStop"));
+                this.cppErrorHandle(this.sendDataToCpp("RPTStop"));  //another SIG
                 break;
             }
             case "load": {
                 //call cpp to load play file.json
-                this.cppErrorHandle(this.sendDataToCpp("RPILoad"));
+                this.cppErrorHandle(this.sendDataToCpp("Load"));
                 break;
             }
             case "terminate": {
@@ -126,6 +126,7 @@ class RpiSocket {
                 this.cppErrorHandle(
                     this.sendDataToCpp([
                         //data structure待訂，payload會有一個.json
+
                     ])
                 );
                 break;
@@ -189,40 +190,32 @@ class RpiSocket {
                     fs.mkdir(
                         fs.existsSync(path.join(__dirname, "../../asset"))
                     );
-                for (let i = 0; i < payload.length; i++) {
-                    //led files
-                    fs.writeFile(
-                        path.join(__dirname, "../../asset", payload[i].name) +
-                            ".json",
-                        JSON.stringify(payload[i].data),
-                        (err) => {
-                            if (err) {
-                                console.log(
-                                    `Upload ${payload[i].name} failed.`
-                                );
-                                this.sendDataToServer([
-                                    "uploadLED",
-                                    {
-                                        OK: false,
-                                        msg: "upload failed",
-                                    },
-                                ]);
-                                throw err;
-                            } else {
-                                console.log(
-                                    `Upload ${payload[i].name} success.`
-                                );
-                                this.sendDataToServer([
-                                    "uploadLED",
-                                    {
-                                        OK: true,
-                                        msg: "upload success",
-                                    },
-                                ]);
-                            }
+                fs.writeFile(
+                    path.join(__dirname, "../../asset/LED.json"),
+                    JSON.stringify(payload),
+                    (err) => {
+                        if (err) {
+                            console.log("Upload LED file failed.");
+                            this.sendDataToServer([
+                                "uploadLED",
+                                {
+                                    OK: false,
+                                    msg: "upload failed",
+                                },
+                            ]);
+                            throw err;
+                        } else {
+                            console.log("Upload LED file success.");
+                            this.sendDataToServer([
+                                "uploadLED",
+                                {
+                                    OK: true,
+                                    msg: "upload success",
+                                },
+                            ]);
                         }
-                    );
-                }
+                    }
+                );
                 break;
             }
             case "shutDown": {

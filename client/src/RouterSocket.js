@@ -68,7 +68,7 @@ class RouterSocket {
         //needs to be json file
         this.sendDataToRpiSocket(["uploadControl", controlFile]);
     };
-    uploadLED = (LEDPic = []) => {
+    uploadLED = (LEDPic) => {
         this.sendDataToRpiSocket(["uploadLED", LEDPic]);
     };
     shutDown = () => {
