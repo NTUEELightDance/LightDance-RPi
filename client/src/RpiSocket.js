@@ -26,7 +26,10 @@ class RpiSocket {
                 this.init();
             }, 3000);
             return;
-        } else this.listeningServer();
+        } else {
+            this.listeningServer();
+            //if (this.controller !== null) this.listeningCpp();
+        }
     };
     listeningServer = () => {
         this.wsClient.onopen = () => {
@@ -67,7 +70,7 @@ class RpiSocket {
     listeningCpp = () => {
         this.controller.stdout.on("data", (mes) => {
             const data = mes.toString();
-            console.log(`Data from C++: ${data}`);
+            //console.log(`Data from C++: ${data}`);
             this.parseCppData(data);
         });
     };
@@ -83,16 +86,14 @@ class RpiSocket {
                     this.controller.kill();
                     console.log("Running C++ is killed");
                 }
-                this.controller = spawn("../test"); //use ./test to test, change to ./controller for real time deployment
+                this.controller = spawn("../../RPIControler/RPIControler"); //use ./test to test, change to ./controller for real time deployment
                 break;
             }
             case "play": {
                 //start playing
                 const startTime = payload.startTime; //從整首歌的第幾秒播放
                 const whenToPlay = payload.whenToPlay; //Rpi從此確切時間開始播放
-                this.cppErrorHandle(
-                    this.sendDataToCpp(`PLay ${startTime} ${whenToPlay}`)
-                );
+                this.sendDataToCpp(`PLay ${startTime} ${whenToPlay}`);
                 break;
             } //back to server的部分還未確定
             case "pause": {
@@ -102,12 +103,12 @@ class RpiSocket {
             }
             case "stop": {
                 //stop playing(prepare to start time)
-                this.cppErrorHandle(this.sendDataToCpp("RPTStop"));  //another SIG
+            this.sendDataToCpp("RPTStop");  //another SIG
                 break;
             }
             case "load": {
                 //call cpp to load play file.json
-                this.cppErrorHandle(this.sendDataToCpp("Load"));
+                this.sendDataToCpp("Load");
                 break;
             }
             case "terminate": {
@@ -123,12 +124,10 @@ class RpiSocket {
                 break;
             }
             case "lightCurrentStatus": {
-                this.cppErrorHandle(
-                    this.sendDataToCpp([
-                        //data structure待訂，payload會有一個.json
+                this.sendDataToCpp([
+                    //data structure待訂，payload會有一個.json
 
-                    ])
-                );
+                ]);
                 break;
             }
 
@@ -251,13 +250,15 @@ class RpiSocket {
     parseCppData = (mes) => {
         //const [task, payload] = this.parseData(mes.toString());
         const message = mes.toString().split(" ");
+        for (let i = 0; i < message.length; i++) message[i] = message[i].trim();
         this.cppResponse = message[0];
+        console.log("Controller response: ", message[0], "Success: ", message[1] === '1', message[1]);
         switch (this.cppResponse) {
             case "start": {
                 this.sendDataToServer([
                     "start",
                     {
-                        OK: message[1] === "1" ? true : false,
+                        OK: message[1] === "1",
                         message: `start ${
                             message[1] === "1" ? "success" : "failed"
                         }`,
@@ -265,11 +266,11 @@ class RpiSocket {
                 ]);
                 break;
             }
-            case "load": {
+            case "Load": {
                 this.sendDataToServer([
                     "load",
                     {
-                        OK: message[1] === "1" ? true : false,
+                        OK: message[1] === "1",
                         message: `load ${
                             message[1] === "1" ? "success" : "failed"
                         }`,
@@ -282,20 +283,20 @@ class RpiSocket {
                     //暫定，可能會再改
                     "play",
                     {
-                        OK: message[1] === "1" ? true : false,
+                        OK: message[1] === "1",
                         message: `play ${
                             message[1] === "1" ? "success" : "failed"
                         }`,
                     },
                 ]);
-                this.musicPlaying = message[i] === "1";
+                this.musicPlaying = message[1] === "1";
                 break;
             }
             case "pause": {
                 this.sendDataToServer([
                     "pause",
                     {
-                        OK: message[1] === "1" ? true : false,
+                        OK: message[1] === "1",
                         message: `pause ${
                             message[1] === "1" ? "success" : "failed"
                         }`,
@@ -307,7 +308,7 @@ class RpiSocket {
                 this.sendDataToServer([
                     "stop",
                     {
-                        OK: message[1] === "1" ? true : false,
+                        OK: message[1] === "1",
                         message: `stop ${
                             message[1] === "1" ? "success" : "failed"
                         }`,
@@ -319,7 +320,7 @@ class RpiSocket {
                 this.sendDataToServer([
                     "lightCurrentStatus",
                     {
-                        OK: message[1] === "1" ? true : false,
+                        OK: message[1] === "1",
                         message: `lightCurrentStatus ${
                             message[1] === "1" ? "success" : "failed"
                         }`,
