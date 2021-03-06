@@ -1,4 +1,0 @@
-dbap wish 326
-dbpri Ric
-dbpri
-dbco

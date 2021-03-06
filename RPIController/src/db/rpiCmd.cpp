@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <cassert>
 #include <cmath>
+#include <string>
 #include "util.h"
 #include "rpiCmd.h"
 #include "dbJson.h"

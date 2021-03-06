@@ -1,16 +1,13 @@
 LIBPKGS  = db cmd util 
 MAIN     = main
-TESTMAIN = test
 
 LIBS     = $(addprefix -l, $(LIBPKGS))
 LIBFILES = $(addsuffix .a, $(addprefix lib, $(LIBPKGS)))
 
-EXEC     = RPIControler
-TESTEXEC = testdb
+EXEC     = RPIController
 
 all: libs main
 
-test: libs testmain
 	
 libs:
 	@for lib in $(LIBPKGS); \
@@ -28,12 +25,6 @@ main:
 	@ln -fs bin/$(EXEC) .
 #	@strip bin/$(EXEC)
 
-testmain:
-	@echo "Checking $(TESTMAIN)..."
-	@cd src/$(TESTMAIN); \
-            make -f make.$(TESTMAIN) --no-print-directory INCLIB="$(LIBS)" EXEC=$(TESTEXEC);
-	@ln -fs bin/$(TESTEXEC) .
-#	@strip bin/$(TESTEXEC)
 
 clean:
 	@for lib in $(LIBPKGS); \
@@ -45,14 +36,10 @@ clean:
 	done
 	@echo "Cleaning $(MAIN)..."
 	@cd src/$(MAIN); make -f make.$(MAIN) --no-print-directory clean
-	@echo "Cleaning $(TESTMAIN)..."
-	@cd src/$(TESTMAIN); make -f make.$(TESTMAIN) --no-print-directory clean
 	@echo "Removing $(LIBFILES)..."
 	@cd lib; rm -f $(LIBFILES)
 	@echo "Removing $(EXEC)..."
 	@rm -f bin/$(EXEC) 
-	@echo "Removing $(TESTEXEC)..."
-	@rm -f bin/$(TESTEXEC) 
 
 ctags:          
 	@rm -f src/tags
