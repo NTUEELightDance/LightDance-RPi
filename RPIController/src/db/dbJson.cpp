@@ -49,11 +49,12 @@ RPIMgr::setDancer(const string& name) {
         //cerr << "Error: cannot load file " << path << endl;
         //string msg = "Error: cannot load file " + path;
         //sendToRPIClient(false, msg);
-        cerr << "Error: cannot load file " << path << endl;
+        cerr << "SetDancer Error_cannot_load_file_" << path << endl;
         return false;
     }
     json j;
     infile >> j;
+    infile.close();
     _ELparts.clear();
     _LEDparts.clear();
     for (json::iterator it = j.begin(); it != j.end(); ++it) {
@@ -64,6 +65,7 @@ RPIMgr::setDancer(const string& name) {
     }
     //cout << name << " success loaded." << endl;
     //sendToRPIClient(true, "success loaded");
+    cout << "SetDancer success" << endl;
     return true;
 }
 bool
@@ -73,13 +75,14 @@ RPIMgr::load(const string& path) {
         //cerr << "Error: cannot load file " << path << endl;
         //string msg = "Error: cannot load file " + path;
         //sendToRPIClient(false, msg);
-        cout << "LOad Error:_cannot_load_file_" << path;
+        cout << "Load Error:_cannot_load_file_" << path << endl;
         return false;
     }
     _loaded = true;
     infile >> _ctrlJSON;
+    infile.close();
     //string msg = "Error: cannot load file " + path;
-    cout << "LOad success" << endl;
+    cout << "Load success" << endl;
     return true;
 }
 

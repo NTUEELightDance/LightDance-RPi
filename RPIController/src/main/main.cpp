@@ -77,7 +77,7 @@ main(int argc, char** argv)
       return 1;
 
    CmdExecStatus status = CMD_EXEC_DONE;
-    cout << "start 1" << endl;
+    cout << "start success" << endl;
    while (status != CMD_EXEC_QUIT) {  // until "quit" or command error
       status = cmdMgr->execOneCmd();
       cout << endl;  // a blank line between each command

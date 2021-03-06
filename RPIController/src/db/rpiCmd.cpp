@@ -347,7 +347,6 @@ SetDancerCmd::exec(const string& option)
     if (tokens.size() > 1)
         return CmdExec::errorOption(CMD_OPT_EXTRA, tokens[1]);
     rpiMgr.setDancer(tokens[0]);
-    cout << "SetDancer success" << endl;
     return CMD_EXEC_DONE;
 }
 

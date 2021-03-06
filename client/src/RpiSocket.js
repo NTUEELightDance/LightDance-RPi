@@ -1,16 +1,17 @@
 const WebSocket = require("ws");
-const { spawn } = require("child_process");
+const { spawn, spawnSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
 const shell = require("shelljs");
+const readline = require("readline");
 
 class RpiSocket {
     constructor() {
         this.wsClient = null;
         this.controller = null; //c++ child process
         this.cmdFromServer = null;
-        this.cppResponse = null;
+        this.cppTask = null;
         this.connected = false;
         this.needToReconnect = true;
         this.musicPlaying = false;
@@ -68,17 +69,38 @@ class RpiSocket {
         };
     };
     listeningCpp = () => {
-        this.controller.stdout.on("data", (mes) => {
-            const data = mes.toString();
-            //console.log(`Data from C++: ${data}`);
-            this.parseCppData(data);
+        const parseCppData = this.parseCppData;
+        // Listening to stdout
+        const rl = readline.createInterface({
+            input: this.controller.stdout,
+        });
+
+        rl.on("line", function (line) {
+            const data = line.trim();
+            if (data.length) {
+                console.log(`Data from C++: ${data}`);
+                parseCppData(data);
+            }
+        });
+
+        // Listening to error
+        const rlErr = readline.createInterface({
+            input: this.controller.stderr,
+        });
+
+        rlErr.on("line", function (line) {
+            const data = line.trim();
+            if (data.length) {
+                console.log(`Data from C++: ${data}`);
+                parseCppData(data);
+            }
         });
     };
     parseServerData = (mes) => {
         const [task, payload] = this.parseData(mes);
         console.log("Command: ", task, "\nPayload: ", payload);
         this.cmdFromServer = task;
-        if (this.controller !== null) this.listeningCpp();
+        // if (this.controller !== null) this.listeningCpp();
         switch (this.cmdFromServer) {
             case "start": {
                 //start c++ file
@@ -87,7 +109,9 @@ class RpiSocket {
                     this.controller.kill();
                     console.log("Running C++ is killed");
                 }
-                this.controller = spawn("../../RPIControler/RPIControler"); //use ./test to test, change to ./controller for real time deployment
+                this.controller = spawn("./RPIController/RPIController"); //use ./test to test, change to ./controller for real time deployment
+                this.listeningCpp();
+                this.sendDataToCpp(`SetDancer dancer0`);
                 break;
             }
             case "play": {
@@ -104,7 +128,7 @@ class RpiSocket {
             }
             case "stop": {
                 //stop playing(prepare to start time)
-            this.sendDataToCpp("RPTStop");  //another SIG
+                this.sendDataToCpp("STOp"); //another SIG
                 break;
             }
             case "load": {
@@ -125,10 +149,35 @@ class RpiSocket {
                 break;
             }
             case "lightCurrentStatus": {
-                this.sendDataToCpp([
-                    //data structure待訂，payload會有一個.json
-
-                ]);
+                if (!fs.existsSync(path.join(__dirname, "../../data")))
+                    fs.mkdirSync(path.join(__dirname, "../../data"));
+                fs.writeFile(
+                    path.join(__dirname, "../../data/status.json"),
+                    JSON.stringify(payload),
+                    (err) => {
+                        if (err) {
+                            console.log("lightCurrentStatus file failed.");
+                            this.sendDataToServer([
+                                "lightCurrentStatus",
+                                {
+                                    OK: false,
+                                    msg: "upload failed",
+                                },
+                            ]);
+                            throw err;
+                        } else {
+                            console.log("lightCurrentStatus file success.");
+                            this.sendDataToServer([
+                                "lightCurrnetStatus",
+                                {
+                                    OK: true,
+                                    msg: "upload success",
+                                },
+                            ]);
+                        }
+                    }
+                );
+                this.sendDataToCpp(["STAtuslight"]);
                 break;
             }
 
@@ -147,7 +196,7 @@ class RpiSocket {
                 if (this.controller !== null) this.controller.kill("SIGKILL");
                 this.controller = null;
                 this.cmdFromServer = null;
-                this.cppResponse = null;
+                this.cppTask = null;
                 this.musicPlaying = false;
                 break;
             }
@@ -234,7 +283,7 @@ class RpiSocket {
 
                 break;
             }
-            case "boardInfo":{
+            case "boardInfo": {
                 this.sendDataToServer([
                     "boardInfo",
                     {
@@ -250,83 +299,40 @@ class RpiSocket {
     };
     parseCppData = (mes) => {
         //const [task, payload] = this.parseData(mes.toString());
-        const message = mes.toString().split(" ");
-        for (let i = 0; i < message.length; i++) message[i] = message[i].trim();
-        this.cppResponse = message[0];
-        console.log("Controller response: ", message[0], "Success: ", message[1] === '1', message[1]);
-        switch (this.cppResponse) {
+        const message = mes.toString().trim().split(" ");
+
+        this.cppTask = message[0];
+        const OK = message[1] === "success";
+
+        console.log("Controller response: ", message);
+        switch (this.cppTask) {
             case "start": {
-                this.sendDataToServer([
-                    "start",
-                    {
-                        OK: message[1] === "1",
-                        message: `start ${
-                            message[1] === "1" ? "success" : "failed"
-                        }`,
-                    },
-                ]);
+                this.sendDataToServer(["start", { OK, message }]);
                 break;
             }
             case "Load": {
-                this.sendDataToServer([
-                    "load",
-                    {
-                        OK: message[1] === "1",
-                        message: `load ${
-                            message[1] === "1" ? "success" : "failed"
-                        }`,
-                    },
-                ]);
+                this.sendDataToServer(["load", { OK, message }]);
                 break;
             }
             case "play": {
                 this.sendDataToServer([
                     //暫定，可能會再改
                     "play",
-                    {
-                        OK: message[1] === "1",
-                        message: `play ${
-                            message[1] === "1" ? "success" : "failed"
-                        }`,
-                    },
+                    { OK, message },
                 ]);
                 this.musicPlaying = message[1] === "1";
                 break;
             }
             case "pause": {
-                this.sendDataToServer([
-                    "pause",
-                    {
-                        OK: message[1] === "1",
-                        message: `pause ${
-                            message[1] === "1" ? "success" : "failed"
-                        }`,
-                    },
-                ]);
+                this.sendDataToServer(["pause", { OK, message }]);
                 break;
             }
             case "stop": {
-                this.sendDataToServer([
-                    "stop",
-                    {
-                        OK: message[1] === "1",
-                        message: `stop ${
-                            message[1] === "1" ? "success" : "failed"
-                        }`,
-                    },
-                ]);
+                this.sendDataToServer(["stop", { OK, message }]);
                 break;
             }
             case "lightCurrentStatus": {
-                this.sendDataToServer([
-                    "lightCurrentStatus",
-                    {
-                        OK: message[1] === "1",
-                        message: `lightCurrentStatus ${
-                            message[1] === "1" ? "success" : "failed"
-                        }`,
-                    },
-                ]);
+                this.sendDataToServer(["lightCurrentStatus", { OK, message }]);
                 break;
             }
         }
