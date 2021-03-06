@@ -175,15 +175,15 @@ class DancerSocket {
             switch (task){
                 case "boardInfo":{
                     this.dancerAgent.addDancerClient(this.dancerName, this);
-                    break;
+                    return;
                 }
             }
 
-            return {
-                from: this.dancerName,
+            this.dancerAgent.socketReciiveData(this.dancerName, {
                 task: task,
-                payload: payload
-            }
+                payload: payload,
+                type: "Rpi"
+            })
         };
     };
     handleDisconnect = () => {
