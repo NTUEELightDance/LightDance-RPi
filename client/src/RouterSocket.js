@@ -157,11 +157,12 @@ const server = http.createServer(app);
 const wss = new Websocket.Server({ server });
 
 class DancerSocket {
-    constructor(ws, dancerName) {
+    constructor(ws, dancerName, dancerAgent) {
         this.ws = null;
         this.clientIp = null;
         this.dancerName = dancerName;
         this.init(ws);
+        this.dancerAgent = dancerAgent;
     }
     init = (ws) => {
         this.ws = ws;
@@ -171,15 +172,23 @@ class DancerSocket {
             const [task, payload] = JSON.parse(message.data);
             console.log("Client response: ", task, "\nPayload: ", payload);
 
+            switch (task){
+                case "boardInfo":{
+                    this.dancerAgent.addDancerClient(this.dancerName, this);
+                    break;
+                }
+            }
+
             return {
+                from: this.dancerName,
                 task: task,
                 payload: payload
-            };
+            }
         };
     };
     handleDisconnect = () => {
         this.ws.onclose = (mes) => {
-            delete this.DancerClients[this.dancerName];
+            this.dancerAgent.deleteDancerClient(this.dancerName, this);
         }
     }
     sendDataToRpiSocket = (data) => {
