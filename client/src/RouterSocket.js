@@ -179,7 +179,7 @@ class DancerSocket {
                 }
             }
 
-            this.dancerAgent.socketReciiveData(this.dancerName, {
+            this.dancerAgent.socketRecieveData(this.dancerName, {
                 task: task,
                 payload: payload,
                 type: "Rpi"
