@@ -20,7 +20,7 @@ class RpiSocket {
         this.connectWebsocket();
     };
     connectWebsocket = () => {
-        this.wsClient = new WebSocket("ws://localhost:4000");
+        this.wsClient = new WebSocket("ws://localhost:8080");
         if (this.wsClient.readyState !== WebSocket.CONNECTING) {
             setTimeout(() => {
                 this.init();
@@ -76,6 +76,7 @@ class RpiSocket {
     };
     parseServerData = (mes) => {
         const [task, payload] = this.parseData(mes);
+        console.log("Command: ", task, "\nPayload: ", payload);
         this.cmdFromServer = task;
         if (this.controller !== null) this.listeningCpp();
         switch (this.cmdFromServer) {
@@ -356,20 +357,3 @@ const mainSocket = () => {
 };
 
 mainSocket();
-
-// register("start", handleStart);
-// register("pause", handePause);
-// register("pause", handePause);
-// register("pause", handePause);
-// register("pause", handePause);
-
-
-
-// registerTable: {
-//     "start": handleStart,
-//     "pause": handlePause,
-// }
-
-// ws.on[task]
-
-// registerTable[task]();
