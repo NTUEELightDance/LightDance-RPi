@@ -15,6 +15,7 @@
 
 // Global variable
 RPIMgr rpiMgr;
+//extern void sendToRPIClient(const bool& ok, const string& msg);
 
 
 bool
@@ -33,7 +34,8 @@ initRPICmd()
     check.push_back(cmdMgr->regCmd("STAtuslight", 3, new StatusLightCmd));
     for (auto i : check) {
       if (!i) {
-         cerr << "Registering \"init\" commands fails... exiting" << endl;
+          //sendToRPIClient(false, "Registering \"init\" commands fails... exiting");
+         //cerr << "Registering \"init\" commands fails... exiting" << endl;
          return false;
       }
    }
@@ -63,7 +65,9 @@ PlayCmd::exec(const string& option)
     }
     else
         return CmdExec::errorOption(CMD_OPT_EXTRA, tokens[1]);
-    cout << "press ctrl-c to pause" << endl;
+    cout << "play success" << endl;
+    cout << "Hint: press ctrl-c to pause" << endl;
+    //cout << "{ \"Status\": \"\"press ctrl-c to pause" << endl;
     rpiMgr.play(givenTime, startTime);
     return CMD_EXEC_DONE;
     
@@ -120,8 +124,10 @@ StopCmd::exec(const string& option)
     // check option
     if (!CmdExec::lexNoOption(option))
         return CMD_EXEC_ERROR;
-    cout << "stop" << endl;
+    //cout << "stop" << endl;
     rpiMgr.stop();
+    cout << "stop success" << endl;
+    //sendToRPIClient(true, "success stop");
     return CMD_EXEC_DONE;
 }
 
@@ -198,21 +204,27 @@ ELTestCmd::exec(const string& option)
     vector<string> tokens;
     CmdExec::lexOptions(option, tokens);
     if (tokens.size() == 0) {
-        cerr << "Error: Missing Option" << endl;
+        //cerr << "Error: Missing Option" << endl;
+        //sendToRPIClient(false, "Error: Missing Option");
+        cout << "ELTest Error:_Missing_Option" << endl;
         return CMD_EXEC_ERROR;
     }
     else if (tokens.size() == 1) {
         int number;
         if (!myStr2Int(tokens[0], number))
             return CmdExec::errorOption(CMD_OPT_ILLEGAL, tokens[0]);
-        cout << "ELTest: number=" << number << endl;
+        //cout << "ELTest: number=" << number << endl;
+        string msg = "ELTest number=" + tokens[0];
+        //sendToRPIClient(true, msg);
     }
     else if (tokens.size() == 2) {
         int number;
         if (!myStr2Int(tokens[0], number))
             return CmdExec::errorOption(CMD_OPT_ILLEGAL, tokens[0]);
         // need to check if alpha is valid
-        cout << "ELTest: number=" << number << " alpha=" << tokens[1] << endl;
+        string msg = "ELTest number=" + tokens[0] + "_alpha=" + tokens[1];
+        //cout << "ELTest: number=" << number << " alpha=" << tokens[1] << endl;
+        //sendToRPIClient(true, msg);
     }
     else
         return CmdExec::errorOption(CMD_OPT_EXTRA, tokens[2]);
@@ -241,28 +253,36 @@ LEDTestCmd::exec(const string& option)
     vector<string> tokens;
     CmdExec::lexOptions(option, tokens);
     if (tokens.size() == 0) {
-        cerr << "Error: Missing Option" << endl;
+        //cerr << "Error: Missing Option" << endl;
+        //sendToRPIClient(false, "Error: Missing Option");
+        cout << "LEDTest Error:_Missing_Option" << endl;
         return CMD_EXEC_ERROR;
     }
     else if (tokens.size() == 1) {
         int number;
         if (!myStr2Int(tokens[0], number))
             return CmdExec::errorOption(CMD_OPT_ILLEGAL, tokens[0]);
-        cout << "LEDTest: number=" << number << endl;
+        //cout << "LEDTest: number=" << number << endl;
+        string msg = "LEDTest number=" + tokens[0];
+        //sendToRPIClient(true, msg);
     }
     else if (tokens.size() == 2) {
         int number;
         if (!myStr2Int(tokens[0], number))
             return CmdExec::errorOption(CMD_OPT_ILLEGAL, tokens[0]);
         // need to check if src is valid
-        cout << "LEDTest: number=" << number << " src=" << tokens[1] << endl;
+        //cout << "LEDTest: number=" << number << " src=" << tokens[1] << endl;
+        string msg = "LEDTest number=" + tokens[0]  + "_src=" + string(tokens[1]);
+        //sendToRPIClient(true, msg);
     }
     else if (tokens.size() == 3) {
         int number;
         if (!myStr2Int(tokens[0], number))
             return CmdExec::errorOption(CMD_OPT_ILLEGAL, tokens[0]);
         // need to check if src and alpha is valid
-        cout << "LEDTest: number=" << number << " src=" << tokens[1] << " src=" << tokens[2] << endl;
+        //cout << "LEDTest: number=" << number << " src=" << tokens[1] << " alpha=" << tokens[2] << endl;
+        string msg = "LEDTest number=" + tokens[0]  + " _src=" + string(tokens[1]) + "_alpha=" + string(tokens[2]);
+        //sendToRPIClient(true, msg);
     }
     else
         return CmdExec::errorOption(CMD_OPT_EXTRA, tokens[3]);
@@ -318,12 +338,15 @@ SetDancerCmd::exec(const string& option)
     vector<string> tokens;
     CmdExec::lexOptions(option, tokens);
     if (tokens.size() < 1) {
-        cerr << "Error: Missing option!" << endl;
+        //cerr << "Error: Missing option!" << endl;
+        //sendToRPIClient(false, "Error: Missing option!");
+        cout << "SetDancer Error:_Missing_Option" << endl;
         return CMD_EXEC_ERROR;
     }
     if (tokens.size() > 1)
         return CmdExec::errorOption(CMD_OPT_EXTRA, tokens[1]);
     rpiMgr.setDancer(tokens[0]);
+    cout << "SetDancer success" << endl;
     return CMD_EXEC_DONE;
 }
 
@@ -351,6 +374,7 @@ StatusLightCmd::exec(const string& option)
         return CMD_EXEC_ERROR;
     if (!rpiMgr.statusLight())
         return CMD_EXEC_ERROR;
+    cout << "STAtuslight success" << endl;
     return CMD_EXEC_DONE;
 }
 
