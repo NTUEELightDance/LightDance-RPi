@@ -40,9 +40,10 @@ class RpiSocket {
                 "boardInfo",
                 {
                     //send boardInfo while connected to server
+                    type: "dancer",
                     name: os.hostname(),
                     OK: true,
-                    msg: "Success",
+                    msg: "Connect Success",
                 },
             ]);
         };
@@ -288,6 +289,7 @@ class RpiSocket {
                     "boardInfo",
                     {
                         //send boardInfo while connected to server
+                        type: "dancer",
                         name: os.hostname(),
                         OK: true,
                         msg: "Success",
