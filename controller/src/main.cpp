@@ -32,22 +32,34 @@ int main(int argc, char *argv[])
             continue;
 
         // TODO: Below are too messy, should try a better way
+
+        // load [control_path]
         if (cmd[0] == "load")
         {
-            rpiMgr->load(); // TODO: need to get cmd arguments
+            if (cmd.length > 1)
+                rpiMgr->load(cmd[1]);
+            else
+                rpiMgr->load();
         }
+
+        // play [start_time] [system_time]
         else if (cmd[0] == "play")
         {
             rpiMgr->play(0, 0); // TODO: need to get cmd arguments
         }
+
+        // stop
         else if (cmd[0] == "stop")
         {
             rpiMgr->stop();
         }
+
+        // statuslight
         else if (cmd[0] == "statuslight")
         {
             rpiMgr->statuslight();
         }
+
         // below won't send to server
         else if (cmd[0] == "eltest")
         {
