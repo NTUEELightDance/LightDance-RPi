@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "cmdMgr.h"
 #include "rpiMgr.h"
@@ -24,12 +25,13 @@ int main(int argc, char *argv[])
     {
         string inp;
         getline(cin, inp);
+        transform(inp.begin(), inp.end(), inp.begin(), ::tolower); // turn input to lowercase
         vector<string> cmd = splitStr(inp);
 
         if (cmd.size() < 1)
             continue;
 
-        // TODO: Below are to messy, should try a better way
+        // TODO: Below are too messy, should try a better way
         if (cmd[0] == "load")
         {
             rpiMgr->load(); // TODO: need to get cmd arguments
@@ -49,9 +51,11 @@ int main(int argc, char *argv[])
         // below won't send to server
         else if (cmd[0] == "eltest")
         {
+            rpiMgr->eltest(); // TODO: need to get cmd arguments
         }
         else if (cmd[0] == "ledtest")
         {
+            rpiMgr->ledtest(); // TODO: need to get cmd arguments
         }
         else if (cmd[0] == "list")
         {
