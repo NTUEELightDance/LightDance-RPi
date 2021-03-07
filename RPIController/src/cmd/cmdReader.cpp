@@ -22,19 +22,10 @@ ParseChar getChar(istream&);
 //----------------------------------------------------------------------
 //    Member Function for class Parser
 //----------------------------------------------------------------------
-void
-CmdParser::readCmd()
-{
-   if (_dofile.is_open()) {
-      readCmdInt(_dofile);
-      _dofile.close();
-   }
-   else
-      readCmdInt(cin);
-}
 
-void
-CmdParser::readCmdInt(istream& istr)
+
+bool
+CmdParser::readCmd(istream& istr)
 {
    resetBufAndPrintPrompt();
 
@@ -75,10 +66,8 @@ CmdParser::readCmdInt(istream& istr)
          default:  // printable character
             insertChar(char(pch)); break;
       }
-      #ifdef TA_KB_SETTING
-      taTestOnly();
-      #endif
    }
+   return true;
 }
 
 
@@ -280,7 +269,7 @@ CmdParser::moveToHistory(int index)
 //    and reset _tempCmdStored to false
 // 5. Reset _historyIdx to _history.size() // for future insertion
 //
-void
+bool
 CmdParser::addHistory()
 {
    // clear ' '
@@ -293,6 +282,7 @@ CmdParser::addHistory()
    if (_tempCmdStored) { _history.pop_back(); _tempCmdStored = false; }
    if (s != "") _history.push_back(s);
    _historyIdx = _history.size();
+   return true;
 }
 
 

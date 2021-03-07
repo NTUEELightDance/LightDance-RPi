@@ -119,10 +119,8 @@ CmdExecStatus
 CmdParser::execOneCmd()
 {
    bool newCmd = false;
-   if (_dofile != 0)
-      newCmd = readCmd(*_dofile);
-   else
-      newCmd = readCmd(cin);
+
+  newCmd = readCmd(cin);
 
    // execute the command
    if (newCmd) {
