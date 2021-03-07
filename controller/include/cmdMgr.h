@@ -3,6 +3,7 @@
 
 class CmdMgr
 {
+public:
     CmdMgr(){};
 };
 
