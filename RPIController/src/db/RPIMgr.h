@@ -1,12 +1,12 @@
 /****************************************************************************
-  FileName     [ dbJson.h ]
+  FileName     [ RPIMgr.h ]
   PackageName  [ db ]
   Synopsis     [ Define database JSON classes ]
   Author       [ Chung-Yang (Ric) Huang ]
   Copyright    [ Copyleft(c) 2015-present LaDs(III), GIEE, NTU, Taiwan ]
 ****************************************************************************/
-#ifndef DB_JSON_H
-#define DB_JSON_H
+#ifndef RPI_MGR_H
+#define RPI_MGR_H
 
 #include <vector>
 #include <string>
