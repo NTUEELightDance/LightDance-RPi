@@ -266,7 +266,7 @@ void RPiMgr::lightOneStatus(const json &status) const
             if (id < 16)
                 el1.setEL(id, dt);
             else
-                el2.setEl(id % 16, dt);
+                el2.setEL(id % 16, dt);
             cout
                 << "ELlightName: " << it.key() << ", "
                 << "alpha: " << getELBright(it.value()) << ", "
