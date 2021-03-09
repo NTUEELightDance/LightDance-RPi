@@ -10,9 +10,11 @@ public:
     CmdMgr(){};
     ~CmdMgr()
     {
-        _cmdMap.clear();
+//        _cmdMap.clear();
     }
 
 private:
-    unordered_map<string, Cmd> _cmdMap;
+//    unordered_map<string, Cmd> _cmdMap;
 };
+
+#endif

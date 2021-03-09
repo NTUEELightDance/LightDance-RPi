@@ -7,8 +7,7 @@
 #include <iostream>
 using namespace std;
 
-vector<string> splitStr(string &str)
-{
+vector<string> splitStr(string &str) {
     vector<string> v;
     istringstream ss(str);
     string word;
@@ -17,5 +16,17 @@ vector<string> splitStr(string &str)
         v.push_back(word);
     }
     return v;
+}
+
+bool Str2Unsint(const string& str, unsigned& unsint) {
+    unsint = 0;
+    if (str.size() == 0)
+        return false;
+    for (int i = 0; i < str.size(); ++i) {
+        if (!isdigit(str[i]))
+            return false;
+        unsint = unsint*10 + (str[i]-'0');
+    }
+    return true;
 }
 #endif

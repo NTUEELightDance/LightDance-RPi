@@ -2,11 +2,21 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <setjmp.h>
 
 #include "cmdMgr.h"
 #include "rpiMgr.h"
 #include "utils.hpp"
+
 using namespace std;
+
+jmp_buf env;
+
+void sigHandler(int sig) {
+    cout << endl;
+    cout << "pause" << endl;
+    longjmp(env, 0);
+}
 
 int main(int argc, char *argv[])
 {
@@ -19,7 +29,13 @@ int main(int argc, char *argv[])
     RPiMgr *rpiMgr = new RPiMgr(dancerName);
 
     // TODO: init and register commands
-
+    if (!rpiMgr->setDancer()) {
+        cerr << "Error: cannot load " << dancerName << ".json" << endl;
+        exit(0);
+    }
+    cout << "success" << endl;
+    signal(SIGINT, sigHandler);
+    setjmp(env);
     bool quit = false;
     while (!quit)
     {
@@ -36,16 +52,44 @@ int main(int argc, char *argv[])
         // load [control_path]
         if (cmd[0] == "load")
         {
-            if (cmd.length > 1)
+            if (cmd.size() > 1)
                 rpiMgr->load(cmd[1]);
             else
                 rpiMgr->load();
         }
 
-        // play [start_time] [system_time]
+        // play [start_time] [delay_time]
         else if (cmd[0] == "play")
         {
-            rpiMgr->play(0, 0); // TODO: need to get cmd arguments
+            // TODO: need to get cmd arguments
+            
+            //play
+            if (cmd.size() == 1)
+                rpiMgr->play(false, 0);
+            
+            //play start_time
+            else if (cmd.size() == 2) {
+                unsigned startTime;
+                if (!Str2Unsint(cmd[1], startTime))
+                    cerr << "Error: illegal option \"" << cmd[1] << "\"" << endl;
+                else
+                    rpiMgr->play(true, startTime);
+            }
+            
+            //play start_time delay_time
+            else {
+                unsigned startTime, delayTime;
+                if (!Str2Unsint(cmd[1], startTime)) {
+                    cerr << "Error: illegal option \"" << cmd[1] << "\"" << endl;
+                    continue;
+                }
+                if (!Str2Unsint(cmd[2], delayTime)) {
+                    cerr << "Error: illegal option \"" << cmd[2] << "\"" << endl;
+                    continue;
+                }
+                //cout << "play " << startTime << " " << delayTime << endl;
+                rpiMgr->play(true, startTime, delayTime);
+            }
         }
 
         // stop
@@ -71,9 +115,11 @@ int main(int argc, char *argv[])
         }
         else if (cmd[0] == "list")
         {
+            rpiMgr->list();
         }
         else if (cmd[0] == "quit")
         {
+            rpiMgr->quit();
             quit = true;
         }
     }
