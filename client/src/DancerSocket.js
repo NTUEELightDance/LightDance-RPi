@@ -43,7 +43,7 @@ class DancerSocket {
     };
     //below are functions for editor server to use
     start = () => {
-        this.sendDataToRpiSocket(["start"]);
+        this.sendDataToRpiSocket(["start", this.dancerName]);
     };
     play = (startTime = 0, whenToPlay = 0) => {
         this.sendDataToRpiSocket([
