@@ -91,3 +91,18 @@ class DancerSocket {
 }
 
 module.exports = DancerSocket;
+
+// const Websocket = require("ws");
+// const http = require("http");
+// const express = require("express");
+// const readline = require("readline");
+
+// const app = express();
+// const server = http.createServer(app);
+// const wss = Websocket.Server({server});
+
+// wss.on("connection", (ws) => {
+//     ws.onmessage = (msg) => {
+
+//     } 
+// })

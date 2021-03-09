@@ -74,7 +74,7 @@ RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay) {
         return;
     }
     size_t currentFrameId = getFrameId();
-    cout << "FrameId: " << currentFrameId << endl;
+    //cout << "FrameId: " << currentFrameId << endl;
     
     long hadDelay = getsystime() - timeIntoFunc;
     if (hadDelay < delay)
@@ -138,7 +138,7 @@ RPiMgr::statuslight() {
     if (!infile) {
         //cerr << "Error: cannot open ./data/status/json" << endl;
         //sendToRPIClient(false, "Error: cannot open ./data/status/json");
-        cout << "Error: cannot open ../../data/status.json" << endl;
+        cout << "Error: cannot open ../data/status.json" << endl;
         return;
     }
     json status;

@@ -15,6 +15,7 @@ jmp_buf env;
 void sigHandler(int sig) {
     cout << endl;
     cout << "pause" << endl;
+    cout << "success" << endl;
     longjmp(env, 0);
 }
 

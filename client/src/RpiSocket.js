@@ -107,12 +107,12 @@ class RpiSocket {
                     //start c++ file
                     if (this.controller !== null) {
                         console.log("Killing running C++.");
-                        this.controller.kill();
+                        this.controller.kill("SIGKILL");
                         console.log("Running C++ is killed");
                     }
                     try {
                         // console.log("Starting controller...");
-                        this.controller = spawn(`../../RPIController/RPIController ${payload}`); //use ./test to test, change to ./controller for real time deployment
+                        this.controller = spawn(path.join(__dirname, `../../controller/controller`), [payload]); //use ./test to test, change to ./controller for real time deployment
                         this.controller.on("error", (err) => {
                             console.log(err);
                         })
@@ -126,7 +126,7 @@ class RpiSocket {
                     //start playing
                     const startTime = payload.startTime; //從整首歌的第幾秒播放
                     const whenToPlay = payload.whenToPlay; //Rpi從此確切時間開始播放
-                    this.sendDataToCpp(`PLay ${startTime} ${whenToPlay}`);
+                    this.sendDataToCpp(`play ${startTime} ${whenToPlay}`);
                     break;
                 } //back to server的部分還未確定
                 case "pause": {
@@ -136,22 +136,23 @@ class RpiSocket {
                 }
                 case "stop": {
                     //stop playing(prepare to start time)
-                    this.sendDataToCpp("STOp"); //another SIG
+                    this.sendDataToCpp("stop"); //another SIG
                     break;
                 }
                 case "load": {
                     //call cpp to load play file.json
-                    this.sendDataToCpp("Load");
+                    this.sendDataToCpp("load");
                     break;
                 }
                 case "terminate": {
                     //terminate c++ file
-                    if (this.controller !== null) this.controller.kill("SIGKILL");
+                    // if (this.controller !== null) this.controller.kill("SIGKILL");
+                    this.sendDataToCpp("quit");
                     this.sendDataToServer([
                         "terminate",
                         {
                             OK: true,
-                            msg: "terminated",
+                            msg: "terminated success",
                         },
                     ]);
                     break;
@@ -185,7 +186,7 @@ class RpiSocket {
                             }
                         }
                     );
-                    this.sendDataToCpp(["STAtuslight"]);
+                    this.sendDataToCpp(["statuslight"]);
                     break;
                 }
                 //above are commands sending to clientApp(controller.cpp)
