@@ -20,7 +20,7 @@ static long getsystime() // ms
 
 bool
 RPiMgr::setDancer() {
-    string path = "../../data/" + _dancerName + ".json";
+    string path = "../data/" + _dancerName + ".json";
     ifstream infile(path.c_str());
     if (!infile)
         return false;
@@ -74,7 +74,7 @@ RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay) {
         return;
     }
     size_t currentFrameId = getFrameId();
-    cout << "FrameId: " << currentFrameId << endl;
+    //cout << "FrameId: " << currentFrameId << endl;
     
     long hadDelay = getsystime() - timeIntoFunc;
     if (hadDelay < delay)
@@ -134,11 +134,11 @@ RPiMgr::stop() {
 
 void
 RPiMgr::statuslight() {
-    ifstream infile("../../data/status.json");
+    ifstream infile("../data/status.json");
     if (!infile) {
         //cerr << "Error: cannot open ./data/status/json" << endl;
         //sendToRPIClient(false, "Error: cannot open ./data/status/json");
-        cout << "Error: cannot open ../../data/status.json" << endl;
+        cout << "Error: cannot open ../data/status.json" << endl;
         return;
     }
     json status;
