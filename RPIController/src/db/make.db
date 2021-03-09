@@ -1,5 +1,5 @@
 PKGFLAG   =
-EXTHDRS   = dbJson.h
+EXTHDRS   = RPIMgr.h
 EXTRAOBJS =
 
 include ../Makefile.in
