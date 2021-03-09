@@ -1,5 +1,5 @@
 /****************************************************************************
-  FileName     [ dbJson.cpp ]
+  FileName     [ RPIMgr.cpp ]
   PackageName  [ db ]
   Synopsis     [ Define database Json member functions ]
   Author       [ Chung-Yang (Ric) Huang ]
@@ -21,7 +21,7 @@ cout << "warnging " << "" << endl;
 #include <algorithm>
 #include <time.h>
 #include <sys/time.h>
-#include "dbJson.h"
+#include "RPIMgr.h"
 #include "util.h"
 //#include "nlohmann/json.hpp"
 

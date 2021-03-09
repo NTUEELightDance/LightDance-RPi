@@ -12,7 +12,7 @@
 #include <string>
 #include "util.h"
 #include "rpiCmd.h"
-#include "dbJson.h"
+#include "RPIMgr.h"
 
 // Global variable
 RPIMgr rpiMgr;
@@ -34,12 +34,12 @@ initRPICmd()
     check.push_back(cmdMgr->regCmd("SETDancer", 4, new SetDancerCmd));
     check.push_back(cmdMgr->regCmd("STAtuslight", 3, new StatusLightCmd));
     for (auto i : check) {
-      if (!i) {
-          //sendToRPIClient(false, "Registering \"init\" commands fails... exiting");
-         //cerr << "Registering \"init\" commands fails... exiting" << endl;
-         return false;
-      }
-   }
+        if (!i) {
+            //sendToRPIClient(false, "Registering \"init\" commands fails... exiting");
+            //cerr << "Registering \"init\" commands fails... exiting" << endl;
+            return false;
+        }
+    }
    return true;
 }
 

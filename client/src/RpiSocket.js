@@ -39,10 +39,10 @@ class RpiSocket {
                 "boardInfo",
                 {
                     //send boardInfo while connected to server
+                    type: "dancer",
                     name: os.hostname(),
                     OK: true,
-                    type: "dancer",
-                    msg: "Success",
+                    msg: "Connect Success",
                 },
             ]);
         };

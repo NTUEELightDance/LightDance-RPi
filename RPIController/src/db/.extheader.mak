@@ -1,4 +1,4 @@
-db.d: ../../include/dbJson.h 
-../../include/dbJson.h: dbJson.h
-	@rm -f ../../include/dbJson.h
-	@ln -fs ../src/db/dbJson.h ../../include/dbJson.h
+db.d: ../../include/RPIMgr.h 
+../../include/RPIMgr.h: RPIMgr.h
+	@rm -f ../../include/RPIMgr.h
+	@ln -fs ../src/db/RPIMgr.h ../../include/RPIMgr.h
