@@ -260,9 +260,17 @@ void RPiMgr::lightOneStatus(const json &status) const
         json::const_iterator temp = _ELparts.find(it.key());
         if (temp != _ELparts.end())
         { //ELparts
-            cout << "ELlightName: " << it.key() << ", "
-                 << "alpha: " << getELBright(it.value()) << ", "
-                 << "number: " << temp.value() << endl;
+            // TOFIX: This is 2020 way, must fix to new way
+            uint8_t id = temp.value();
+            uint16_t dt = getELBright(it.value());
+            if (id < 16)
+                el1.setEL(id, dt);
+            else
+                el2.setEl(id % 16, dt);
+            cout
+                << "ELlightName: " << it.key() << ", "
+                << "alpha: " << getELBright(it.value()) << ", "
+                << "number: " << temp.value() << endl;
         }
         else
         {
