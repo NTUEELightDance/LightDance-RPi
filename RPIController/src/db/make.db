@@ -1,6 +1,0 @@
-PKGFLAG   =
-EXTHDRS   = RPIMgr.h
-EXTRAOBJS =
-
-include ../Makefile.in
-include ../Makefile.lib
