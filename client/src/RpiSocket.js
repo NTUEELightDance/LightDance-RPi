@@ -11,7 +11,6 @@ class RpiSocket {
         this.wsClient = null;
         this.controller = null; //c++ child process
         this.cmdFromServer = null;
-        this.cppTask = null;
         this.connected = false;
         this.needToReconnect = true;
         this.musicPlaying = false;
@@ -51,12 +50,13 @@ class RpiSocket {
         };
         this.wsClient.onmessage = (mes) => {
             const data = mes.data;
+            console.log(`----------------------------------------`)
             console.log(`Data from server: ${data}`);
             this.parseServerData(data);
         };
         this.wsClient.onclose = (e) => {
             console.log("Websocket client closed.");
-            if (!this.musicPlaying && this.controller !== null)
+            if (!this.musicPlaying && this.controller)
                 this.controller.kill(); //若音樂在播而不小心斷線，就不管
 
             if (this.needToReconnect) {
@@ -91,35 +91,38 @@ class RpiSocket {
         rlErr.on("line", function (line) {
             const data = line.trim();
             if (data.length) {
-                console.log(`Data from C++: ${data}`);
+                console.log(`Data from C++ Error: ${data}`);
                 parseCppData(data);
             }
         });
     };
     parseServerData = (mes) => {
         const [task, payload] = this.parseData(mes);
-        console.log("Command: ", task, "\nPayload: ", payload);
+        console.log("Command: ", task, ", Payload: ", payload);
         this.cmdFromServer = task;
         // if (this.controller !== null) this.listeningCpp();
         try {
             switch (this.cmdFromServer) {
                 case "start": {
                     //start c++ file
-                    if (this.controller !== null) {
+                    if (this.controller) {
                         console.log("Killing running C++.");
                         this.controller.kill("SIGKILL");
+                        this.controller = null;
                         console.log("Running C++ is killed");
                     }
                     try {
                         // console.log("Starting controller...");
                         this.controller = spawn(path.join(__dirname, `../../controller/controller`), [payload]); //use ./test to test, change to ./controller for real time deployment
-                        this.controller.on("error", (err) => {
-                            console.log(err);
-                        })
+                        this.listeningCpp();
+                        // this.controller.on("error", (err) => {
+                        //     console.log("Spawn on failed");
+                        //     throw err;
+                        // })
                     } catch (err){
-                        console.log(err);
+                        console.error(err);
+                        this.controller = null;
                     }
-                    this.listeningCpp();
                     break;
                 }
                 case "play": {
@@ -131,7 +134,7 @@ class RpiSocket {
                 } //back to server的部分還未確定
                 case "pause": {
                     //pause playing
-                    this.controller.kill("SIGINT");
+                    if (this.controller) this.controller.kill("SIGINT");
                     break;
                 }
                 case "stop": {
@@ -148,6 +151,7 @@ class RpiSocket {
                     //terminate c++ file
                     // if (this.controller !== null) this.controller.kill("SIGKILL");
                     this.sendDataToCpp("quit");
+                    this.controller = null;
                     this.sendDataToServer([
                         "terminate",
                         {
@@ -177,7 +181,7 @@ class RpiSocket {
                             } else {
                                 console.log("lightCurrentStatus file success.");
                                 this.sendDataToServer([
-                                    "lightCurrnetStatus",
+                                    "lightCurrentStatus",
                                     {
                                         OK: true,
                                         msg: "upload success",
@@ -186,7 +190,7 @@ class RpiSocket {
                             }
                         }
                     );
-                    this.sendDataToCpp(["statuslight"]);
+                    this.sendDataToCpp("statuslight");
                     break;
                 }
                 //above are commands sending to clientApp(controller.cpp)
@@ -201,10 +205,9 @@ class RpiSocket {
                     delete this.wsClient;
                     this.connectWebsocket();
     
-                    if (this.controller !== null) this.controller.kill("SIGKILL");
+                    if (this.controller) this.controller.kill("SIGKILL");
                     this.controller = null;
                     this.cmdFromServer = null;
-                    this.cppTask = null;
                     this.musicPlaying = false;
                     break;
                 }
@@ -306,7 +309,7 @@ class RpiSocket {
                 }
             }
         } catch (err) {
-            if (this.controller === null || !this.controller.connected) {
+            if (this.controller || !this.controller.connected) {
                 this.sendDataToServer([
                     task,
                     {
@@ -339,16 +342,11 @@ class RpiSocket {
         }
     };
     parseCppData = (mes) => {
-        // const message = mes.toString().trim().split(" ");
-
-        // this.cppTask = message[0];
-        // const OK = message[0].toLowerCase() === "success";
         const message = mes.toString().trim();
         const OK = message.toLowerCase().includes("success");
 
-        console.log("Controller response: ", message);
         this.sendDataToServer([
-            this.cppTask,
+            this.cmdFromServer,
             {
                 OK,
                 msg: message
@@ -356,28 +354,32 @@ class RpiSocket {
         ])
     };
     sendDataToServer = (data) => {
+        console.log("Data to Server: ", data);
+        console.log("----------------------------------------")
         this.wsClient.send(JSON.stringify(data));
     };
     sendDataToCpp = (data) => {
         try {
+            if (!this.controller || !this.controller.connected) throw data;
             console.log(`Data to C++: ${data}`);
             this.controller.stdin.write(`${data}\n`);
         } catch (err){
-            this.sendDataToServer(["Error", {
-                ...data
+            this.sendDataToServer([this.cmdFromServer, {
+                OK: false,
+                msg: "Needs to start/restart C++"
             }]);
         };
     };
     parseData = (data) => {
-        console.log(`Data: ${data}`);
+        // console.log(`Data: ${data}`);
         return JSON.parse(data);
     };
     cppErrorHandle = (func) => {
         console.log("Handle error...");
-        if (this.controller === null) {
+        if (!this.controller || !this.controller.connected) {
             //C++ not launched or launch failed
             console.log("C++ is not running or has unexpected error");
-            this.sendDataToServer(["Error", "Needs to start/restart C++"]);
+            this.sendDataToServer([this.cmdFromServer, "Needs to start/restart C++"]);
         } else func;
     };
 }
