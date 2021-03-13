@@ -1,1 +1,1 @@
-node client/src/RpiSocket.js
+sudo node client/src/RpiSocket.js

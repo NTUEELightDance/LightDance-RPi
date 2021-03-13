@@ -112,13 +112,8 @@ class RpiSocket {
                         console.log("Running C++ is killed");
                     }
                     try {
-                        // console.log("Starting controller...");
                         this.controller = spawn(path.join(__dirname, `../../controller/controller`), [payload]); //use ./test to test, change to ./controller for real time deployment
                         this.listeningCpp();
-                        // this.controller.on("error", (err) => {
-                        //     console.log("Spawn on failed");
-                        //     throw err;
-                        // })
                     } catch (err){
                         console.error(err);
                         this.controller = null;
@@ -309,7 +304,7 @@ class RpiSocket {
                 }
             }
         } catch (err) {
-            if (this.controller || !this.controller.connected) {
+            if (this.controller) {
                 this.sendDataToServer([
                     task,
                     {
@@ -360,10 +355,11 @@ class RpiSocket {
     };
     sendDataToCpp = (data) => {
         try {
-            if (!this.controller || !this.controller.connected) throw data;
+            if (!this.controller) throw data;
             console.log(`Data to C++: ${data}`);
             this.controller.stdin.write(`${data}\n`);
         } catch (err){
+            console.error(`Send Data To Cpp error`, err);
             this.sendDataToServer([this.cmdFromServer, {
                 OK: false,
                 msg: "Needs to start/restart C++"
@@ -376,7 +372,7 @@ class RpiSocket {
     };
     cppErrorHandle = (func) => {
         console.log("Handle error...");
-        if (!this.controller || !this.controller.connected) {
+        if (!this.controller) {
             //C++ not launched or launch failed
             console.log("C++ is not running or has unexpected error");
             this.sendDataToServer([this.cmdFromServer, "Needs to start/restart C++"]);

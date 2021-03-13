@@ -15,9 +15,9 @@ public:
     RPiMgr(){};
     RPiMgr(string dancerName) : _dancerName(dancerName){
     	
-	ifstream infile("../asset/LED.json");
+	ifstream infile("./asset/LED.json");
 	if (!infile)
-		cerr << "Error: cannot open LED.son" << endl;
+		cerr << "Error: cannot open LED.json" << endl;
 	else {
 		infile >> LEDJson;
 		for (json::iterator it = LEDJson.begin(); it != LEDJson.end(); ++it) {
