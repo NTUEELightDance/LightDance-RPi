@@ -20,7 +20,7 @@ class RpiSocket {
         this.connectWebsocket();
     };
     connectWebsocket = () => {
-        this.wsClient = new WebSocket("ws://localhost:8080");
+        this.wsClient = new WebSocket("ws://192.168.0.200:8080");
         if (this.wsClient.readyState !== WebSocket.CONNECTING) {
             setTimeout(() => {
                 this.init();

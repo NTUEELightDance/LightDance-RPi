@@ -25,7 +25,7 @@ static long getsystime() // ms
 
 bool RPiMgr::setDancer()
 {
-    string path = "../data/dancers/" + _dancerName + ".json";
+    string path = "./data/dancers/" + _dancerName + ".json";
     ifstream infile(path.c_str());
     if (!infile)
         return false;
@@ -282,6 +282,7 @@ void RPiMgr::lightOneStatus(const json &status) const
         }
         else
         {
+		cout << "dd" << endl;/*
             temp = _LEDparts.find(it.key());
             if (temp != _LEDparts.end())
             { 
@@ -303,6 +304,7 @@ void RPiMgr::lightOneStatus(const json &status) const
             }
             else
                 cerr << "Error: lightName " << it.key() << " not found!" << endl;
-        }
+        */
+	}
     }
 }

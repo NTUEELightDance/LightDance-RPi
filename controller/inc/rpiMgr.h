@@ -37,7 +37,7 @@ public:
     	
     };
     bool setDancer();
-    void load(const string& path="../data/control.json");
+    void load(const string& path="./data/control.json");
     void play(bool givenSTartTime, unsigned start, unsigned delay = 0);
     void stop();
     void statuslight();
