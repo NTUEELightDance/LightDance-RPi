@@ -1,28 +1,32 @@
 CXX = g++
-OBJS = ./build/cmdMgr.o ./build/rpiMgr.o
-INC = ./include
-LIB = ./lib
-OBJDIR = ./build
-EXEDIR = ./bin
-CXXFLAGS=./src/main.cpp
-CFLAGS=-std=c++11
+CFLAGS = -Wall -std=c++11 -Wno-psabi
+OPTFLAGS = -g
+# OPTFLAGS = -O3
 
-all: directories $(EXEDIR)/controller
+SRC_DIR = src/
+INC_DIR = inc/
+BIN_DIR = bin/
+LIB_DIR = lib/
+OBJ_DIR = build/
 
-directories: $(OBJDIR) $(EXEDIR)
+EXEC = controller
+BIN	= $(addprefix $(BIN_DIR), $(EXEC))
+INC = -I$(INC_DIR)
+SRC = $(wildcard $(SRC_DIR)*.cpp)
+OBJ = $(SRC:$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
 
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
+# OBJ := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
+LIB = -L./$(LIB_DIR) -lbcm2835 -lpca9685
 
-$(EXEDIR):
-	mkdir -p $(EXEDIR)
+.PHONY: all clean
 
-$(OBJDIR)/%.o: ./src/%.cpp
-	$(CXX) -c -o $@ $< -g $(CFLAGS) -I$(INC)
+all: $(BIN)
 
-$(EXEDIR)/controller: $(OBJS)
-	$(CXX) $(CXXFLAGS) -o ./bin/controller $(CFLAGS) -I$(INC) $(OBJS)
+$(BIN): $(OBJ)
+	$(CXX) $(CFLAGS) $(OPTFLAGS) $(LDFLAGS) $^ $(LIB) -o $(BIN)
 
+$(OBJ_DIR)%.o : $(SRC_DIR)%.cpp
+	@echo ">> compiling: $<"
+	$(CXX) $(CFLAGS) $(INC) $(LIB) $(LIBDEP) -c $< -o $@
 clean:
-	rm -f $(OBJDIR)/*
-	rm -f $(EXEDIR)/*
+	rm -f $(BIN) $(OBJ)
