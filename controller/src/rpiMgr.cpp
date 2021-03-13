@@ -25,7 +25,7 @@ static long getsystime() // ms
 
 bool RPiMgr::setDancer()
 {
-    string path = "../data/" + _dancerName + ".json";
+    string path = "../data/dancers/" + _dancerName + ".json";
     ifstream infile(path.c_str());
     if (!infile)
         return false;

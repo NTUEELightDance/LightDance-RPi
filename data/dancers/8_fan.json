@@ -1,0 +1,40 @@
+{
+  "ELPARTS": {
+    "G_BELT": 19,
+    "G_BODY": 14,
+    "G_L_ARM": 12,
+    "G_L_FOREARM": 15,
+    "G_L_LEG": 29,
+    "G_L_PANT": 27,
+    "G_L_SHOE": 31,
+    "G_MASK": 11,
+    "G_R_ARM": 13,
+    "G_R_FOREARM": 16,
+    "G_R_LEG": 30,
+    "G_R_PANT": 28,
+    "G_R_SHOE": 32,
+    "S_L_HAND": 7,
+    "S_R_HAND": 8,
+    "B_BELT": 19,
+    "B_BODY": 14,
+    "B_L_ARM": 12,
+    "B_L_FOREARM": 15,
+    "B_L_LEG": 29,
+    "B_L_PANT": 27,
+    "B_L_SHOE": 31,
+    "B_MASK": 11,
+    "B_R_ARM": 13,
+    "B_R_FOREARM": 16,
+    "B_R_LEG": 30,
+    "B_R_PANT": 28,
+    "B_R_SHOE": 32
+  },
+  "LEDPARTS": {
+    "LED_NECKTIE": { "id": 0, "len": 56 },
+    "LED_L_SHOULDER": { "id": 1, "len": 18 },
+    "LED_R_SHOULDER": { "id": 2, "len": 18 },
+    "LED_R_SHOE": { "id": 3, "len": 40 },
+    "LED_L_SHOE": { "id": 4, "len": 40 },
+    "LED_BELT": { "id": 5, "len": 52 }
+  }
+}
