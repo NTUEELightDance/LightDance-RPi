@@ -123,8 +123,8 @@ class RpiSocket {
                 case "play": {
                     //start playing
                     const startTime = payload.startTime; //從整首歌的第幾秒播放
-                    const whenToPlay = payload.whenToPlay; //Rpi從此確切時間開始播放
-                    this.sendDataToCpp(`play ${startTime} ${whenToPlay}`);
+                    const delay = payload.delay; //Rpi從此確切時間開始播放
+                    this.sendDataToCpp(`play ${startTime} ${delay}`);
                     break;
                 } //back to server的部分還未確定
                 case "pause": {
