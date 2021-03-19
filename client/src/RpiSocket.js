@@ -50,14 +50,13 @@ class RpiSocket {
         };
         this.wsClient.onmessage = (mes) => {
             const data = mes.data;
-            console.log(`----------------------------------------`)
+            console.log(`----------------------------------------`);
             console.log(`Data from server: ${data}`);
             this.parseServerData(data);
         };
         this.wsClient.onclose = (e) => {
             console.log("Websocket client closed.");
-            if (!this.musicPlaying && this.controller)
-                this.controller.kill(); //若音樂在播而不小心斷線，就不管
+            if (!this.musicPlaying && this.controller) this.controller.kill(); //若音樂在播而不小心斷線，就不管
 
             if (this.needToReconnect) {
                 console.log("Websocket client reconnecting to server...");
@@ -112,9 +111,12 @@ class RpiSocket {
                         console.log("Running C++ is killed");
                     }
                     try {
-                        this.controller = spawn(path.join(__dirname, `../../controller/controller`), [payload]); //use ./test to test, change to ./controller for real time deployment
+                        this.controller = spawn(
+                            path.join(__dirname, `../../controller/controller`),
+                            [payload]
+                        ); //use ./test to test, change to ./controller for real time deployment
                         this.listeningCpp();
-                    } catch (err){
+                    } catch (err) {
                         console.error(err);
                         this.controller = null;
                     }
@@ -122,9 +124,8 @@ class RpiSocket {
                 }
                 case "play": {
                     //start playing
-                    const startTime = payload.startTime; //從整首歌的第幾秒播放
-                    const delay = payload.delay; //Rpi從此確切時間開始播放
-                    this.sendDataToCpp(`play ${startTime} ${delay}`);
+                    const { startTime, delay, sysTime } = payload; //從整首歌的第幾秒播放, delay 多久, 系統時間多少開始
+                    this.sendDataToCpp(`play ${startTime} ${delay} ${sysTime}`);
                     break;
                 } //back to server的部分還未確定
                 case "pause": {
@@ -199,7 +200,7 @@ class RpiSocket {
                     };
                     delete this.wsClient;
                     this.connectWebsocket();
-    
+
                     if (this.controller) this.controller.kill("SIGKILL");
                     this.controller = null;
                     this.cmdFromServer = null;
@@ -286,7 +287,7 @@ class RpiSocket {
                 }
                 case "sync": {
                     //payload 至少會有時間，將Rpi的時間與電腦同步\
-    
+
                     break;
                 }
                 case "boardInfo": {
@@ -309,30 +310,25 @@ class RpiSocket {
                     task,
                     {
                         OK: 0,
-                        msg: "controller isn't started yet or disconnect unexpected, please press \"start\" button again"
-                    }
+                        msg:
+                            'controller isn\'t started yet or disconnect unexpected, please press "start" button again',
+                    },
                 ]);
             }
             // else if (){
 
             // }
-            else if (err instanceof TypeError){
-
-            }
-            else if (err instanceof SyntaxError){
-
-            }
-            else if (err instanceof EvalError){
-
-            }
-            else {
+            else if (err instanceof TypeError) {
+            } else if (err instanceof SyntaxError) {
+            } else if (err instanceof EvalError) {
+            } else {
                 this.sendDataToServer([
                     task,
                     {
                         OK: 0,
-                        msg: err
-                    }
-                ])
+                        msg: err,
+                    },
+                ]);
             }
         }
     };
@@ -344,13 +340,13 @@ class RpiSocket {
             this.cmdFromServer,
             {
                 OK,
-                msg: message
-            }
-        ])
+                msg: message,
+            },
+        ]);
     };
     sendDataToServer = (data) => {
         console.log("Data to Server: ", data);
-        console.log("----------------------------------------")
+        console.log("----------------------------------------");
         this.wsClient.send(JSON.stringify(data));
     };
     sendDataToCpp = (data) => {
@@ -358,13 +354,16 @@ class RpiSocket {
             if (!this.controller) throw data;
             console.log(`Data to C++: ${data}`);
             this.controller.stdin.write(`${data}\n`);
-        } catch (err){
+        } catch (err) {
             console.error(`Send Data To Cpp error`, err);
-            this.sendDataToServer([this.cmdFromServer, {
-                OK: false,
-                msg: "Needs to start/restart C++"
-            }]);
-        };
+            this.sendDataToServer([
+                this.cmdFromServer,
+                {
+                    OK: false,
+                    msg: "Needs to start/restart C++",
+                },
+            ]);
+        }
     };
     parseData = (data) => {
         // console.log(`Data: ${data}`);
@@ -375,7 +374,10 @@ class RpiSocket {
         if (!this.controller) {
             //C++ not launched or launch failed
             console.log("C++ is not running or has unexpected error");
-            this.sendDataToServer([this.cmdFromServer, "Needs to start/restart C++"]);
+            this.sendDataToServer([
+                this.cmdFromServer,
+                "Needs to start/restart C++",
+            ]);
         } else func;
     };
 }
