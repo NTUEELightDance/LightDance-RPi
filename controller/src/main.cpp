@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
             //play
             if (cmd.size() == 1)
                 rpiMgr->play(false, 0);
-
+ 
             //play start_time
             else if (cmd.size() == 2)
             {
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
             }
 
             //play start_time delay_time
-            else
+            else if (cmd.size() == 3)
             {
                 unsigned startTime, delayTime;
                 if (!Str2Unsint(cmd[1], startTime))
@@ -98,6 +98,27 @@ int main(int argc, char *argv[])
                 //cout << "play " << startTime << " " << delayTime << endl;
                 rpiMgr->play(true, startTime, delayTime);
             }
+	    //play start_time delay_time system_time
+	    else {
+		unsigned startTime, systemTime;
+                if (!Str2Unsint(cmd[1], startTime))
+                {
+                    cerr << "Error: illegal option \"" << cmd[1] << "\"" << endl;
+                    continue;
+                }
+                if (!Str2Unsint(cmd[3], systemTime))
+                {
+                    cerr << "Error: illegal option \"" << cmd[3] << "\"" << endl;
+                    continue;
+                }
+		
+		long nowTime = time(NULL);
+		if (systemTime < (unsigned)nowTime) {
+                    cerr << "Error: the given systemTime(" << systemTime << ") is before systemTime now(" << nowTime << ")" << endl;
+		    continue;
+		}
+		rpiMgr->play(true, startTime, (systemTime-nowTime)*1000);
+	    }
         }
 
         // stop
