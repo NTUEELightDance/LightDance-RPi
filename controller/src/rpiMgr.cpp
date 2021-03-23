@@ -13,16 +13,6 @@
 
 EL el1(16, 0x40), el2(8, 0x60);
 
-// TODO
-static long getsystime() // ms
-{
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday(&tv, &tz);
-    return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
-    //return tv.tv_usec/1000;
-}
-
 bool RPiMgr::setDancer()
 {
     string path = "./data/dancers/" + _dancerName + ".json";
@@ -41,10 +31,11 @@ bool RPiMgr::setDancer()
             _LEDparts = it.value();
     }
     uint8_t strips = _LEDparts.size();
-    uint16_t* nLEDs = new uint16_t[strips];
-    for (json::iterator it = _LEDparts.begin(); it != _LEDparts.end(); ++it) {
-	nLEDs[(int)(it.value()["id"])] = uint16_t(it.value()["len"]);
-    	cout << it.value()["len"] << " ";
+    uint16_t *nLEDs = new uint16_t[strips];
+    for (json::iterator it = _LEDparts.begin(); it != _LEDparts.end(); ++it)
+    {
+        nLEDs[(int)(it.value()["id"])] = uint16_t(it.value()["len"]);
+        cout << it.value()["len"] << " ";
     }
     cout << (int)strips << endl;
     led_strip = new LED_Strip(strips, nLEDs);
@@ -282,7 +273,7 @@ void RPiMgr::lightOneStatus(const json &status) const
         }
         else
         {
-		cout << "dd" << endl;/*
+            cout << "dd" << endl; /*
             temp = _LEDparts.find(it.key());
             if (temp != _LEDparts.end())
             { 
@@ -305,6 +296,6 @@ void RPiMgr::lightOneStatus(const json &status) const
             else
                 cerr << "Error: lightName " << it.key() << " not found!" << endl;
         */
-	}
+        }
     }
 }

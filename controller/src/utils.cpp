@@ -3,6 +3,8 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <sys/time.h>
+
 #include "definition.h"
 using namespace std;
 
@@ -40,3 +42,12 @@ bool Str2Unsint(const string &str, unsigned &unsint)
     return true;
 }
 
+// TODO
+static long getsystime() // ms
+{
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday(&tv, &tz);
+    return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+    //return tv.tv_usec/1000;
+}

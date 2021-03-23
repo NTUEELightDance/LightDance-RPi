@@ -80,7 +80,7 @@ class NtpClient {
     const offset = Math.round(((t1 - t0)+(t2 - t3)) * 0.5);
     console.log(`delay: ${delay}, offset: ${offset}`)
     // TODO: set time
-    this.cb(offset);
+    this.cb(delay);
   };
 
   /**
