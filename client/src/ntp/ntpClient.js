@@ -80,6 +80,9 @@ class NtpClient {
     const offset = Math.round(((t1 - t0)+(t2 - t3)) * 0.5);
     console.log(`delay: ${delay}, offset: ${offset}`)
     // TODO: set time
+    const date = new Date(t3 + offset);
+    require("child_process").exec(`sudo date --set '${date.toString()}'`, (msg) => {
+    console.log(msg)});
     this.cb(delay);
   };
 
