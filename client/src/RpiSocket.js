@@ -6,6 +6,8 @@ const os = require("os");
 const shell = require("shelljs");
 const readline = require("readline");
 
+const NtpClient = require('./ntp/ntpClient')
+
 class RpiSocket {
     constructor() {
         this.wsClient = null;
@@ -14,6 +16,9 @@ class RpiSocket {
         this.connected = false;
         this.needToReconnect = true;
         this.musicPlaying = false;
+        this.ntpClient = new NtpClient((time) => {
+            console.log(`Set to time ${time}`)
+        })
         this.init();
     }
     init = () => {
@@ -287,7 +292,15 @@ class RpiSocket {
                 }
                 case "sync": {
                     //payload 至少會有時間，將Rpi的時間與電腦同步\
-
+                    this.ntpClient.startTimeSync((transmitDelay) => {
+                        this.sendDataToServer([
+                            "sync",
+                            {
+                                OK: 1,
+                                msg: `transmit delay ${transmitDelay}`
+                            }
+                        ])
+                    });
                     break;
                 }
                 case "boardInfo": {

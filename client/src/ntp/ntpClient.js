@@ -4,10 +4,9 @@ const SERVER_IP = "192.168.0.200"; // should be changed
 
 /**
  * NtpClient on RPi
- * @param cb { function } callback function
  */
 class NtpClient {
-  constructor(cb) {
+  constructor() {
     this.client = dgram.createSocket("udp4");
     this.timeData = {
       t0: null,
@@ -16,7 +15,7 @@ class NtpClient {
       t3: null,
     };
     this.init();
-    this.cb = cb;
+    this.cb = null;
   }
 
   /**
@@ -35,9 +34,11 @@ class NtpClient {
   };
 
   /**
-   * Start time syncing, to get t0 ~ t3
+   * start time syncing
+   * @param { function } cb callbCk function
    */
-  startTimeSync = () => {
+  startTimeSync = (cb) => {
+    this.cb = cb;
     this.timeData.t0 = Date.now(); // client send time
     this.timeData.t1 = null;
     this.timeData.t2 = null;
@@ -79,7 +80,7 @@ class NtpClient {
     const offset = Math.round(((t1 - t0)+(t2 - t3)) * 0.5);
     console.log(`delay: ${delay}, offset: ${offset}`)
     // TODO: set time
-    this.cb(t3 + offset);
+    this.cb(offset);
   };
 
   /**
@@ -105,11 +106,9 @@ class NtpClient {
 
 module.exports = NtpClient;
 
-const ntpClient = new NtpClient((time) => {
-  console.log(`Set to time ${time}`);
-});
+// Usage: 
+// const ntpClient = new NtpClient();
+// ntpClient.startTimeSync((time) => {
+//   console.log(`Set to time ${time}`);
+// });
 
-ntpClient.startTimeSync();
-setInterval(() => {
-    ntpClient.startTimeSync();
-}, 10000)
