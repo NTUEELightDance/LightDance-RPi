@@ -1,6 +1,6 @@
 const dgram = require("dgram");
 const SERVER_PORT = 7122;
-const SERVER_IP = "0.0.0.0"; // should be changed
+const SERVER_IP = "192.168.0.200"; // should be changed
 
 /**
  * NtpClient on RPi
@@ -39,6 +39,9 @@ class NtpClient {
    */
   startTimeSync = () => {
     this.timeData.t0 = Date.now(); // client send time
+    this.timeData.t1 = null;
+    this.timeData.t2 = null;
+    this.timeData.t3 = null;
     console.log("Start syncing ...", this.timeData);
     this.sendMsg(this.timeData);
   };
@@ -47,9 +50,9 @@ class NtpClient {
    * Set time
    * @param {} param0
    */
-  setTime = (timeData) => {
-    this.timeData.t1 = timeData.t1; // server receive time
-    this.timeData.t2 = timeData.t2; // server send time
+  setTime = (sysTime) => {
+    this.timeData.t1 = sysTime; // server receive time
+    this.timeData.t2 = sysTime; // server send time, set the same as t1 (almost same by testing)
     this.timeData.t3 = Date.now(); // client receive time
 
     const { t0, t1, t2, t3 } = this.timeData;
@@ -72,10 +75,11 @@ class NtpClient {
       return;
     }
     // Calculate time shift
-    const rtt = Math.round((t3 - t0 - (t2 - t1)) / 2);
-    const time = t2 + rtt;
+    const delay = Math.round((t3 - t0 - (t2 - t1)) / 2);
+    const offset = Math.round(((t1 - t0)+(t2 - t3)) * 0.5);
+    console.log(`delay: ${delay}, offset: ${offset}`)
     // TODO: set time
-    this.cb(time);
+    this.cb(t3 + offset);
   };
 
   /**
@@ -86,7 +90,8 @@ class NtpClient {
    */
   getMsg = (msg, rinfo) => {
     console.log(`receive ${msg} from ${rinfo.address}:${rinfo.port}`);
-    this.setTime(JSON.parse(msg));
+    // this.setTime(JSON.parse(msg));
+    this.setTime(parseInt(msg));
   };
 
   /**
@@ -105,3 +110,6 @@ const ntpClient = new NtpClient((time) => {
 });
 
 ntpClient.startTimeSync();
+setInterval(() => {
+    ntpClient.startTimeSync();
+}, 10000)
