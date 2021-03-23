@@ -88,20 +88,12 @@ void RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay)
     long hadDelay = getsystime() - timeIntoFunc;
     if (hadDelay < delay)
         std::this_thread::sleep_for(std::chrono::milliseconds(delay - hadDelay));
-    /*
-    if (_ctrlJson[currentFrameId]["fade"])
-        lightOneStatus(getFadeStatus(_startTime, _ctrlJson[currentFrameId], _ctrlJson[currentFrameId+1]));
-    else
-        lightOneStatus(_ctrlJson[currentFrameId]["status"]);
-    */
-    cout << "start play" << endl;
+    cout << "start play success" << endl;
     long sysStartTime = getsystime();
-    //cout << "hi" << endl;
-    //_playing = true;
-
-    while (1)
+    _playing = true;
+    while (_playing)
     {
-        //cout << "Time: " << _startTime << " FrameId: " << currentFrameId << endl;
+        // cout << "Time: " << _startTime << " FrameId: " << currentFrameId << endl;
         if (_startTime >= _ctrlJson[_ctrlJson.size() - 1]["start"])
         {
             lightOneStatus(_ctrlJson[_ctrlJson.size() - 1]["status"]);
@@ -122,24 +114,14 @@ void RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay)
             if (_ctrlJson[currentFrameId]["fade"])
                 lightOneStatus(getFadeStatus(_startTime, _ctrlJson[currentFrameId], _ctrlJson[currentFrameId + 1]));
         }
-        /*
-         if (_ctrlJSON[currentFrameId]["fade"]) {
-         cout << "fade" << endl;
-         lightOneStatus(getFadeStatus(_startTime, _ctrlJSON[currentFrameId], _ctrlJSON[currentFrameId+1]));
-         }
-         else
-         lightOneStatus(_ctrlJSON[currentFrameId]["status"]);
-         */
         _startTime = (getsystime() - sysStartTime);
     }
-    //
-    cout << "success" << endl;
 }
 
 void RPiMgr::stop()
 {
     _startTime = 0;
-    cout << "success" << endl;
+    cout << "stop success" << endl;
 }
 
 void RPiMgr::statuslight()
@@ -258,22 +240,22 @@ void RPiMgr::lightOneStatus(const json &status) const
     {
         json::const_iterator temp = _ELparts.find(it.key());
         if (temp != _ELparts.end())
-        { //ELparts
-            // TOFIX: This is 2020 way, must fix to new way
+        { 
+            //ELparts
             uint8_t id = temp.value();
             uint16_t dt = getELBright(it.value());
             if (id < 16)
                 el1.setEL(id, dt);
             else
                 el2.setEL(id % 16, dt);
-            cout
-                << "ELlightName: " << it.key() << ", "
-                << "alpha: " << getELBright(it.value()) << ", "
-                << "number: " << temp.value() << endl;
+            // cout
+            //     << "ELlightName: " << it.key() << ", "
+            //     << "alpha: " << getELBright(it.value()) << ", "
+            //     << "number: " << temp.value() << endl;
         }
         else
         {
-            cout << "dd" << endl; /*
+         /*
             temp = _LEDparts.find(it.key());
             if (temp != _LEDparts.end())
             { 

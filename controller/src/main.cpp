@@ -12,13 +12,13 @@
 using namespace std;
 
 jmp_buf env;
+RPiMgr *rpiMgr;
 
 void sigHandler(int sig)
 {
     cout << endl;
-    cout << "pause" << endl;
-    cout << "success" << endl;
-    longjmp(env, 0);
+    cout << "pause success" << endl;
+    if (rpiMgr) rpiMgr->pause();
 }
 
 int main(int argc, char *argv[])
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
         exit(0);
     }
     string dancerName = argv[1];
-    RPiMgr *rpiMgr = new RPiMgr(dancerName);
+    rpiMgr = new RPiMgr(dancerName);
 
     // TODO: init and register commands
     if (!rpiMgr->setDancer())
@@ -37,9 +37,8 @@ int main(int argc, char *argv[])
         cerr << "Error: cannot load " << dancerName << ".json" << endl;
         exit(0);
     }
-    cout << "success" << endl;
+    cout << "start success" << endl;
     signal(SIGINT, sigHandler);
-    setjmp(env);
     bool quit = false;
     while (!quit)
     {
@@ -101,25 +100,26 @@ int main(int argc, char *argv[])
             //play start_time delay_time system_time
             else
             {
-                unsigned startTime, systemTime;
+                unsigned startTime;
+		long systemTime;
                 if (!Str2Unsint(cmd[1], startTime))
                 {
                     cerr << "Error: illegal option \"" << cmd[1] << "\"" << endl;
                     continue;
                 }
-                if (!Str2Unsint(cmd[3], systemTime))
+                if (!Str2LongInt(cmd[3], systemTime))
                 {
                     cerr << "Error: illegal option \"" << cmd[3] << "\"" << endl;
                     continue;
                 }
 
                 long nowTime = getsystime();
-                if (systemTime < (unsigned)nowTime)
+                if (systemTime < nowTime)
                 {
                     cerr << "Error: the given systemTime(" << systemTime << ") is before systemTime now(" << nowTime << ")" << endl;
                     continue;
                 }
-                rpiMgr->play(true, startTime, (systemTime - nowTime) * 1000);
+                rpiMgr->play(true, startTime, systemTime - nowTime);
             }
         }
 

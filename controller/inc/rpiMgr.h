@@ -45,6 +45,7 @@ public:
     void eltest();
     void ledtest();
     void quit();
+    void pause() { _playing = false; }
 
 private:
     string _dancerName;

@@ -42,8 +42,21 @@ bool Str2Unsint(const string &str, unsigned &unsint)
     return true;
 }
 
+bool Str2LongInt(const string &str, long &longInt)
+{
+    longInt = 0;
+    if (str.size() == 0)
+        return false;
+    for (size_t i = 0; i < str.size(); ++i)
+    {
+        if (!isdigit(str[i]))
+            return false;
+        longInt = longInt * 10 + (str[i] - '0');
+    }
+    return true;
+}
 // TODO
-static long getsystime() // ms
+long getsystime() // ms
 {
     struct timeval tv;
     struct timezone tz;

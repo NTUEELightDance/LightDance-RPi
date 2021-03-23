@@ -16,6 +16,7 @@ uint16_t getELBright(double alpha);
 vector<string> splitStr(string &str);
 
 bool Str2Unsint(const string &str, unsigned &unsint);
-
+bool Str2LongInt(const string &str, long &);
+long getsystime();
 
 #endif
