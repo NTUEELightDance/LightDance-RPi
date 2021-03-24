@@ -237,7 +237,7 @@ class RpiSocket {
                                     "uploadControl",
                                     {
                                         OK: true,
-                                        msg: "upload success",
+                                        msg: `upload success length=${payload.length}`,
                                     },
                                 ]);
                             }
@@ -271,7 +271,7 @@ class RpiSocket {
                                     "uploadLED",
                                     {
                                         OK: true,
-                                        msg: "upload success",
+                                        msg: `upload success ${Object.keys(payload).length}`,
                                     },
                                 ]);
                             }
