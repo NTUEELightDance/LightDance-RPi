@@ -77,13 +77,12 @@ class NtpClient {
     }
     // Calculate time shift
     const delay = Math.round((t3 - t0 - (t2 - t1)) / 2);
-    const offset = Math.round(((t1 - t0)+(t2 - t3)) * 0.5);
+    const offset = Math.round(((t1 - t0)+(t2 - t3)) / 2);
     console.log(`delay: ${delay}, offset: ${offset}`)
     // TODO: set time
-    const date = new Date(t3 + offset);
-    require("child_process").exec(`sudo date --set '${date.toString()}'`, (msg) => {
+    require("child_process").exec(`sudo date +%s -s @${(t2+delay)/1000}`, (msg) => {
     console.log(msg)});
-    this.cb(delay);
+    this.cb(delay, offset);
   };
 
   /**
