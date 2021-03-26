@@ -135,7 +135,7 @@ class RpiSocket {
 	           const de = sysTime - nowTime;
 		    console.log(`nowTime ${nowTime}, sysTime ${sysTime} delay ${de}`);
 			setTimeout(() => {
-			shell.exec("/home/pi/playSong.sh");
+			// shell.exec("/home/pi/playSong.sh");
 		    }, delay);
                     break;
                 } //back to server的部分還未確定
