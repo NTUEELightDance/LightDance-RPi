@@ -14,23 +14,28 @@ class RPiMgr
 public:
     RPiMgr(){};
     RPiMgr(string dancerName) : _dancerName(dancerName){
-    	
-	ifstream infile("./asset/LED.json");
+    	//cerr << "jizz" << endl;	    
+	ifstream infile("./asset/LED.json", ios::in);
 	if (!infile)
-		cerr << "Error: cannot open LED.json" << endl;
+		cerr << "Error:cannot open LED.json" << endl;
 	else {
 		infile >> LEDJson;
 		for (json::iterator it = LEDJson.begin(); it != LEDJson.end(); ++it) {
-			json j;
-			for (int i = 0; i < it.value().size(); ++i) {
-				uint8_t B = ((unsigned long)it.value()[i]) % 256;
-				uint8_t G = (((unsigned long)it.value()[i]) >> 8) % 256;
-				uint8_t R = (((unsigned long)it.value()[i]) >> 16) % 256;
-				j.push_back(R);
-				j.push_back(G);
-				j.push_back(B);
+			for (json::iterator it2 = it.value().begin(); it2 != it.value().end(); ++it2) {
+				json j;
+				//*
+				for (int i = 0; i < it2.value().size(); ++i) {
+					uint8_t B = ((unsigned long)it2.value()[i]) % 256;
+					uint8_t G = (((unsigned long)it2.value()[i]) >> 8) % 256;
+					uint8_t R = (((unsigned long)it2.value()[i]) >> 16) % 256;
+					j.push_back(R);
+					j.push_back(G);
+					j.push_back(B);
+				}
+				it2.value() = j;
+				//*/
+				//cout << it2.value() << endl;
 			}
-			it.value() = j;
 		}
 	}
 	infile.close();
@@ -42,7 +47,7 @@ public:
     void stop();
     void statuslight();
     void list();
-    void eltest();
+    void eltest(int id, unsigned brightness);
     void ledtest();
     void quit();
     void pause() { _playing = false; }

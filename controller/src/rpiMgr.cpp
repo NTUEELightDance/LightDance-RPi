@@ -35,9 +35,9 @@ bool RPiMgr::setDancer()
     for (json::iterator it = _LEDparts.begin(); it != _LEDparts.end(); ++it)
     {
         nLEDs[(int)(it.value()["id"])] = uint16_t(it.value()["len"]);
-        cout << it.value()["len"] << " ";
+        //cout << it.value()["len"] << " ";
     }
-    cout << (int)strips << endl;
+    //cout << (int)strips << endl;
     led_strip = new LED_Strip(strips, nLEDs);
     return true;
 }
@@ -126,12 +126,10 @@ void RPiMgr::stop()
 
 void RPiMgr::statuslight()
 {
-    ifstream infile("../data/status.json");
+    ifstream infile("./data/status.json");
     if (!infile)
     {
-        //cerr << "Error: cannot open ./data/status/json" << endl;
-        //sendToRPIClient(false, "Error: cannot open ./data/status/json");
-        cout << "Error: cannot open ../data/status.json" << endl;
+        cerr << "Error: cannot open ./data/status.json" << endl;
         return;
     }
     json status;
@@ -156,8 +154,26 @@ void RPiMgr::list()
     }
 }
 
-void RPiMgr::eltest()
+void RPiMgr::eltest(int id, unsigned brightness)
 {
+    if (brightness > 4095) {
+	cerr << "Warning: brightness is bigger than 4095, light brightness as 4095" << endl;
+	brightness = 4095;
+    }
+    if (id < 0) {
+	for (json::const_iterator it = _ELparts.begin(); it != _ELparts.end(); ++it) {
+	    if ((int)it.value() < 16)
+                el1.setEL((int)it.value(), 4095);
+            else
+                el2.setEL((int)it.value() % 16, 4095);
+	}
+    	return;
+    }
+    if (id < 16)
+        el1.setEL(id, brightness);
+    else
+        el2.setEL(id % 16, brightness);
+    
 }
 
 void RPiMgr::ledtest()
@@ -222,10 +238,12 @@ json RPiMgr::getFadeStatus(const size_t &currentTime, const json &firstFrame, co
             json::const_iterator it2 = secondFrame["status"].find(it.key());
             float temp = (1 - rate) * float(it.value()["alpha"]) + rate * float(it2.value()["alpha"]);
             LEDinfo["alpha"] = roundf(temp * 10) / 10.0;
-            if (it.value()["src"] != it2.value()["src"])
+            /*
+	    if (it.value()["src"] != it2.value()["src"])
             {
                 cout << "Error: the src in two fade frame is different" << endl;
             }
+	    */
             ret[it.key()] = LEDinfo;
         }
         else
@@ -240,7 +258,7 @@ void RPiMgr::lightOneStatus(const json &status) const
     {
         json::const_iterator temp = _ELparts.find(it.key());
         if (temp != _ELparts.end())
-        { 
+        {
             //ELparts
             uint8_t id = temp.value();
             uint16_t dt = getELBright(it.value());
@@ -248,36 +266,43 @@ void RPiMgr::lightOneStatus(const json &status) const
                 el1.setEL(id, dt);
             else
                 el2.setEL(id % 16, dt);
-            // cout
-            //     << "ELlightName: " << it.key() << ", "
-            //     << "alpha: " << getELBright(it.value()) << ", "
-            //     << "number: " << temp.value() << endl;
-        }
+            /* 
+	    cout
+                 << "ELlightName: " << it.key() << ", "
+                 << "alpha: " << getELBright(it.value()) << ", "
+                 << "number: " << temp.value() << endl;
+            */
+	}
         else
         {
-         /*
+         //*
             temp = _LEDparts.find(it.key());
             if (temp != _LEDparts.end())
             { 
 		//LEDparts
 		uint8_t id = temp.value()["id"];
-		size_t len = LEDJson[string(it.value()["src"])].size();
+		size_t len = temp.value()["len"];
+		//			 size_t len = LEDJson[string(it.value()["src"])].size();
+		//*
 		uint8_t* color = new uint8_t[len];
-		cout << "id: " << (int)id << endl;
-		cout << "len: " << (int)len << endl;
+		//cout << "id: " << (int)id << endl;
+		//cout << "len: " << (int)len << endl;
 		for (int i = 0; i < len; ++i) {
-			color[i] = uint8_t(LEDJson[string(it.value()["src"])][i]);
-			cout << (int)color[i] << endl;
+			color[i] = uint8_t(LEDJson[it.key()][string(it.value()["src"])][i]);
+			//	cout << (int)color[i] << endl;
 		}
                 led_strip->sendToStrip(id, color);
+		/*
 		cout << "LEDlightName: " << it.key() << ", "
                      << "alpha: " << (it.value()["alpha"]) << ", "
                      << "number: " << temp.value()["id"] << ", "
-                     << "src: " << (it.value()["src"]) << LEDJson[string(it.value()["src"])] << endl;
-            }
+                     << "src: " << (it.value()["src"]) << " "  << LEDJson[string(it.key())][string(it.value()["src"])] << endl;
+            	*/
+	    	delete[] color;
+	    }
             else
                 cerr << "Error: lightName " << it.key() << " not found!" << endl;
-        */
+        //*/
         }
     }
 }

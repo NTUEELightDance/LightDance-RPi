@@ -72,8 +72,8 @@ void LED_Strip::sendToStrip(const uint8_t &id, uint8_t *color)
 	bcm2835_spi_writenb(stripInfo, 2);
 	//std::cout << short(id)  << std::endl;
 	bcm2835_spi_writenb(buf, dataLen);
-	for (int i = 0; i < dataLen; i++) std::cout << (short)buf[i] << " ";
-	std::cout << std::endl;
+//	for (int i = 0; i < dataLen; i++) std::cout << (short)buf[i] << " ";
+//	std::cout << std::endl;
 }
 
 
