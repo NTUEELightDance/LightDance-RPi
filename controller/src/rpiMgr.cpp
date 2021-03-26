@@ -91,6 +91,7 @@ void RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay)
     cout << "start play success" << endl;
     long sysStartTime = getsystime();
     _playing = true;
+    // system("/home/pi/playSong.sh");
     while (_playing)
     {
         // cout << "Time: " << _startTime << " FrameId: " << currentFrameId << endl;

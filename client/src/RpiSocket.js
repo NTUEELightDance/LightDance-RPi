@@ -131,6 +131,12 @@ class RpiSocket {
                     //start playing
                     const { startTime, delay, sysTime } = payload; //從整首歌的第幾秒播放, delay 多久, 系統時間多少開始
                     this.sendDataToCpp(`play ${startTime} ${delay} ${sysTime}`);
+		   const nowTime = Date.now(); 
+	           const de = sysTime - nowTime;
+		    console.log(`nowTime ${nowTime}, sysTime ${sysTime} delay ${de}`);
+			setTimeout(() => {
+			shell.exec("/home/pi/playSong.sh");
+		    }, delay);
                     break;
                 } //back to server的部分還未確定
                 case "pause": {
@@ -237,7 +243,7 @@ class RpiSocket {
                                     "uploadControl",
                                     {
                                         OK: true,
-                                        msg: "upload success",
+                                        msg: `upload success length=${payload.length}`,
                                     },
                                 ]);
                             }
@@ -271,7 +277,7 @@ class RpiSocket {
                                     "uploadLED",
                                     {
                                         OK: true,
-                                        msg: "upload success",
+                                        msg: `upload success ${Object.keys(payload).length}`,
                                     },
                                 ]);
                             }
@@ -282,7 +288,7 @@ class RpiSocket {
                 case "shutDown": {
                     //shut down Rpi computer
                     this.needToReconnect = false;
-                    shell.exec("shutdown -h 0");
+                    shell.exec("sudo halt");
                     break;
                 }
                 case "reboot": {
@@ -292,12 +298,12 @@ class RpiSocket {
                 }
                 case "sync": {
                     //payload 至少會有時間，將Rpi的時間與電腦同步\
-                    this.ntpClient.startTimeSync((transmitDelay) => {
+                    this.ntpClient.startTimeSync((transmitDelay, offset) => {
                         this.sendDataToServer([
                             "sync",
                             {
                                 OK: 1,
-                                msg: `transmit delay ${transmitDelay}`
+                                msg: `transmit delay ${transmitDelay}, offset ${offset}`
                             }
                         ])
                     });
