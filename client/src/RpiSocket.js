@@ -288,7 +288,7 @@ class RpiSocket {
                 case "shutDown": {
                     //shut down Rpi computer
                     this.needToReconnect = false;
-                    shell.exec("shutdown -h 0");
+                    shell.exec("sudo halt");
                     break;
                 }
                 case "reboot": {
