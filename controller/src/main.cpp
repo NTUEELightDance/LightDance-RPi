@@ -144,11 +144,13 @@ int main(int argc, char *argv[])
 	    }
 	    // eltest id brightness
 	    else if (cmd.size() >= 3){
-            	unsigned id, brightness;
-	    	if (!Str2Unsint(cmd[1], id)) {
+		int id = stoi(cmd[1]);
+		cout << "testing id: " << id << endl;
+            	unsigned brightness;
+	    	/* if (!Str2Unsint(cmd[1], id)) {
                     cerr << "Error: illegal option \"" << cmd[1] << "\"" << endl;
 		    continue;
-		}
+		}*/
 	    	if (!Str2Unsint(cmd[2], brightness)) {
                     cerr << "Error: illegal option \"" << cmd[2] << "\"" << endl;
 		    continue;
@@ -157,7 +159,7 @@ int main(int argc, char *argv[])
 
 	    }
 	    else {
-		cerr << "Error: missing options" << endl;
+		cerr << "Error: missing options, should give id(0~31) and brightness(0~4095)" << endl;
 		continue;
 	    }
 	    // TODO: need to get cmd arguments

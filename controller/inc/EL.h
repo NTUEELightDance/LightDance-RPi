@@ -26,7 +26,7 @@ public:
     }
 
     pca = new PCA9685(addr);
-    pca.SetFrequency(100);
+    pca->SetFrequency(100);
 
     _dutyCycle = new uint16_t[nEL];
   };

@@ -171,7 +171,7 @@ class RpiSocket {
                 case "lightCurrentStatus": {
                     if (!fs.existsSync(path.join(__dirname, "../../data")))
                         fs.mkdirSync(path.join(__dirname, "../../data"));
-                    fs.writeFile(
+                    fs.writeFileSync(
                         path.join(__dirname, "../../data/status.json"),
                         JSON.stringify(payload),
                         (err) => {

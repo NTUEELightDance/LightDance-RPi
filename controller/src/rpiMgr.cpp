@@ -123,6 +123,7 @@ void RPiMgr::stop()
 {
     _startTime = 0;
     cout << "stop success" << endl;
+    eltest(-1, 0);
 }
 
 void RPiMgr::statuslight()
@@ -164,9 +165,9 @@ void RPiMgr::eltest(int id, unsigned brightness)
     if (id < 0) {
 	for (json::const_iterator it = _ELparts.begin(); it != _ELparts.end(); ++it) {
 	    if ((int)it.value() < 16)
-                el1.setEL((int)it.value(), 4095);
+                el1.setEL((int)it.value(), brightness);
             else
-                el2.setEL((int)it.value() % 16, 4095);
+                el2.setEL((int)it.value() % 16, brightness);
 	}
     	return;
     }
