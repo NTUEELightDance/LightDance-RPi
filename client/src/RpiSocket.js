@@ -130,13 +130,13 @@ class RpiSocket {
                 case "play": {
                     //start playing
                     const { startTime, delay, sysTime } = payload; //從整首歌的第幾秒播放, delay 多久, 系統時間多少開始
-                    this.sendDataToCpp(`play ${startTime} ${delay} ${sysTime}`);
+                   // this.sendDataToCpp(`play ${startTime} ${delay} ${sysTime}`);
 		   const nowTime = Date.now(); 
 	           const de = sysTime - nowTime;
 		    console.log(`nowTime ${nowTime}, sysTime ${sysTime} delay ${de}`);
 			setTimeout(() => {
-			// shell.exec("/home/pi/playSong.sh");
-		    }, delay);
+			shell.exec("/home/pi/playSong.sh");
+		    }, delay+300);
                     break;
                 } //back to server的部分還未確定
                 case "pause": {

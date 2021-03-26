@@ -19,6 +19,7 @@ void sigHandler(int sig)
     cout << endl;
     cout << "pause success" << endl;
     if (rpiMgr) rpiMgr->pause();
+    //longjmp(env, 0);
 }
 
 int main(int argc, char *argv[])
@@ -39,6 +40,7 @@ int main(int argc, char *argv[])
     }
     cout << "start success" << endl;
     signal(SIGINT, sigHandler);
+    //setjmp(env);
     bool quit = false;
     while (!quit)
     {

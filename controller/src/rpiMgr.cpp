@@ -58,6 +58,12 @@ void RPiMgr::load(const string &path)
 
 void RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay)
 {
+    /*
+    cout << "givenStartTime: " << givenStartTime << endl;
+    cout << "start: " << start << endl;
+    cout << "delay: " << delay << endl;
+    cout << "_startTime: " << _startTime << endl; 
+    */
     long timeIntoFunc = getsystime();
     if (!_loaded)
     {
@@ -89,9 +95,16 @@ void RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay)
     if (hadDelay < delay)
         std::this_thread::sleep_for(std::chrono::milliseconds(delay - hadDelay));
     cout << "start play success" << endl;
+
+    if (_ctrlJson[currentFrameId]["fade"])
+        lightOneStatus(getFadeStatus(_startTime, _ctrlJson[currentFrameId], _ctrlJson[currentFrameId + 1]));
+    else
+        lightOneStatus(_ctrlJson[currentFrameId]["status"]);
+
     long sysStartTime = getsystime();
     _playing = true;
     // system("/home/pi/playSong.sh");
+    long startTime = (long)_startTime;
     while (_playing)
     {
         // cout << "Time: " << _startTime << " FrameId: " << currentFrameId << endl;
@@ -109,14 +122,19 @@ void RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay)
                 lightOneStatus(getFadeStatus(_startTime, _ctrlJson[currentFrameId], _ctrlJson[currentFrameId + 1]));
             else
                 lightOneStatus(_ctrlJson[currentFrameId]["status"]);
-        }
+        	
+		}
         else
         {
             if (_ctrlJson[currentFrameId]["fade"])
                 lightOneStatus(getFadeStatus(_startTime, _ctrlJson[currentFrameId], _ctrlJson[currentFrameId + 1]));
         }
-        _startTime = (getsystime() - sysStartTime);
-    }
+        _startTime = startTime + (getsystime() - sysStartTime);
+	/*
+	if (_startTime % 1000 == 0)
+		cerr << "_startTime: " << _startTime << endl;
+    	*/
+	}
 }
 
 void RPiMgr::stop()
@@ -163,11 +181,11 @@ void RPiMgr::eltest(int id, unsigned brightness)
 	brightness = 4095;
     }
     if (id < 0) {
-	for (json::const_iterator it = _ELparts.begin(); it != _ELparts.end(); ++it) {
-	    if ((int)it.value() < 16)
-                el1.setEL((int)it.value(), brightness);
+	for (int i = 0; i < 32; ++i) {
+	    if (i  < 16)
+                el1.setEL(i, brightness);
             else
-                el2.setEL((int)it.value() % 16, brightness);
+                el2.setEL(i % 16, brightness);
 	}
     	return;
     }
@@ -202,17 +220,19 @@ RPiMgr::getFrameId() const
         cout << "Warning: startTime exceed total time" << endl;
         return 0;
     }
+    if (_startTime == 0)
+	    return 0;
     size_t first = 0;
     size_t last = totalFrame - 1;
-    while (first < last)
+    while (first <= last)
     {
         size_t mid = (first + last) / 2;
-        if (_startTime < _ctrlJson[mid]["start"])
-            last = mid - 1;
-        else if (_startTime > _ctrlJson[mid]["start"])
+        if (_startTime > _ctrlJson[mid]["start"])
             first = mid + 1;
-        else
+        else if (_startTime == _ctrlJson[mid]["start"])
             return mid;
+        else
+            last = mid - 1;
     }
     if (_ctrlJson[first]["start"] > _startTime)
         first--;
@@ -273,7 +293,7 @@ void RPiMgr::lightOneStatus(const json &status) const
                  << "ELlightName: " << it.key() << ", "
                  << "alpha: " << getELBright(it.value()) << ", "
                  << "number: " << temp.value() << endl;
-            */
+           //*/
 	}
         else
         {
@@ -299,7 +319,7 @@ void RPiMgr::lightOneStatus(const json &status) const
                      << "alpha: " << (it.value()["alpha"]) << ", "
                      << "number: " << temp.value()["id"] << ", "
                      << "src: " << (it.value()["src"]) << " "  << LEDJson[string(it.key())][string(it.value()["src"])] << endl;
-            	*/
+            	//*/
 	    	delete[] color;
 	    }
             else
