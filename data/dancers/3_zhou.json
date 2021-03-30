@@ -10,7 +10,7 @@
     "B_MASK": 6,
     "B_R_ARM": 4,
     "B_R_FOREARM": 3,
-    "B_R_LEG": 20,
+    "B_R_LEG": 25,
     "B_R_PANT": 22,
     "B_R_SHOE": 16,
     "S_L_HAND": 11,
