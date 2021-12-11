@@ -109,3 +109,5 @@ dist
 .vscode/
 */bin/*
 
+# python
+**/__pycache__/**
