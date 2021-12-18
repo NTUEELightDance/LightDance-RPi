@@ -109,6 +109,9 @@ dist
 .vscode/
 */bin/*
 
+# python
+**/__pycache__/**
+
 # Environments
 .env
 .venv
