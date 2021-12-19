@@ -69,7 +69,12 @@ int main(int argc, char *argv[]){
         if (cmd.size() < 1)
             continue;
         
-        method_map[cmd[0]]->exec(cmd, quit);
+        if (method_map.count(cmd[0]) > 0)
+            method_map[cmd[0]]->exec(cmd, quit);
+        else {
+            string err = "Error: key not found \"" + cmd[0] + "\"\n";
+            send_str(socket, err);
+        }
     }
     return 0;
 }
