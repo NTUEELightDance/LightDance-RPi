@@ -18,7 +18,6 @@ public:
     virtual void exec(const vector<string>& cmd, bool& quit){
         string err = "Error: not implementing exec()\n";
         send_str(_socket, err);
-        exit(0);
     };
 protected:
     zmq::socket_t& _socket;
