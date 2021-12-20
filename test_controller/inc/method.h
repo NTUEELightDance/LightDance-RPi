@@ -82,7 +82,6 @@ public:
     }
 };
 
-// Below methods won't have interaction with interfaces
 class Eltest: public BaseMethod {
 public:
     Eltest(zmq::socket_t& socket): BaseMethod(socket){};
