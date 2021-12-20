@@ -12,7 +12,7 @@ RPiMgr::RPiMgr(const string &dancerName):_dancerName(dancerName){
                 for (int i = 0; i < it2.value().size(); ++i){
                     uint8_t B = ((unsigned long)it2.value()[i]) % 256;
                     uint8_t G = (((unsigned long)it2.value()[i]) >> 8) % 256;
-					uint8_t R = (((unsigned long)it2.value()[i]) >> 16) % 256;
+                    uint8_t R = (((unsigned long)it2.value()[i]) >> 16) % 256;
 					j.push_back(R);
 					j.push_back(G);
 					j.push_back(B);
