@@ -12,6 +12,8 @@ You must first install `cppzmq` to enable the usage of controller
     bash install_zeromq_mac.sh
     ```
 
+    Reference link: https://github.com/zeromq/cppzmq
+
 -   Installation on RPi:
     Type in the following script:
 
@@ -19,3 +21,5 @@ You must first install `cppzmq` to enable the usage of controller
     cd LightDance-RPi/scripts/
     bash install_zeromq_rpi.sh
     ```
+
+    Reference link: http://osdevlab.blogspot.com/2015/12/how-to-install-zeromq-package-in.html
