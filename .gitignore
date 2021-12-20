@@ -108,6 +108,7 @@ dist
 .DS_Store
 .vscode/
 */bin/*
+zeromq/
 
 # python
 **/__pycache__/**

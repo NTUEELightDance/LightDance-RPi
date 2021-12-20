@@ -140,30 +140,30 @@ int main(int argc, char *argv[])
         // below won't send to server
         else if (cmd[0] == "eltest")
         {
-	    // eltest (default all light)
-	    if (cmd.size() == 1) {
-		rpiMgr->eltest(-1, 4095);	    
-	    }
-	    // eltest id brightness
-	    else if (cmd.size() >= 3){
-		int id = stoi(cmd[1]);
-		cout << "testing id: " << id << endl;
-            	unsigned brightness;
-	    	/* if (!Str2Unsint(cmd[1], id)) {
-                    cerr << "Error: illegal option \"" << cmd[1] << "\"" << endl;
-		    continue;
-		}*/
-	    	if (!Str2Unsint(cmd[2], brightness)) {
+            // eltest (default all light)
+            if (cmd.size() == 1) {
+                rpiMgr->eltest(-1, 4095);	    
+            }
+            // eltest id brightness
+            else if (cmd.size() >= 3){
+                int id = stoi(cmd[1]);
+                cout << "testing id: " << id << endl;
+                unsigned brightness;
+                /* if (!Str2Unsint(cmd[1], id)) {
+                        cerr << "Error: illegal option \"" << cmd[1] << "\"" << endl;
+                continue;
+            }*/
+                if (!Str2Unsint(cmd[2], brightness)) {
                     cerr << "Error: illegal option \"" << cmd[2] << "\"" << endl;
-		    continue;
-		}
-		rpiMgr->eltest((int)id, brightness);
+                    continue;
+                }
+                rpiMgr->eltest((int)id, brightness);
 
-	    }
-	    else {
-		cerr << "Error: missing options, should give id(0~31) and brightness(0~4095)" << endl;
-		continue;
-	    }
+            }
+            else {
+                cerr << "Error: missing options, should give id(0~31) and brightness(0~4095)" << endl;
+                continue;
+	        }
 	    // TODO: need to get cmd arguments
         }
         else if (cmd[0] == "ledtest")
