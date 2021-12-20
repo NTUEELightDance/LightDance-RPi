@@ -151,4 +151,14 @@ protected:
     }
 };
 
+class Pause: public BaseMethod {
+public:
+    Pause(zmq::socket_t& socket): BaseMethod(socket){};
+protected:
+    void method(const vector<string>& cmd, bool& quit){
+        cout << "pause success" << endl;
+        rpiMgr->pause();
+    }
+};
+
 #endif
