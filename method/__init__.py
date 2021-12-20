@@ -7,3 +7,4 @@ import pause  # TODO
 import kick  # TODO
 import boardInfo
 import sync  # TODO
+import play  # TODO
