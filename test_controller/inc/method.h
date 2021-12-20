@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <zmq.hpp>
+#include <thread>
 #include "rpiMgr.h"
 #include "utils.h"
 
@@ -11,22 +12,29 @@ using namespace std;
 extern RPiMgr *rpiMgr;
 
 // BaseMethod for other method to inherit
-// You must implement the exec() function in child classes
+// You must implement the method() function in child classes
 class BaseMethod {
 public:
     BaseMethod(zmq::socket_t& socket):_socket(socket){};
-    virtual void exec(const vector<string>& cmd, bool& quit){
-        string err = "Error: not implementing exec()\n";
+    void exec(const vector<string>& cmd, bool& quit){
+        thread t(&(BaseMethod::method), this, cmd, quit);
+        // Seperate the execution
+        t.detach();
+    }
+protected:
+    virtual void method(const vector<string>& cmd, bool& quit){
+        string err = "Error: not implementing method()\n";
         send_str(_socket, err);
     };
-protected:
+
     zmq::socket_t& _socket;
 };
 
 class Load: public BaseMethod {
 public:
     Load(zmq::socket_t& socket): BaseMethod(socket){};
-    void exec(const vector<string>& cmd, bool& quit){
+protected:
+    void method(const vector<string>& cmd, bool& quit){
         if (cmd.size() > 1)
             rpiMgr->load(cmd[1]);
         else
@@ -37,7 +45,8 @@ public:
 class Play: public BaseMethod {
 public:
     Play(zmq::socket_t& socket): BaseMethod(socket){};
-    void exec(const vector<string>& cmd, bool& quit){
+protected:
+    void method(const vector<string>& cmd, bool& quit){
         if (cmd.size() == 1)
             rpiMgr->play(false, 0);
         else if (cmd.size() == 2){
@@ -69,7 +78,8 @@ public:
 class Stop: public BaseMethod {
 public:
     Stop(zmq::socket_t& socket): BaseMethod(socket){};
-    void exec(const vector<string>& cmd, bool& quit){
+protected:
+    void method(const vector<string>& cmd, bool& quit){
         rpiMgr->stop();
     }
 };
@@ -77,7 +87,8 @@ public:
 class StatusLight: public BaseMethod {
 public:
     StatusLight(zmq::socket_t& socket): BaseMethod(socket){};
-    void exec(const vector<string>& cmd, bool& quit){
+protected:
+    void method(const vector<string>& cmd, bool& quit){
         rpiMgr->statuslight();
     }
 };
@@ -85,7 +96,8 @@ public:
 class Eltest: public BaseMethod {
 public:
     Eltest(zmq::socket_t& socket): BaseMethod(socket){};
-    void exec(const vector<string>& cmd, bool& quit){
+protected:
+    void method(const vector<string>& cmd, bool& quit){
         // default all light
         if (cmd.size() == 1)
             rpiMgr->eltest(-1, 4095);
@@ -114,7 +126,8 @@ public:
 class Ledtest: public BaseMethod {
 public:
     Ledtest(zmq::socket_t& socket): BaseMethod(socket){};
-    void exec(const vector<string>& cmd, bool& quit){
+protected:
+    void method(const vector<string>& cmd, bool& quit){
         rpiMgr->ledtest();  // TODO: need to get cmd arguments
     }
 };
@@ -122,7 +135,8 @@ public:
 class List: public BaseMethod {
 public:
     List(zmq::socket_t& socket): BaseMethod(socket){};
-    void exec(const vector<string>& cmd, bool& quit){
+protected:
+    void method(const vector<string>& cmd, bool& quit){
         rpiMgr->list();
     }
 };
@@ -130,7 +144,8 @@ public:
 class Quit: public BaseMethod {
 public:
     Quit(zmq::socket_t& socket): BaseMethod(socket){};
-    void exec(const vector<string>& cmd, bool& quit){
+protected:
+    void method(const vector<string>& cmd, bool& quit){
         rpiMgr->quit();
         quit = true;
     }
