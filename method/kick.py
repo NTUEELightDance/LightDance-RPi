@@ -1,5 +1,5 @@
-from baseMethod import BaseMethod
-import zmq
+from .baseMethod import BaseMethod
+
 
 # Kick is only for socket usage, cli and wire won't need this function
 class Kick(BaseMethod):

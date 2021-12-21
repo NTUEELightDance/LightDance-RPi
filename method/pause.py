@@ -1,1 +1,1 @@
-from baseMethod import BaseMethod
+from .baseMethod import BaseMethod
