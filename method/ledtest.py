@@ -1,7 +1,7 @@
 from .baseMethod import BaseMethod
 
 
-# Statuslight
+# Ledtest
 class Ledtest(BaseMethod):
     def method(self, payload=None):
         response = self.socket.send("ledtest")

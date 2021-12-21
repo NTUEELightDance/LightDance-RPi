@@ -1,7 +1,7 @@
 from .baseMethod import BaseMethod
 
 
-# Statuslight
+# Eltest
 class Eltest(BaseMethod):
     def method(self, payload=None):
         response = self.socket.send(["eltest", payload["id"], payload["brightness"]])
