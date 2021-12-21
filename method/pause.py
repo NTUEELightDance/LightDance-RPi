@@ -1,5 +1,6 @@
 from .baseMethod import BaseMethod
 
+
 # Pause
 class Pause(BaseMethod):
     def method(self, payload=None):

@@ -2,6 +2,7 @@ import os
 
 from .baseMethod import BaseMethod
 
+
 # BoardInfo
 class BoardInfo(BaseMethod):
     def method(self, payload):
