@@ -1,6 +1,5 @@
 from typing import Any
 
-
 class BaseMethod():
     def __init__(self) -> None:
         pass
