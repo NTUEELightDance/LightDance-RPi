@@ -15,11 +15,7 @@ using namespace std;
 const char connectionURL[] = "tcp://*:8000";  // The url for zeromq usage
 RPiMgr *rpiMgr;
 
-void sigHandler(int sig){
-    cout << endl << "pause success" << endl;
-    if (rpiMgr)
-        rpiMgr->pause();
-}
+// Don't use SIGINT anymore, use multi thread instead
 
 map<string, BaseMethod*> setup_method_map(zmq::socket_t& socket){
     map<string, BaseMethod*> method_map;
@@ -31,6 +27,7 @@ map<string, BaseMethod*> setup_method_map(zmq::socket_t& socket){
     method_map.insert(pair<string, BaseMethod*>("ledtest", new Ledtest(socket)));
     method_map.insert(pair<string, BaseMethod*>("list", new List(socket)));
     method_map.insert(pair<string, BaseMethod*>("quit", new Quit(socket)));
+    method_map.insert(pair<string, BaseMethod*>("pause", new Pause(socket)));
     return method_map;
 }
 
@@ -45,7 +42,6 @@ int main(int argc, char *argv[]){
     // TODO: setDancer
 
     cout << "start success" << endl;
-    signal(SIGINT, sigHandler);
 
     bool quit = false;
     // Using zeromq
