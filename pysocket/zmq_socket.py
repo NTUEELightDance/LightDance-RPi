@@ -3,7 +3,7 @@ from typing import Union
 import zmq
 
 
-class Zmq_socket:
+class ZMQSocket:
     def __init__(self, port=8000) -> None:
         context = zmq.Context()
         self.socket = context.socket(zmq.REQ)
