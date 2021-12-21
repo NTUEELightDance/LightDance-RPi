@@ -1,8 +1,8 @@
 from .baseMethod import BaseMethod
 
 
-# Stop
-class Stop(BaseMethod):
+# Load
+class Load(BaseMethod):
     def method(self, payload=None):
-        response = self.socket.send("stop")
+        response = self.socket.send(["load", payload["path"]])
         return response

@@ -1,5 +1,7 @@
-from baseMethod import BaseMethod
 import os
+
+from .baseMethod import BaseMethod
+
 
 # Reboots RPi
 class Reboot(BaseMethod):
