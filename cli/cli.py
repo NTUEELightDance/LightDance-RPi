@@ -1,7 +1,21 @@
-import sys
 import os
+import sys
+
 import cmd2
-from cmd2 import Bg, Fg, style, argparse
+from cmd2 import Bg, Fg, argparse, style
+
+from method.eltest import Eltest
+from method.ledtest import Ledtest
+from method.list import List
+from method.load import Load
+from method.play import Play
+from method.quit import Quit
+from method.reboot import Reboot
+from method.shutDown import ShutDown
+from method.statuslight import Statuslight
+from method.stop import Stop
+from method.uploadJsonFile import UploadJsonFile
+from pysocket.zmq_socket import Zmq_socket
 
 INTRO = r"""
     _   __ ______ __  __ ______ ______                         
@@ -29,21 +43,39 @@ class LightDanceCLI(cmd2.Cmd):
     """LightDanceCLI"""
 
     def __init__(self):
-        self.load = False
-
+        # CMD2 init
         self.intro = style(INTRO, fg=Fg.BLUE, bold=True)
         self.prompt = "LightDance CLI> "
 
         shortcuts = dict(cmd2.DEFAULT_SHORTCUTS)
 
-        super().__init__(shortcuts=shortcuts)
+        super().__init__(shortcuts=shortcuts, startup_script="./cli/startup")
+
+        # ZMQ methods init
+        self.socket = Zmq_socket(port=8000)
+        self.METHODS = {
+            "shutDown": ShutDown(),
+            "reboot": Reboot(),
+            "uploadControl": UploadJsonFile(socket=self.socket),
+            "load": Load(socket=self.socket),
+            "play": Play(socket=self.socket),
+            "stop": Stop(socket=self.socket),
+            "statuslight": Statuslight(socket=self.socket),
+            "eltest": Eltest(socket=self.socket),
+            "ledtest": Ledtest(socket=self.socket),
+            "list": List(socket=self.socket),
+            "quit": Quit(socket=self.socket),
+        }
+
+        # vars init
+        self.load = False
 
     # load [path]
     load_parser = cmd2.Cmd2ArgumentParser()
     load_parser.add_argument(
         "control_path",
         nargs="?",
-        default="control.json",
+        default="data/control.json",
         type=file_path,
         help="Path to control JSON file.",
     )
@@ -52,13 +84,17 @@ class LightDanceCLI(cmd2.Cmd):
     def do_load(self, args):
         """Load control JSON file"""
 
-        with open(args.control_path, "r") as f:
-            control_path = f.read()
+        control_path = args.control_path
+        with open(control_path, "r") as f:
+            control = f.read()
 
-        if not control_path:
+        if not control:
             self.pwarning("Warning: control.json is empty")
 
-        self.poutput(f"load: {args.control_path}")
+        payload = {"path": control_path}
+        response = self.METHODS["load"](payload)
+
+        self.poutput(response)
         self.load = True
 
     complete_load = cmd2.Cmd.path_complete
@@ -75,23 +111,46 @@ class LightDanceCLI(cmd2.Cmd):
     @cmd2.with_argparser(play_parser)
     def do_play(self, args):
         """play"""
+
+        start_time = args.start_time
+        delay_time = args.delay_time
+
         if not self.load:
             self.perror("Error: play failed, need to load first")
             return
 
-        self.poutput(f"played {args.start_time} {args.delay_time}")
+        payload = {"start_time": str(start_time), "delay_time": str(delay_time)}
+        response = self.METHODS["play"](payload)
+
+        self.poutput(response)
 
     def do_stop(self, args):
         """stop"""
-        self.poutput("stop")
+
+        response = self.METHODS["stop"]()
+
+        self.poutput(response)
 
     def do_statuslight(self, args):
         """statuslight"""
-        self.poutput("statuslight")
+
+        response = self.METHODS["statuslight"]()
+
+        self.poutput(response)
 
     def do_list(self, args):
         """list"""
-        self.poutput("list")
+
+        response = self.METHODS["list"]()
+
+        self.poutput(response)
+
+    # def do_quit(self, args):
+    #     """quit"""
+
+    #     response = self.METHODS["quit"]()
+
+    #     self.poutput(response)
 
     # eltest [id] [brightness]
     eltest_parser = cmd2.Cmd2ArgumentParser()
@@ -103,19 +162,30 @@ class LightDanceCLI(cmd2.Cmd):
     @cmd2.with_argparser(eltest_parser)
     def do_eltest(self, args):
         """test el"""
-        if args.brightness > 4095:
+
+        id = args.id
+        brightness = args.brightness
+
+        if brightness > 4095:
             self.pwarning(
                 "Warning: brightness is bigger than 4095, light brightness as 4095"
             )
-            args.brightness = 4095
+            brightness = 4095
 
-        self.poutput(f"eltest {args.id} {args.brightness}")
+        payload = {"id": str(id), "brightness": str(brightness)}
+        response = self.METHODS["eltest"](payload)
+
+        self.poutput(response)
 
     def do_ledtest(self, args):
         """test led"""
-        self.poutput("ledtest")
+
+        response = self.METHODS["ledtest"]()
+
+        self.poutput(response)
 
 
 if __name__ == "__main__":
     app = LightDanceCLI()
+    app.debug = True
     sys.exit(app.cmdloop())
