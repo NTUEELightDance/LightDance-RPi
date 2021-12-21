@@ -1,8 +1,8 @@
 from .baseMethod import BaseMethod
 
 
-# Stop
-class Stop(BaseMethod):
+# Ledtest
+class Ledtest(BaseMethod):
     def method(self, payload=None):
-        response = self.socket.send("stop")
+        response = self.socket.send("ledtest")
         return response

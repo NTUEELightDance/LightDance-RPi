@@ -1,8 +1,8 @@
 from .baseMethod import BaseMethod
 
 
-# Stop
-class Stop(BaseMethod):
+# List
+class List(BaseMethod):
     def method(self, payload=None):
-        response = self.socket.send("stop")
+        response = self.socket.send("list")
         return response

@@ -1,10 +1,16 @@
-import baseMethod
-import reboot
-import shutDown
-import uploadJsonFile
-import stop
-import pause  # TODO
-import kick  # TODO
-import boardInfo
-import sync  # TODO
-import play  # TODO
+from .baseMethod import *
+from .boardInfo import *
+from .eltest import *
+from .kick import *
+from .ledtest import *
+from .list import *
+from .load import *
+from .pause import *
+from .play import *
+from .quit import *
+from .reboot import *
+from .shutDown import *
+from .statuslight import *
+from .stop import *
+from .sync import *
+from .uploadJsonFile import *

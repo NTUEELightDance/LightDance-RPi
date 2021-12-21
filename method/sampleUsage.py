@@ -1,5 +1,5 @@
-from shutDown import ShutDown
 from reboot import Reboot
+from shutDown import ShutDown
 from uploadJsonFile import UploadJsonFile
 
 methods = {

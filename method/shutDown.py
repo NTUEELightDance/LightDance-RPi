@@ -1,5 +1,7 @@
-from baseMethod import BaseMethod
 import os
+
+from .baseMethod import BaseMethod
+
 
 # Shutdown RPi
 class ShutDown(BaseMethod):
