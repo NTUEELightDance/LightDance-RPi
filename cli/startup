@@ -1,6 +1,8 @@
+boardinfo
 load
 play
 stop
 statuslight
 eltest
 ledtest
+help -v

@@ -2,20 +2,11 @@ import os
 import sys
 
 import cmd2
-from cmd2 import Bg, Fg, argparse, style
+from cmd2 import Fg, argparse, style
 
-from method.eltest import Eltest
-from method.ledtest import Ledtest
-from method.list import List
-from method.load import Load
-from method.play import Play
-from method.quit import Quit
-from method.reboot import Reboot
-from method.shutDown import ShutDown
-from method.statuslight import Statuslight
-from method.stop import Stop
-from method.uploadJsonFile import UploadJsonFile
-from pysocket.zmq_socket import Zmq_socket
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
+from method import *
+from pysocket import ZMQSocket
 
 INTRO = r"""
     _   __ ______ __  __ ______ ______                         
@@ -52,23 +43,37 @@ class LightDanceCLI(cmd2.Cmd):
         super().__init__(shortcuts=shortcuts, startup_script="./cli/startup")
 
         # ZMQ methods init
-        self.socket = Zmq_socket(port=8000)
+        self.socket = ZMQSocket(port=8000)
         self.METHODS = {
             "shutDown": ShutDown(),
             "reboot": Reboot(),
+            "boardinfo": BoardInfo(),
             "uploadControl": UploadJsonFile(socket=self.socket),
             "load": Load(socket=self.socket),
             "play": Play(socket=self.socket),
             "stop": Stop(socket=self.socket),
-            "statuslight": Statuslight(socket=self.socket),
-            "eltest": Eltest(socket=self.socket),
-            "ledtest": Ledtest(socket=self.socket),
+            "statuslight": StatusLight(socket=self.socket),
+            "eltest": ELTest(socket=self.socket),
+            "ledtest": LEDTest(socket=self.socket),
             "list": List(socket=self.socket),
             "quit": Quit(socket=self.socket),
         }
 
         # vars init
         self.load = False
+
+    def do_boardinfo(self, args):
+        """boardinfo"""
+        info = self.METHODS["boardinfo"]()
+        self.poutput(info)
+
+    def do_reboot(self, args):
+        """reboot"""
+        self.METHODS["reboot"]()
+
+    def do_shutdown(self, args):
+        """shutdown"""
+        self.METHODS["shutdown"]()
 
     # load [path]
     load_parser = cmd2.Cmd2ArgumentParser()
@@ -126,31 +131,23 @@ class LightDanceCLI(cmd2.Cmd):
 
     def do_stop(self, args):
         """stop"""
-
         response = self.METHODS["stop"]()
-
         self.poutput(response)
 
-    def do_statuslight(self, args):
+    def do_statuslight(self, args):  # TODO
         """statuslight"""
-
         response = self.METHODS["statuslight"]()
-
         self.poutput(response)
 
-    def do_list(self, args):
-        """list"""
-
+    def do_list(self, args):  # TODO
         response = self.METHODS["list"]()
-
         self.poutput(response)
 
-    # def do_quit(self, args):
-    #     """quit"""
-
-    #     response = self.METHODS["quit"]()
-
-    #     self.poutput(response)
+    def do_quit(self, args):
+        """quit"""
+        response = self.METHODS["quit"]()
+        self.poutput(response)
+        return 1
 
     # eltest [id] [brightness]
     eltest_parser = cmd2.Cmd2ArgumentParser()
@@ -177,11 +174,9 @@ class LightDanceCLI(cmd2.Cmd):
 
         self.poutput(response)
 
-    def do_ledtest(self, args):
+    def do_ledtest(self, args):  # TODO
         """test led"""
-
         response = self.METHODS["ledtest"]()
-
         self.poutput(response)
 
 
