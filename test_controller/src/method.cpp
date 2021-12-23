@@ -10,6 +10,7 @@ void BaseMethod::method(const vector<string>& cmd, bool& quit){
     string err = "Error: not implementing method()\n";
     send_str(_socket, err);
 };
+BaseMethod::~BaseMethod(){};
 
 Load::Load(zmq::socket_t& socket): BaseMethod(socket){};
 void Load::method(const vector<string>& cmd, bool& quit){
@@ -90,7 +91,7 @@ void Ledtest::method(const vector<string>& cmd, bool& quit){
 };
 
 List::List(zmq::socket_t& socket): BaseMethod(socket){};
-void method(const vector<string>& cmd, bool& quit){
+void List::method(const vector<string>& cmd, bool& quit){
     rpiMgr->list();
 };
 

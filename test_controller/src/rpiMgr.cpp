@@ -25,9 +25,50 @@ RPiMgr::RPiMgr(const string &dancerName):_dancerName(dancerName){
 }
 
 bool RPiMgr::setDancer(){
-    
+    // TODO
+    return true;
 }
 
 void RPiMgr::pause(){
     _playing = false;
+}
+
+void RPiMgr::load(const string& path){
+    // TODO
+    return;
+}
+
+void RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay){
+    // TODO
+    return;
+}
+
+void RPiMgr::stop(){
+    // TODO
+    return;
+}
+
+void RPiMgr::statuslight(){
+    // TODO
+    return;
+}
+
+void RPiMgr::eltest(int id, unsigned brightness){
+    // TODO
+    return;
+}
+
+void RPiMgr::ledtest(){
+    // TODO
+    return;
+}
+
+void RPiMgr::list(){
+    // TODO
+    return;
+}
+
+void RPiMgr::quit(){
+    // TODO
+    return;
 }

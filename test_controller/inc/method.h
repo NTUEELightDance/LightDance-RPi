@@ -16,6 +16,7 @@ extern RPiMgr *rpiMgr;
 class BaseMethod {
 public:
     BaseMethod(zmq::socket_t& socket);
+    virtual ~BaseMethod();
     void exec(const vector<string>& cmd, bool& quit);
 protected:
     virtual void method(const vector<string>& cmd, bool& quit);
