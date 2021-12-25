@@ -57,6 +57,7 @@ class LightDanceCLI(cmd2.Cmd):
             "ledtest": LEDTest(socket=self.socket),
             "list": List(socket=self.socket),
             "quit": Quit(socket=self.socket),
+            "send": Send(socket=self.socket),
         }
 
         # vars init
@@ -140,6 +141,7 @@ class LightDanceCLI(cmd2.Cmd):
         self.poutput(response)
 
     def do_list(self, args):  # TODO
+        """list"""
         response = self.METHODS["list"]()
         self.poutput(response)
 
@@ -148,6 +150,16 @@ class LightDanceCLI(cmd2.Cmd):
         response = self.METHODS["quit"]()
         self.poutput(response)
         return 1
+
+    send_parser = cmd2.Cmd2ArgumentParser()
+    send_parser.add_argument("message", nargs="?", default="Hello", type=str, help="message")
+
+    @cmd2.with_argparser(send_parser)
+    def do_send(self, args):
+        """send"""
+        payload = {"message": args.message}
+        response = self.METHODS["send"](payload)
+        self.poutput(response)
 
     # eltest [id] [brightness]
     eltest_parser = cmd2.Cmd2ArgumentParser()

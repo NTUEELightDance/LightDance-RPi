@@ -13,4 +13,5 @@ from .shutDown import *
 from .statuslight import *
 from .stop import *
 from .sync import *
+from .send import *
 from .uploadJsonFile import *

@@ -11,7 +11,7 @@ while True:
     message = socket.recv()
     print("Received request: %s" % message.decode())
 
-    time.sleep(1)
+    # time.sleep(1)
 
     #  Send reply back to client
     socket.send_string(f"Success: {message.decode()}")

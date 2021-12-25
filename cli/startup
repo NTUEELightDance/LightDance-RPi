@@ -5,4 +5,5 @@ stop
 statuslight
 eltest
 ledtest
+send "Ray hello!!"
 help -v
