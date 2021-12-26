@@ -1,6 +1,6 @@
 #include "../inc/rpiMgr.h"
 
-RPiMgr::RPiMgr(const string &dancerName):_dancerName(dancerName){
+RPiMgr::RPiMgr(const string &dancerName, zmq::socket_t& socket):_dancerName(dancerName),_socket(socket){
     ifstream infile("./asset/LED.json", ios::in);
     if (!infile)
         cerr << "Error: cannot open ./asset/LED.json" << endl;
@@ -34,8 +34,21 @@ void RPiMgr::pause(){
 }
 
 void RPiMgr::load(const string& path){
-    // TODO
-    return;
+    string msg = "Loading " + path + "\n";
+    send_str(_socket, msg);
+    cout << msg;
+    ifstream infile(path.c_str());
+    if (!infile){
+        msg = "Error: failed cannot open file " + path + "\n";
+        send_str(_socket, msg);
+        cout << msg;
+        return;
+    }
+    infile >> _ctrlJson;
+    _loaded = true;
+    msg = "success";
+    send_str(_socket, msg);
+    cout << msg;
 }
 
 void RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay){

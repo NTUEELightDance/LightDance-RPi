@@ -27,3 +27,7 @@ rm libsodium-1.0.18.tar.gz
 sudo rm -rf libsodium-1.0.18
 rm zeromq-4.1.4.tar.gz
 sudo rm -rf zeromq-4.1.4
+
+# set include file
+sudo echo /etc/ld.so.conf >> /usr/local/lib/libzmq.so.5
+sudo ldconfig

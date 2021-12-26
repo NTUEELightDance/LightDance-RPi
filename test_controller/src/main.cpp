@@ -36,18 +36,19 @@ int main(int argc, char *argv[]){
         cerr << "Error: missing parameters (dancerName)" << endl;
         exit(0);
     }
-    string dancerName = argv[1];
-    rpiMgr = new RPiMgr(dancerName);
-
-    // TODO: setDancer
-
-    cout << "start success" << endl;
 
     bool quit = false;
     // Using zeromq
     zmq::context_t context(1);
     zmq::socket_t socket(context, ZMQ_REP);
     socket.bind(connectionURL);
+
+    string dancerName = argv[1];
+    rpiMgr = new RPiMgr(dancerName, socket);
+
+    // TODO: setDancer
+
+    cout << "start success" << endl;
 
     // Establish method mapping using strategy patter
     map<string, BaseMethod*> method_map = setup_method_map(socket);
@@ -58,7 +59,7 @@ int main(int argc, char *argv[]){
 
         // zmq server socket receive data
         socket.recv(&request);
-        string inp = (char*)request.data();
+        string inp = request.to_string();
         transform(inp.begin(), inp.end(), inp.begin(), ::tolower);
         vector<string> cmd = splitStr(inp);
 
