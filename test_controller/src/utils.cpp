@@ -37,7 +37,9 @@ bool Str2LongInt(const string &str, long &longInt){
     return true;
 }
 
-bool send_str(zmq::socket_t& socket, const string& msg){
+bool send_str(zmq::socket_t& socket, const string& msg, const bool& send_multiple){
     zmq::message_t response(msg.c_str(), msg.size());
+    if (send_multiple)
+        return socket.send(response, ZMQ_SNDMORE);
     return socket.send(response);
 }

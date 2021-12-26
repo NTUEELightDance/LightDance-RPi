@@ -4,7 +4,9 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <zmq.hpp>
 #include "nlohmann/json.hpp"
+#include "utils.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -12,7 +14,7 @@ using json = nlohmann::json;
 class RPiMgr {
 public:
     RPiMgr();
-    RPiMgr(const string& dancerName);
+    RPiMgr(const string& dancerName, zmq::socket_t& socket);
     bool setDancer();  // TODO
     void pause();
     void load(const string& path = "./data/control.json");  // TODO
@@ -27,7 +29,10 @@ public:
 private:
     string _dancerName;
     json LEDJson;
+    json _ctrlJson;
     bool _playing;
+    bool _loaded;
+    zmq::socket_t& _socket;
 };
 
 #endif
