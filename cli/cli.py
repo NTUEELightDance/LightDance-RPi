@@ -152,7 +152,9 @@ class LightDanceCLI(cmd2.Cmd):
         return 1
 
     send_parser = cmd2.Cmd2ArgumentParser()
-    send_parser.add_argument("message", nargs="?", default="Hello", type=str, help="message")
+    send_parser.add_argument(
+        "message", nargs="?", default="Hello", type=str, help="message"
+    )
 
     @cmd2.with_argparser(send_parser)
     def do_send(self, args):
