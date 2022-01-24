@@ -31,6 +31,13 @@ You must first install `cppzmq` to enable the usage of controller
 pip3 install -r requirements.txt
 ```
 
+### Formatter & Linter
+```
+bash scripts/py_formatter.sh
+
+bash scripts/py_lint.sh
+```
+
 ## Run
 ### Run Controller
 Bulid
