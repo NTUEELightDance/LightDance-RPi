@@ -1,5 +1,6 @@
 # 2021-LightDance-RPi
 
+## Installation
 ### Setup zeromq
 
 You must first install `cppzmq` to enable the usage of controller
@@ -23,3 +24,33 @@ You must first install `cppzmq` to enable the usage of controller
     ```
 
     Reference link: http://osdevlab.blogspot.com/2015/12/how-to-install-zeromq-package-in.html
+
+### Install Python Dependencies
+```
+# At LightDance-RPi/
+pip3 install -r requirements.txt
+```
+
+### Formatter & Linter
+```
+bash scripts/py_formatter.sh
+
+bash scripts/py_lint.sh
+```
+
+## Run
+### Run Controller
+Bulid
+```
+bash compile.sh
+```
+
+Run
+```
+./test_controller/controller
+```
+
+### Run CLI
+```
+python3 cli/cli.py
+```

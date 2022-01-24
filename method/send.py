@@ -1,8 +1,8 @@
 from .baseMethod import BaseMethod
 
 
-# Statuslight
-class StatusLight(BaseMethod):
+# Send
+class Send(BaseMethod):
     def method(self, payload=None):
-        response = self.socket.send("statuslight")
+        response = self.socket.send(payload["message"])
         return response
