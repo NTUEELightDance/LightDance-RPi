@@ -193,6 +193,25 @@ class LightDanceCLI(cmd2.Cmd):
         response = self.METHODS["ledtest"]()
         self.poutput(response)
 
+    # sendlight [id] [vector]
+    sendlight_parser = cmd2.Cmd2ArgumentParser()
+    sendlight_parser.add_argument("id", nargs="?", default=-1, type=int, help="id 0~31")
+    sendlight_parser.add_argument(
+        "vector", nargs="?", default=4095, type=int, help="brightness 0~4095"
+    )
+
+    @cmd2.with_argparser(sendlight_parser)
+    def do_sendlight(self, args):
+        """send light"""
+
+        id = args.id
+        vector = args.vector
+
+        payload = {"id": str(id), "vector": str(vector)}
+        response = self.METHODS["sendlight"](payload)
+
+        self.response_parser(response)
+
 
 if __name__ == "__main__":
     app = LightDanceCLI()

@@ -10,6 +10,7 @@ from .play import *
 from .quit import *
 from .reboot import *
 from .send import *
+from .sendLight import *
 from .shutDown import *
 from .statuslight import *
 from .stop import *
