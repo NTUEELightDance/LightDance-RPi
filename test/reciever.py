@@ -1,6 +1,6 @@
-from logging import warning
-import time
 import random
+import time
+from logging import warning
 
 import zmq
 
@@ -16,5 +16,5 @@ while True:
     # time.sleep(1)
 
     #  Send reply back to client
-    status = random.choice(['Success', 'Error', 'Warning'])
+    status = random.choice(["Success", "Error", "Warning"])
     socket.send_string(f"{status}: {message.decode()}")
