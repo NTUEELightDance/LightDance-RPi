@@ -7,14 +7,17 @@
 #include <zmq.hpp>
 #include "nlohmann/json.hpp"
 #include "utils.h"
+#include "logger.h"
 
 using namespace std;
 using json = nlohmann::json;
 
+extern Logger* logger;
+
 class RPiMgr {
 public:
     RPiMgr();
-    RPiMgr(const string& dancerName, zmq::socket_t& socket);
+    RPiMgr(const string& dancerName);
     bool setDancer();  // TODO
     void pause();
     void load(const string& path = "./data/control.json");  // TODO
@@ -32,7 +35,6 @@ private:
     json _ctrlJson;
     bool _playing;
     bool _loaded;
-    zmq::socket_t& _socket;
 };
 
 #endif

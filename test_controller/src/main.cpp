@@ -9,11 +9,13 @@
 #include "rpiMgr.h"
 #include "utils.h"
 #include "method.h"
+#include "logger.h"
 
 using namespace std;
 
 const char connectionURL[] = "tcp://*:8000";  // The url for zeromq usage
 RPiMgr *rpiMgr;
+Logger *logger;
 
 // Don't use SIGINT anymore, use multi thread instead
 
@@ -44,11 +46,10 @@ int main(int argc, char *argv[]){
     socket.bind(connectionURL);
 
     string dancerName = argv[1];
-    rpiMgr = new RPiMgr(dancerName, socket);
+    rpiMgr = new RPiMgr(dancerName);
+    logger = new Logger(socket);
 
     // TODO: setDancer
-
-    cout << "start success" << endl;
 
     // Establish method mapping using strategy patter
     map<string, BaseMethod*> method_map = setup_method_map(socket);
@@ -69,8 +70,8 @@ int main(int argc, char *argv[]){
         if (method_map.count(cmd[0]) > 0)
             method_map[cmd[0]]->exec(cmd, quit);
         else {
-            string err = "Error: key not found \"" + cmd[0] + "\"\n";
-            send_str(socket, err);
+            string err = "key not found \"" + cmd[0] + "\"\n";
+            logger->error(err.c_str());
         }
     }
     return 0;
