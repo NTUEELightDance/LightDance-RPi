@@ -6,10 +6,12 @@
 #include <thread>
 #include "rpiMgr.h"
 #include "utils.h"
+#include "logger.h"
 
 using namespace std;
 
 extern RPiMgr *rpiMgr;
+extern Logger *logger;
 
 // BaseMethod for other method to inherit
 // You must implement the method() function in child classes
