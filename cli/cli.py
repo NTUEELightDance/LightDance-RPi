@@ -29,6 +29,7 @@ def file_path(path):
     else:
         raise argparse.ArgumentTypeError("File not found!")
 
+
 class LightDanceCLI(cmd2.Cmd):
     """LightDanceCLI"""
 
@@ -61,15 +62,6 @@ class LightDanceCLI(cmd2.Cmd):
 
         # vars init
         self.load = False
-
-    
-    def response_parser(self, response: str):
-        if "error" in response.lower():
-            self.perror(response)
-        elif "success" in response.lower():
-            self.poutput(response)
-        elif "warning" in response.lower():
-            self.pwarning(response)
 
     def do_boardinfo(self, args):
         """boardinfo"""
@@ -108,7 +100,7 @@ class LightDanceCLI(cmd2.Cmd):
         payload = {"path": control_path}
         response = self.METHODS["load"](payload)
 
-        self.response_parser(response)
+        self.poutput(response)
         self.load = True
 
     complete_load = cmd2.Cmd.path_complete
@@ -136,27 +128,27 @@ class LightDanceCLI(cmd2.Cmd):
         payload = {"start_time": str(start_time), "delay_time": str(delay_time)}
         response = self.METHODS["play"](payload)
 
-        self.response_parser(response)
+        self.poutput(response)
 
     def do_stop(self, args):
         """stop"""
         response = self.METHODS["stop"]()
-        self.response_parser(response)
+        self.poutput(response)
 
     def do_statuslight(self, args):  # TODO
         """statuslight"""
         response = self.METHODS["statuslight"]()
-        self.response_parser(response)
+        self.poutput(response)
 
     def do_list(self, args):  # TODO
         """list"""
         response = self.METHODS["list"]()
-        self.response_parser(response)
+        self.poutput(response)
 
     def do_quit(self, args):
         """quit"""
         response = self.METHODS["quit"]()
-        self.response_parser(response)
+        self.poutput(response)
         return 1
 
     send_parser = cmd2.Cmd2ArgumentParser()
@@ -169,7 +161,7 @@ class LightDanceCLI(cmd2.Cmd):
         """send"""
         payload = {"message": args.message}
         response = self.METHODS["send"](payload)
-        self.response_parser(response)
+        self.poutput(response)
 
     # eltest [id] [brightness]
     eltest_parser = cmd2.Cmd2ArgumentParser()
@@ -194,12 +186,12 @@ class LightDanceCLI(cmd2.Cmd):
         payload = {"id": str(id), "brightness": str(brightness)}
         response = self.METHODS["eltest"](payload)
 
-        self.response_parser(response)
+        self.poutput(response)
 
     def do_ledtest(self, args):  # TODO
         """test led"""
         response = self.METHODS["ledtest"]()
-        self.response_parser(response)
+        self.poutput(response)
 
 
 if __name__ == "__main__":
