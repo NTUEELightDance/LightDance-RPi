@@ -104,6 +104,7 @@ void RPiMgr::play(const bool& givenStartTime, const unsigned& start, const unsig
     long startTime = (long)_startTime;
 
     thread loop(RPiMgr::play_loop, this, ref(sysStartTime), ref(startTime), ref(currentFrameId));
+    loop.join();
     logger->log("end of playing");
     
     return;
