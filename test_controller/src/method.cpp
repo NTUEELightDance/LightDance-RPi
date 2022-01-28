@@ -1,10 +1,10 @@
 #include "method.h"
 
+// TODO: check whether multiple replies is valid
+
 BaseMethod::BaseMethod(zmq::socket_t& socket):_socket(socket){};
 void BaseMethod::exec(const vector<string>& cmd, bool& quit){
-    thread t(&BaseMethod::method, this, ref(cmd), ref(quit));
-    // Seperate the execution
-    t.detach();
+    this->method(cmd, quit);
 };
 void BaseMethod::method(const vector<string>& cmd, bool& quit){
     logger->error("not implementing method()");
@@ -49,6 +49,7 @@ void Play::method(const vector<string>& cmd, bool& quit){
             logger->error(buf);
         }
         if (option1 && option2)
+            // TODO: add thread
             rpiMgr->play(true, startTime, delayTime);
         else
             return;
