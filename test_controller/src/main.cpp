@@ -61,6 +61,7 @@ int main(int argc, char *argv[]){
         // zmq server socket receive data
         socket.recv(&request);
         string inp = request.to_string();
+        cout << inp << endl;
         transform(inp.begin(), inp.end(), inp.begin(), ::tolower);
         vector<string> cmd = splitStr(inp);
 

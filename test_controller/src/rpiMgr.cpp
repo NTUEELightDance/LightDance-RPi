@@ -47,7 +47,7 @@ void RPiMgr::load(const string& path){
 }
 
 void RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay){
-    // TODO
+    // TODO: implement another thread
     return;
 }
 
