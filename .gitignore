@@ -128,3 +128,9 @@ venv.bak/
 
 # test files
 test.*
+test_receiver
+
+# CMake
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
