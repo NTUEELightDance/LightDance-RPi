@@ -16,8 +16,8 @@ SRC = $(wildcard $(SRC_DIR)*.cpp)
 OBJ = $(SRC:$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
 
 # OBJ := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC))
-# LIB = -L./$(LIB_DIR) -lbcm2835 -lpca9685 -lzmq -lsodium
-LIB = -L./$(LIB_DIR) -lzmq -lsodium
+LIB = -L./$(LIB_DIR) -lbcm2835 -lpca9685 -lzmq -lsodium
+# LIB = -L./$(LIB_DIR) -lzmq -lsodium
 
 .PHONY: all clean
 
