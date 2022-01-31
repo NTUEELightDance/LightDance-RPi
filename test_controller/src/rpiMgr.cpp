@@ -103,7 +103,7 @@ void RPiMgr::play(const bool& givenStartTime, const unsigned& start, const unsig
     _playing = true;
     long startTime = (long)_startTime;
 
-    thread loop(RPiMgr::play_loop, this, ref(sysStartTime), ref(startTime), ref(currentFrameId));
+    thread loop(&RPiMgr::play_loop, this, ref(sysStartTime), ref(startTime), ref(currentFrameId));
     loop.join();
     logger->log("end of playing");
     
@@ -220,7 +220,7 @@ json RPiMgr::getFadeStatus(const size_t& currentTime, const json& firstStatus, c
     for (json::const_iterator it = firstStatus["status"].begin(); it != firstStatus["status"].end(); ++ it){
         if (_ELparts.find(it.key()) != _ELparts.end()){
             json::const_iterator it2 = secondStatus["status"].find(it.key());
-            float temp = (1 - rate) * float(it.value() + rate * float(it2.value()));
+            float temp = (1 - rate) * float(it.value()) + rate * float(it2.value());
             ret[it.key()] = roundf(temp * 10) / 10.0;
         }
         else if (_LEDparts.find(it.key()) != _LEDparts.end()){
