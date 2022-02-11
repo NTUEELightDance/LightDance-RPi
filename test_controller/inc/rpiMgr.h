@@ -10,6 +10,7 @@
 #include <math.h>
 #include <time.h>
 #include <sys/time.h>
+#include <atomic>
 
 #include "nlohmann/json.hpp"
 #include "utils.h"
@@ -44,16 +45,16 @@ private:
     size_t getFrameId() const;
     json getFadeStatus(const size_t& currentTime, const json& firstStatus, const json& second) const;
     void lightOneStatus(const json& status) const;  // TODO: EL
-    void play_loop(const long& sysStartTime, const long& startTime, size_t& currentFrameId);  // For threading
+    void play_loop(const long& startTime, size_t currentFrameId);  // For threading
 
     string _dancerName;
     json LEDJson;
     json _ctrlJson;
     json _ELparts;
     json _LEDparts;
-    bool _playing;
+    atomic<bool> _playing;
     bool _loaded;
-    size_t _startTime;
+    atomic<size_t> _startTime;
     // LED_Strip* led_strip;
 };
 

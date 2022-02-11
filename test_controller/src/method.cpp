@@ -54,7 +54,7 @@ void Play::method(const vector<string>& cmd, bool& quit){
         else
             return;
     }
-    logger->success("play success");
+    // logger->success("play success");
 };
 
 Stop::Stop(zmq::socket_t& socket): BaseMethod(socket){};
@@ -79,7 +79,7 @@ void Eltest::method(const vector<string>& cmd, bool& quit){
         int id = stoi(cmd[1]);
         char buf[128];
         sprintf(buf, "Testing id: %d", id);
-        logger->log(buf);
+        // logger->log(buf);
 
         unsigned brightness;
         if (!Str2Unsint(cmd[2], brightness)){
