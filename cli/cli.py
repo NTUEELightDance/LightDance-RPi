@@ -29,6 +29,7 @@ def file_path(path):
     else:
         raise argparse.ArgumentTypeError("File not found!")
 
+
 class LightDanceCLI(cmd2.Cmd):
     """LightDanceCLI"""
 
@@ -50,6 +51,7 @@ class LightDanceCLI(cmd2.Cmd):
             "uploadControl": UploadJsonFile(socket=self.socket),
             "load": Load(socket=self.socket),
             "play": Play(socket=self.socket),
+            "pause": Pause(socket=self.socket),
             "stop": Stop(socket=self.socket),
             "statuslight": StatusLight(socket=self.socket),
             "eltest": ELTest(socket=self.socket),
@@ -62,7 +64,6 @@ class LightDanceCLI(cmd2.Cmd):
         # vars init
         self.load = False
 
-    
     def response_parser(self, response: str):
         if "error" in response.lower():
             self.perror(response)
@@ -136,6 +137,11 @@ class LightDanceCLI(cmd2.Cmd):
         payload = {"start_time": str(start_time), "delay_time": str(delay_time)}
         response = self.METHODS["play"](payload)
 
+        self.response_parser(response)
+
+    def do_pause(self, args):
+        """pause"""
+        response = self.METHODS["pause"]()
         self.response_parser(response)
 
     def do_stop(self, args):
