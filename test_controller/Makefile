@@ -5,7 +5,7 @@ OPTFLAGS = -g
 
 SRC_DIR = src/
 INC_DIR = inc/
-BIN_DIR = bin/
+BIN_DIR = ./
 LIB_DIR = lib/
 OBJ_DIR = build/
 
