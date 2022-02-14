@@ -7,7 +7,7 @@ void BaseMethod::exec(const vector<string>& cmd, bool& quit){
     this->method(cmd, quit);
 };
 void BaseMethod::method(const vector<string>& cmd, bool& quit){
-    logger->error("not implementing method()");
+    logger->error("Method", "not implementing method()");
 };
 BaseMethod::~BaseMethod(){};
 
@@ -17,7 +17,6 @@ void Load::method(const vector<string>& cmd, bool& quit){
         rpiMgr->load(cmd[1]);
     else
         rpiMgr->load();
-    logger->success("load success");
 };
 
 Play::Play(zmq::socket_t& socket): BaseMethod(socket){};
@@ -27,9 +26,7 @@ void Play::method(const vector<string>& cmd, bool& quit){
     else if (cmd.size() == 2){
         unsigned startTime;
         if (!Str2Unsint(cmd[1], startTime)){
-            char buf[128];
-            sprintf("illegal option \"%s\"", cmd[1].c_str());
-            logger->error(buf);
+            logger->error("Play", "Illegal option \"" + cmd[1] + "\"");
             return;
         }
         else
@@ -38,54 +35,42 @@ void Play::method(const vector<string>& cmd, bool& quit){
     else if (cmd.size() == 3){
         unsigned startTime, delayTime;
         const bool option1 = Str2Unsint(cmd[1], startTime), option2 = Str2Unsint(cmd[2], delayTime);
-        if (!option1){
-            char buf[128];
-            sprintf("illegal option \"%s\"", cmd[1].c_str());
-            logger->error(buf);
-        }
-        if (!option2){
-            char buf[128];
-            sprintf("Illegal option \"%s\"", cmd[2].c_str());
-            logger->error(buf);
-        }
+        if (!option1)
+            logger->error("Play", "Illegal option \"" + cmd[1] + "\"");
+        if (!option2)
+            logger->error("Play", "Illegal option \"" + cmd[2] + "\"");
         if (option1 && option2)
-            // TODO: add thread
             rpiMgr->play(true, startTime, delayTime);
         else
             return;
     }
-    // logger->success("play success");
 };
 
 Stop::Stop(zmq::socket_t& socket): BaseMethod(socket){};
 void Stop::method(const vector<string>& cmd, bool& quit){
     rpiMgr->stop();
-    logger->success("stop success");
+    logger->success("Stop");
 };
 
 StatusLight::StatusLight(zmq::socket_t& socket): BaseMethod(socket){};
 void StatusLight::method(const vector<string>& cmd, bool& quit){
     rpiMgr->statuslight();
-    logger->success("statuslight success");
 };
 
 Eltest::Eltest(zmq::socket_t& socket): BaseMethod(socket){};
 void Eltest::method(const vector<string>& cmd, bool& quit){
+    string mes = "";
     // default all light
     if (cmd.size() == 1)
         rpiMgr->eltest(-1, 4095);
     // id/brightness
     else if (cmd.size() >= 3){
         int id = stoi(cmd[1]);
-        char buf[128];
-        sprintf(buf, "Testing id: %d", id);
-        // logger->log(buf);
+        mes = "Testing id: " + cmd[2];
 
         unsigned brightness;
         if (!Str2Unsint(cmd[2], brightness)){
-            char buf[128];
-            sprintf(buf, "Illegal option \"%s\"", cmd[2].c_str());
-            logger->error(buf);
+            logger->error("Eltest", "Illegal option \"" + cmd[2] + "\"");
             return;
         }
         else
@@ -93,33 +78,32 @@ void Eltest::method(const vector<string>& cmd, bool& quit){
     }
     // error
     else{
-        logger->error("Missing options, should give id(0 ~ 31) and brightness(0 ~ 4095)");
+        logger->error("Eltest", "Missing options, should give id(0 ~ 31) and brightness(0 ~ 4095)");
         return;
     }
-    logger->success("eltest success");
+    logger->success("Eltest", mes);
 };
 
 Ledtest::Ledtest(zmq::socket_t& socket): BaseMethod(socket){};
 void Ledtest::method(const vector<string>& cmd, bool& quit){
     rpiMgr->ledtest();  // TODO: need to get cmd arguments
-    logger->success("ledtest success");
+    logger->success("Ledtest");
 };
 
 List::List(zmq::socket_t& socket): BaseMethod(socket){};
 void List::method(const vector<string>& cmd, bool& quit){
     rpiMgr->list();
-    logger->success("list success");
 };
 
 Quit::Quit(zmq::socket_t& socket): BaseMethod(socket){};
 void Quit::method(const vector<string>& cmd, bool& quit){
     rpiMgr->quit();
     quit = true;
-    logger->success("quit success");
+    logger->success("Quit");
 };
 
 Pause::Pause(zmq::socket_t& socket): BaseMethod(socket){};
 void Pause::method(const vector<string>& cmd, bool& quit){
     rpiMgr->pause();
-    logger->success("pause success");
+    logger->success("Pause");
 };

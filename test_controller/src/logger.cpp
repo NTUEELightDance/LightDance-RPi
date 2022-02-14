@@ -3,23 +3,20 @@
 Logger::Logger(zmq::socket_t& _socket): socket(_socket){};
 Logger::~Logger(){};
 
-bool Logger::success(const char* message){
-    char buf[128];
-    sprintf(buf, "Success: %s\n", message);
-    zmq::message_t mes(buf, strlen(buf));
-    return socket.send(mes);    
-}
-
-bool Logger::error(const char* message){
-    char buf[128];
-    sprintf(buf, "Error: %s\n", message);
-    zmq::message_t mes(buf, strlen(buf));
+bool Logger::success(const string& method, const string& message){
+    string buf = "[ " + method + " / Success ]\n" + message;
+    zmq::message_t mes(buf.c_str(), buf.size());
     return socket.send(mes);
 }
 
-bool Logger::log(const char* message){
-    char buf[128];
-    sprintf(buf, "%s\n", message);
-    zmq::message_t mes(buf, strlen(buf));
+bool Logger::error(const string& method, const string& message){
+    string buf = "[ " + method + " / Error ]\n" + message;
+    zmq::message_t mes(buf.c_str(), buf.size());
+    return socket.send(mes);
+}
+
+bool Logger::log(const string& method, const string& message){
+    string buf = "[ " + method + " / Log ]\n" + message;
+    zmq::message_t mes(buf.c_str(), buf.size());
     return socket.send(mes);
 }
