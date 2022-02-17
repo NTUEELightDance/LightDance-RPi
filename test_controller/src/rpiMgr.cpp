@@ -58,10 +58,14 @@ void RPiMgr::pause(){
 }
 
 void RPiMgr::load(const string& path){
+    if (_playing){
+        logger->error("Load", "Cannot load while playing");
+        return;
+    }
     string msg = "Loading " + path;
     ifstream infile(path.c_str());
     if (!infile){
-        msg += "\nfailed cannot open file: " + path;
+        msg += "\nFailed cannot open file: " + path;
         logger->error("Load", msg);
         return;
     }
@@ -102,7 +106,7 @@ void RPiMgr::play(const bool& givenStartTime, const unsigned& start, const unsig
     _playing = true;
     long startTime = (long)_startTime;
 
-    thread loop(&RPiMgr::play_loop, this, ref(startTime), currentFrameId);
+    thread loop(&RPiMgr::play_loop, this, startTime, currentFrameId);
     loop.detach();
     
     return;
@@ -269,8 +273,9 @@ void RPiMgr::lightOneStatus(const json &status) const {
 }
 
 // For threading
-void RPiMgr::play_loop(const long& startTime, size_t currentFrameId){
+void RPiMgr::play_loop(const long startTime, size_t currentFrameId){
     const long sysStartTime = getsystime();
+    int localStartTime = startTime;
     while (_playing){
         if (_startTime >= (unsigned long)_ctrlJson[_ctrlJson.size() - 1]["start"]){
             lightOneStatus(_ctrlJson[_ctrlJson.size() - 1]["status"]);
@@ -289,7 +294,7 @@ void RPiMgr::play_loop(const long& startTime, size_t currentFrameId){
                 lightOneStatus(getFadeStatus(_startTime, _ctrlJson[currentFrameId], _ctrlJson[currentFrameId + 1]));
         }
         
-        _startTime = startTime + (getsystime() - sysStartTime);
+        _startTime = localStartTime + (getsystime() - sysStartTime);
     }
     cout << "end playing\n";
 }
