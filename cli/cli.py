@@ -65,12 +65,19 @@ class LightDanceCLI(cmd2.Cmd):
         self.load = False
 
     def response_parser(self, response: str):
-        if "error" in response.lower():
-            self.perror(response)
-        elif "success" in response.lower():
-            self.poutput(response)
-        elif "warning" in response.lower():
-            self.pwarning(response)
+        lines = response.split('\n')
+        status = lines[0]
+        
+        content = '\n'.join(lines[1:]).strip('\n')
+        if content == '':
+            content = 'Success'
+
+        if "error" in status.lower():
+            self.perror(content)
+        elif "success" in status.lower():
+            self.poutput(content)
+        elif "warning" in status.lower():
+            self.pwarning(content)
 
     def do_boardinfo(self, args):
         """boardinfo"""
