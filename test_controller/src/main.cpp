@@ -50,6 +50,7 @@ int main(int argc, char *argv[]){
     logger = new Logger(socket);
 
     // TODO: setDancer
+    rpiMgr->setDancer();
 
     // Establish method mapping using strategy patter
     map<string, BaseMethod*> method_map = setup_method_map(socket);

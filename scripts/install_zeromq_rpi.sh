@@ -29,5 +29,5 @@ rm zeromq-4.1.4.tar.gz
 rm -rf zeromq-4.1.4
 
 # set include file
-sudo echo /etc/ld.so.conf >> /usr/local/lib/libzmq.so.5
+sudo echo /etc/ld.so.conf >> /usr/local/lib/libzmq.so.5 # sometimes error
 sudo ldconfig
