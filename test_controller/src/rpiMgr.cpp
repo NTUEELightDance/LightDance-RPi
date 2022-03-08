@@ -90,35 +90,37 @@ void RPiMgr::pause() {
     _playing = false;
 }
 
-void RPiMgr::load(const string& path) {
-    string msg = "loading " + path;
-    cout << "rpiMgr.cpp 62: " << msg << endl;
-    // logger->log(msg.c_str());
+void RPiMgr::load(const string& path){
+    if (_playing){
+        logger->error("Load", "Cannot load while playing");
+        return;
+    }
+    string msg = "Loading " + path;
     ifstream infile(path.c_str());
-    if (!infile) {
-        msg = "failed cannot open file " + path;
-        cout << msg << endl;
-        logger->error(msg.c_str());
+    if (!infile){
+        msg += "\nFailed cannot open file: " + path;
+        logger->error("Load", msg);
         return;
     }
     infile >> _ctrlJson;
     _loaded = true;
+    logger->success("Load", msg);
 }
 
 void RPiMgr::play(const bool& givenStartTime, const unsigned& start, const unsigned& delay) {
     long timeIntoFunc = getsystime();
-    if (!_loaded) {
-        logger->error("play failed, need to load first");
+    if (!_loaded){
+        logger->error("Play", "Play failed, need to load first");
         return;
     }
-    if (_ctrlJson.size() == 0) {
-        logger->log("Warning: control.json is empty\nend of playing\nsuccess");
+    if (_ctrlJson.size() == 0){
+        logger->log("Play", "Warning: control.json is empty\nend of play\n");
         return;
     }
     if (givenStartTime)
         _startTime = start;
-    if (_startTime > (unsigned long)_ctrlJson[_ctrlJson.size() - 1]["start"]) {
-        logger->log("Warning: startTime excess totalTime\nend of playing\nsuccess");
+    if (_startTime > (unsigned long)_ctrlJson[_ctrlJson.size() - 1]["start"]){
+        logger->log("Play", "Warning: startTime excess totalTime\nend of playing");
         return;
     }
 
@@ -126,7 +128,7 @@ void RPiMgr::play(const bool& givenStartTime, const unsigned& start, const unsig
     long hadDelay = getsystime() - timeIntoFunc;
     if (hadDelay < delay)
         this_thread::sleep_for(chrono::microseconds(delay - hadDelay));
-    logger->success("play success");
+    logger->success("Play", "Start play loop thread");
 
     if (_ctrlJson[currentFrameId]["fade"])
         lightOneStatus(getFadeStatus(_startTime, _ctrlJson[currentFrameId], _ctrlJson[currentFrameId + 1]));
@@ -137,7 +139,7 @@ void RPiMgr::play(const bool& givenStartTime, const unsigned& start, const unsig
     _playing = true;
     long startTime = (long)_startTime;
 
-    thread loop(&RPiMgr::play_loop, this, ref(startTime), currentFrameId);
+    thread loop(&RPiMgr::play_loop, this, startTime, currentFrameId);
     loop.detach();
     return;
 }
@@ -151,13 +153,14 @@ void RPiMgr::stop() {
 
 void RPiMgr::statuslight() {
     ifstream infile("./data/status.json");
-    if (!infile) {
-        logger->error("cannot open ./data/status.json");
+    if (!infile){
+        logger->error("Statuslight", "Cannot open ./data/status.json");
         return;
     }
     json status;
     infile >> status;
     lightOneStatus(status);
+    logger->success("Statuslight");
     return;
 }
 
@@ -188,25 +191,26 @@ void RPiMgr::ledtest() {
     return;
 }
 
-void RPiMgr::list() {
-    logger->log("ELPARTS:");
-    for (json::const_iterator it = _ELparts.begin(); it != _ELparts.end(); ++it) {
+void RPiMgr::list(){
+    string mes = "ELPARTS:\n";
+    for (json::const_iterator it = _ELparts.begin(); it != _ELparts.end(); ++ it){
         string part = "\t";
         part += it.key();
         for (int i = 0; i < 15 - it.key().size(); ++i)
             part += " ";
         part += it.value();
-        logger->log(part.c_str());
+        mes += part + "\n";
     }
-    logger->log("LEDPARTS:");
-    for (json::const_iterator it = _LEDparts.begin(); it != _LEDparts.end(); ++it) {
+    mes += "LEDPARTS:\n";
+    for (json::const_iterator it = _LEDparts.begin(); it != _LEDparts.end(); ++ it){
         string part = "\t";
         part += it.key();
         for (int i = 0; i < 15 - it.key().size(); ++i)
             part += " ";
         part += it.value();
-        logger->log(part.c_str());
+        mes += part + "\n";
     }
+    logger->success("List", mes);
     return;
 }
 
@@ -217,12 +221,12 @@ void RPiMgr::quit() {
 // private function
 size_t RPiMgr::getFrameId() const {
     size_t totalFrame = _ctrlJson.size();
-    if (totalFrame == 0) {
-        logger->log("Warning: totalFrame is 0\n");
+    if (totalFrame == 0){
+        // logger->log("Warning: totalFrame is 0\n");
         return 0;
     }
-    if (_startTime > (unsigned long)_ctrlJson[totalFrame - 1]["start"]) {
-        logger->log("Warning: startTime exceed total time\n");
+    if (_startTime > (unsigned long)_ctrlJson[totalFrame - 1]["start"]){
+        // logger->log("Warning: startTime exceed total time\n");
         return 0;
     }
     if (_startTime == 0)
@@ -361,10 +365,11 @@ void RPiMgr::lightOneStatus(const json& status) {
 }
 
 // For threading
-void RPiMgr::play_loop(const long& startTime, size_t currentFrameId) {
+void RPiMgr::play_loop(const long startTime, size_t currentFrameId){
     const long sysStartTime = getsystime();
-    while (_playing) {
-        if (_startTime >= (unsigned long)_ctrlJson[_ctrlJson.size() - 1]["start"]) {
+    int localStartTime = startTime;
+    while (_playing){
+        if (_startTime >= (unsigned long)_ctrlJson[_ctrlJson.size() - 1]["start"]){
             lightOneStatus(_ctrlJson[_ctrlJson.size() - 1]["status"]);
             _playing = false;
             break;
@@ -379,8 +384,8 @@ void RPiMgr::play_loop(const long& startTime, size_t currentFrameId) {
             if (_ctrlJson[currentFrameId]["fade"])
                 lightOneStatus(getFadeStatus(_startTime, _ctrlJson[currentFrameId], _ctrlJson[currentFrameId + 1]));
         }
-
-        _startTime = startTime + (getsystime() - sysStartTime);
+        
+        _startTime = localStartTime + (getsystime() - sysStartTime);
     }
     cout << "end playing\n";
 }

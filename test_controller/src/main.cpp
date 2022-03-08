@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
         // zmq server socket receive data
         socket.recv(&request);
         string inp = request.to_string();
-        cout << "recv: " << inp << endl;
+        // cout << "recv: " << inp << endl;
         transform(inp.begin(), inp.end(), inp.begin(), ::tolower);
         vector<string> cmd = splitStr(inp);
 
@@ -71,10 +71,8 @@ int main(int argc, char *argv[]){
         
         if (method_map.count(cmd[0]) > 0)
             method_map[cmd[0]]->exec(cmd, quit);
-        else {
-            string err = "key not found \"" + cmd[0] + "\"\n";
-            logger->error(err.c_str());
-        }
+        else 
+            logger->error(cmd[0], "key not found");
     }
     return 0;
 }
