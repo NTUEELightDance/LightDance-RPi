@@ -15,7 +15,9 @@
 #include "nlohmann/json.hpp"
 #include "utils.h"
 #include "logger.h"
-// #include "LED_strip.h"
+#include "LED_strip.h"
+#include "OFrgba_to_rgb.h"
+#include "pca2022.h"
 // #include "EL.h"
 
 using namespace std;
@@ -51,11 +53,14 @@ private:
     json LEDJson;
     json _ctrlJson;
     json _ELparts;
+    json _OFparts;
     json _LEDparts;
+    vector<vector<char>> LED_buf;
     atomic<bool> _playing;
     bool _loaded;
     atomic<size_t> _startTime;
-    // LED_Strip* led_strip;
+    LED_Strip* led_strip;
+    PCA* of;
 };
 
 #endif
