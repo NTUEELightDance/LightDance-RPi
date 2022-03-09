@@ -42,11 +42,6 @@ long getsystime() {
     return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-// alpha: 0, 0.1, 0.2, ... , 1
-uint16_t getELBright(const double &alpha) {
-    return convertEL[int(alpha * 10)];
-}
-
 int rgbHexInterpolate(int hex1, int hex2, const float &rate) {
     const float B1 = hex1 % 256;
     hex1 >>= 8;
