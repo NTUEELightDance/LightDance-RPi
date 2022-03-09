@@ -49,7 +49,6 @@ int main(int argc, char *argv[]){
     rpiMgr = new RPiMgr(dancerName);
     logger = new Logger(socket);
 
-    // TODO: setDancer
     rpiMgr->setDancer();
 
     // Establish method mapping using strategy patter

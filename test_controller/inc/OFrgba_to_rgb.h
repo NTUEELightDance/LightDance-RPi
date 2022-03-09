@@ -3,16 +3,11 @@
 #define gamma_g 1.8
 #define gamma_b 1.66
 
-int *OFrgba_to_rgbiref(int R, int G, int B, float a)
-{
-  int *color = new int[3];
-
-  color[0] = int(pow(a/3, gamma_r) * 255);
-  color[1] = int(pow(a/3, gamma_g) * 255);
-  color[2] = int(pow(a/3, gamma_b) * 255);
-  color[3] = R;
-  color[4] = G;
-  color[5] = B;
-
-  return color;
+void OFrgba_to_rgbiref(vector<char>& OF, const char& R, const char& G, const char& B, const float& a) {
+    OF[0] = char(pow(a / 3, gamma_r) * 255);
+    OF[1] = char(pow(a / 3, gamma_g) * 255);
+    OF[2] = char(pow(a / 3, gamma_b) * 255);
+    OF[3] = R;
+    OF[4] = G;
+    OF[5] = B;
 };
