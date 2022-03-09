@@ -7,7 +7,7 @@ from method import *
 from pysocket import ZMQSocket
 
 boardname = "lightdancer-1" # use"lightdancer-1" to test
-cmdlist = ["shutDown","reboot","boardinfo","uploadControl","load","play","pause","stop","statuslight","eltest","ledtest","list","quit","send"] 
+cmdlist = ["reboot","boardinfo","uploadControl","load","play","pause","stop","statuslight","eltest","ledtest","list","quit","send"] 
 
 class Client:
     def __init__(self):
@@ -19,7 +19,6 @@ class Client:
         ######zmq#######
         self.socket = ZMQSocket(port=8000)
         self.METHODS = {
-           "shutDown": ShutDown(),
             "reboot": Reboot(),
             "boardinfo": BoardInfo(),
             "uploadControl": UploadJsonFile(socket=self.socket),
@@ -34,28 +33,40 @@ class Client:
             "quit": Quit(socket=self.socket),
             "send": Send(socket=self.socket),
         }
-        #########
+        ##############
     
     def on_message(self, ws, message):
         cmd , payload = self.ParseServerData(message)
         if (self.Check(ws,cmd,payload) != False):
-            ws.send(json.dumps([
-                cmd,
-                {
-                    "type": "dancer",
-                    "name": boardname,
-                    "OK": True,
-                    "msg": cmd+" success",
-                },
-            ]))
             if (payload == None):
-                self.METHODS[cmd]()
+                response = self.METHODS[cmd]()
+                if (cmd=="boardinfo"):
+                    ws.send(json.dumps(response[1]))
+                else:
+                    self.parse_response(ws,response)   
             else:
-                self.METHODS[cmd](payload)
+                response = self.METHODS[cmd](payload)
+                self.parse_response(ws,response)
             print("Send message to rpi complete")
         else:
             print("Failed")
-        
+
+    def parse_response (self,ws,response):
+        #print(response)  #print the response 
+        command = response.split(" ")[1]
+        status = response.split(" ")[3]
+        ws.send(json.dumps([
+            command,
+            {
+                "type": "dancer",
+                "name": boardname,
+                "OK": True if status == "Success" else False,
+                "msg": command + " " +status,
+            },
+        ]))
+        for i in range (1,len(response.split("\n"))-1):
+            print(response.split("\n")[i])
+
     def on_open(self,ws):
         print("Successfully on_open") #Print Whether successfully on_open
         ws.send(json.dumps([
@@ -64,7 +75,7 @@ class Client:
                     "type": "dancer",
                     "name": boardname,
                     "OK": True,
-                    "msg": "Connect Success",
+                    "msg": "Connect Success!!!!",
                 },
             ]))
     
