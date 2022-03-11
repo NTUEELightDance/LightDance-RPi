@@ -1,4 +1,4 @@
-#include "../inc/utils.h"
+#include "utils.h"
 
 vector<string> splitStr(string &str) {
     vector<string> v;
@@ -60,4 +60,12 @@ int rgbHexInterpolate(int hex1, int hex2, const float &rate) {
     const int Bi = (1 - rate) * B1 + rate * B2;
 
     return (Ri << 16) + (Gi << 8) + Gi;
+}
+
+void colorCode2RGB(int colorCode, char &R, char &G, char &B) {
+    B = colorCode % 256;
+    colorCode >>= 8;
+    G = colorCode % 256;
+    colorCode >>= 8;
+    R = colorCode % 256;
 }

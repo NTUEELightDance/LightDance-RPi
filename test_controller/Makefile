@@ -21,7 +21,12 @@ LIB = -L./$(LIB_DIR) -lbcm2835 -lpca9685 -lzmq -lsodium -lwiringPi -lwiringPiDev
 
 .PHONY: all clean
 
-all: $(BIN)
+all: directories $(BIN)
+
+directories: $(OBJ_DIR)
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
 $(BIN): $(OBJ)
 	$(CXX) $(CFLAGS) $(OPTFLAGS) $(LDFLAGS) $^ $(LIB) -o $(BIN)

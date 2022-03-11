@@ -1,4 +1,4 @@
-#include "../inc/gamma_correction.h"
+#include "gamma_correction.h"
 
 #include <math.h>
 

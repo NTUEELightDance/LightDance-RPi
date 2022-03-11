@@ -17,5 +17,6 @@ bool Str2Unsint(const string &str, unsigned &unsint);
 bool Str2LongInt(const string &str, long &);
 long getsystime();  // Uint: ms
 int rgbHexInterpolate(int hex1, int hex2, const float &rate);
+void colorCode2RGB(int colorCode, char &R, char &G, char &B);
 
 #endif

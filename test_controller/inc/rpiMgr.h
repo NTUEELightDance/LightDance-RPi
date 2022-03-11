@@ -15,20 +15,21 @@
 #include <zmq.hpp>
 
 #include "LED_strip.h"
-#include "OFrgba_to_rgb.h"
 #include "gamma_correction.h"
+#include "ledplayer.h"
 #include "logger.h"
 #include "nlohmann/json.hpp"
-#include "pca2022.h"
+#include "ofplayer.h"
+#include "pca.h"
 #include "utils.h"
 
 using namespace std;
 using json = nlohmann::json;
 
 #define TOTAL_LED_PARTS 16
-#define TOTAL_OF_PARTS 26
-#define OF_PARAMS 6
 #define ALPHA_RANGE 15
+#define NUM_OF 26
+#define NUM_OF_PARAMS 6
 
 extern Logger* logger;
 
@@ -36,9 +37,9 @@ class RPiMgr {
    public:
     RPiMgr();
     RPiMgr(const string& dancerName);
-    bool setDancer();  // TODO: LED_Strip
+    bool setDancer();
     void pause();
-    void load(const string& path = "./asset/");
+    void load(const string& path = "../asset/");
     void play(const bool& givenStartTime, const unsigned& start, const unsigned& delay = 0);
     void stop();
     void statuslight();  // TODO
@@ -49,25 +50,19 @@ class RPiMgr {
 
    private:
     // Functions
-    size_t getLEDId() const;
-    size_t getOFId() const;
-    json getLEDFadeStatus(const size_t& currentTime, const json& firstFrame, const json& secondFrame) const;
-    json getOFFadeStatus(const size_t& currentTime, const json& firstFrame, const json& secondFrame) const;
-    void lightLEDStatus(const json& LEDstatus) const;
-    void lightOFStatus(const json& OFstatus) const;
+    void lightLEDStatus(const LEDPlayer::frame& frame, const int& channel_id);
+    void lightOFStatus(const OFPlayer::frame& frame);
     // For threading
-    void play_loop(const long startTime, size_t currentLEDId, size_t currentOFId);
-    // Testing and reference
-    json getFadeStatus(const size_t& currentTime, const json& firstStatus, const json& second) const;
-    void lightOneStatus(const json& status) const;
+    void play_loop(const long startTime);
 
-    string _dancerName;
-    json _LEDJson;
-    json _OFJson;
-    json _LEDparts;
-    json _OFparts;
+    // Variables
+    vector<LEDPlayer> led_players;
+    OFPlayer of_player;
+
     vector<vector<char>> LED_buf;
     vector<vector<char>> OF_buf;
+
+    string _dancerName;
     atomic<bool> _playing;
     bool _loaded;
     atomic<size_t> _startTime;
