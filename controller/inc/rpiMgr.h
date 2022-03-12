@@ -1,72 +1,73 @@
 #ifndef RPIMGR_H
 #define RPIMGR_H
-#include <string>
-#include <iostream>
+
+#include <math.h>
+#include <sys/time.h>
+#include <time.h>
+
+#include <algorithm>
+#include <atomic>
+#include <chrono>
 #include <fstream>
-#include "nlohmann/json.hpp"
+#include <iostream>
+#include <string>
+#include <thread>
+#include <zmq.hpp>
+
 #include "LED_strip.h"
+#include "gamma_correction.h"
+#include "ledplayer.h"
+#include "logger.h"
+#include "nlohmann/json.hpp"
+#include "ofplayer.h"
+#include "pca.h"
+#include "utils.h"
 
 using namespace std;
 using json = nlohmann::json;
 
-class RPiMgr
-{
-public:
-    RPiMgr(){};
-    RPiMgr(string dancerName) : _dancerName(dancerName){
-    	//cerr << "jizz" << endl;	    
-	ifstream infile("./asset/LED.json", ios::in);
-	if (!infile)
-		cerr << "Error:cannot open LED.json" << endl;
-	else {
-		infile >> LEDJson;
-		for (json::iterator it = LEDJson.begin(); it != LEDJson.end(); ++it) {
-			for (json::iterator it2 = it.value().begin(); it2 != it.value().end(); ++it2) {
-				json j;
-				//*
-				for (int i = 0; i < it2.value().size(); ++i) {
-					uint8_t B = ((unsigned long)it2.value()[i]) % 256;
-					uint8_t G = (((unsigned long)it2.value()[i]) >> 8) % 256;
-					uint8_t R = (((unsigned long)it2.value()[i]) >> 16) % 256;
-					j.push_back(R);
-					j.push_back(G);
-					j.push_back(B);
-				}
-				it2.value() = j;
-				//*/
-				//cout << it2.value() << endl;
-			}
-		}
-	}
-	infile.close();
-    	
-    };
+#define TOTAL_LED_PARTS 16
+#define ALPHA_RANGE 15
+#define NUM_OF 26
+#define NUM_OF_PARAMS 6
+
+extern Logger* logger;
+
+class RPiMgr {
+   public:
+    RPiMgr();
+    RPiMgr(const string& dancerName);
     bool setDancer();
-    void load(const string& path="./data/control.json");
-    void play(bool givenSTartTime, unsigned start, unsigned delay = 0);
+    void pause();
+    void load(const string& path = "../asset/");
+    void play(const bool& givenStartTime, const unsigned& start, const unsigned& delay = 0);
     void stop();
-    void statuslight();
+    void statuslight();  // TODO
+    void LEDtest();      // TODO
+    void OFtest();       // TODO
     void list();
-    void eltest(int id, unsigned brightness);
-    void ledtest();
     void quit();
-    void pause() { _playing = false; }
 
-private:
+   private:
+    // Functions
+    void lightLEDStatus(const LEDPlayer::Frame& frame, const int& channelId);
+    void lightOFStatus(const OFPlayer::Frame& frame);
+    // For threading
+    void playLoop(const long startTime);
+
+    // Variables
+    vector<LEDPlayer> ledPlayers;
+    OFPlayer ofPlayer;
+
+    vector<vector<char>> LEDBuf;
+    vector<vector<char>> OFBuf;
+
     string _dancerName;
-    json _ctrlJson;
-    json _ELparts;
-    json _LEDparts;
-    size_t _startTime;
+    atomic<bool> _playing;
     bool _loaded;
-    bool _playing;
-    json LEDJson;
+    atomic<size_t> _startTime;
     LED_Strip* led_strip;
-
-    //function
-    size_t getFrameId() const;
-    json getFadeStatus(const size_t& currentTime, const json& firstStatus, const json& secondStatus) const;
-    void lightOneStatus(const json& status) const;
+    PCA* of;
 };
 
 #endif
