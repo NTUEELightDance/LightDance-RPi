@@ -13,25 +13,25 @@ using json = nlohmann::json;
 class OFPlayer {
    public:
     // structures for of usage
-    typedef struct of_status {
-        of_status() : colorCode(0), alpha(0) {}
-        of_status(const int& cc, const int& a);
-        of_status& operator=(const of_status&);
+    typedef struct OFStatus {
+        OFStatus() : colorCode(0), alpha(0) {}
+        OFStatus(const int& cc, const int& a);
+        OFStatus& operator=(const OFStatus&);
         unsigned int colorCode;
         unsigned int alpha;
-    } of_status;
-    typedef struct frame {
-        frame() : start(0), fade(false) {}
-        frame(const size_t& _start, const bool& _fade, const json& _status);
+    } OFStatus;
+    typedef struct Frame {
+        Frame() : start(0), fade(false) {}
+        Frame(const size_t& _start, const bool& _fade, const json& _status);
         size_t start;
         bool fade;
-        unordered_map<string, of_status> status;
-    } frame;
+        unordered_map<string, OFStatus> status;
+    } Frame;
 
     void init(const json& OFparts);
     void load(const json& pl);
-    frame getFrame(const size_t& time);
-    bool is_finished() const;
+    Frame getFrame(const size_t& time);
+    bool isFinished() const;
     int getFrameNum() const;
     size_t getEndTime() const;
     int getChannelId(const string& part);
@@ -39,11 +39,11 @@ class OFPlayer {
 
    private:
     size_t getFrameId(const size_t& time);
-    frame getFadeFrame(const size_t& time);
+    Frame getFadeFrame(const size_t& time);
 
-    unordered_map<string, int> channel_id;
-    size_t frame_id;
-    vector<frame> play_list;
+    unordered_map<string, int> channelId;
+    size_t frameId;
+    vector<Frame> playList;
 };
 
 #endif

@@ -50,17 +50,17 @@ class RPiMgr {
 
    private:
     // Functions
-    void lightLEDStatus(const LEDPlayer::frame& frame, const int& channel_id);
-    void lightOFStatus(const OFPlayer::frame& frame);
+    void lightLEDStatus(const LEDPlayer::Frame& frame, const int& channelId);
+    void lightOFStatus(const OFPlayer::Frame& frame);
     // For threading
-    void play_loop(const long startTime);
+    void playLoop(const long startTime);
 
     // Variables
-    vector<LEDPlayer> led_players;
-    OFPlayer of_player;
+    vector<LEDPlayer> ledPlayers;
+    OFPlayer ofPlayer;
 
-    vector<vector<char>> LED_buf;
-    vector<vector<char>> OF_buf;
+    vector<vector<char>> LEDBuf;
+    vector<vector<char>> OFBuf;
 
     string _dancerName;
     atomic<bool> _playing;
