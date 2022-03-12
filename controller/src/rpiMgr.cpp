@@ -1,330 +1,215 @@
-#include <fstream>
-#include <iomanip>
-#include <sys/time.h>
-#include <time.h>
-#include <thread>
-#include <chrono>
-#include <math.h>
-
 #include "rpiMgr.h"
-#include "definition.h"
-#include "utils.h"
-#include "EL.h"
 
-EL el1(16, 0x40), el2(8, 0x60);
+#include "OFrgba_to_rgb.hpp"
 
-bool RPiMgr::setDancer()
-{
-    string path = "./data/dancers/" + _dancerName + ".json";
+RPiMgr::RPiMgr(const string& dancerName) : _dancerName(dancerName) {}
+
+bool RPiMgr::setDancer() {
+    string path = "../data/dancers/" + _dancerName + ".json";
     ifstream infile(path.c_str());
-    if (!infile)
+    if (!infile) {
+        cout << "Cannot open file: " << path << endl;
         return false;
+    }
+
     json j;
     infile >> j;
-    _ELparts.clear();
-    _LEDparts.clear();
-    for (json::iterator it = j.begin(); it != j.end(); ++it)
-    {
-        if (it.key() == "ELPARTS")
-            _ELparts = it.value();
-        if (it.key() == "LEDPARTS")
-            _LEDparts = it.value();
-    }
-    uint8_t strips = _LEDparts.size();
-    uint16_t *nLEDs = new uint16_t[strips];
-    for (json::iterator it = _LEDparts.begin(); it != _LEDparts.end(); ++it)
-    {
-        nLEDs[(int)(it.value()["id"])] = uint16_t(it.value()["len"]);
-        //cout << it.value()["len"] << " ";
-    }
-    //cout << (int)strips << endl;
-    led_strip = new LED_Strip(strips, nLEDs);
+
+    // LED
+    ledPlayers.clear();
+    for (json::iterator it = j["LEDPARTS"].begin(); it != j["LEDPARTS"].end(); ++it)
+        ledPlayers.push_back(LEDPlayer(it.key(), it.value()["len"], it.value()["id"]));
+
+    vector<uint16_t> nLEDs(TOTAL_LED_PARTS);
+    for (auto& lp : ledPlayers)
+        nLEDs[lp.channelId] = lp.len;
+    LEDBuf.resize(nLEDs.size());
+    for (int i = 0; i < LEDBuf.size(); ++i)
+        LEDBuf[i].resize(nLEDs[i] * 3, (char)0);
+
+    // OF
+    ofPlayer.init(j["OFPARTS"]);
+    OFBuf.resize(NUM_OF);
+    for (int i = 0; i < OFBuf.size(); ++i)
+        OFBuf[i].resize(NUM_OF_PARAMS);
+
+    // hardware
+    led_strip = new LED_Strip;
+    led_strip->initialize(nLEDs);
+    of = new PCA;
+
     return true;
 }
 
-void RPiMgr::load(const string &path)
-{
-    cout << "Loading " << path << endl;
-    ifstream infile(path.c_str());
-    if (!infile)
-    {
-        cerr << "Error: failed cannot open file " << path << endl;
-        return;
-    }
-    infile >> _ctrlJson;
-    _loaded = true;
-    cout << "success" << endl;
+void RPiMgr::pause() {
+    _playing = false;
 }
 
-void RPiMgr::play(bool givenStartTime, unsigned start, unsigned delay)
-{
-    /*
-    cout << "givenStartTime: " << givenStartTime << endl;
-    cout << "start: " << start << endl;
-    cout << "delay: " << delay << endl;
-    cout << "_startTime: " << _startTime << endl; 
-    */
-    long timeIntoFunc = getsystime();
-    if (!_loaded)
-    {
-        cerr << "Error: play failed, need to load first" << endl;
+void RPiMgr::load(const string& path) {
+    // While playing, you cannot load
+    if (_playing) {
+        logger->error("Load", "Cannot load while playing");
         return;
     }
-    //  TODO need to handle whenToPlay
+    // Files
+    ifstream LEDfile(path + "LED.json");
+    ifstream OFfile(path + "OF.json");
+    string msg = "Loading dir: " + path;
+    if (!LEDfile) {
+        msg += "\nFailed to open file: " + path + "LED.json";
+        logger->error("Load", msg);
+        return;
+    }
+    if (!OFfile) {
+        msg += "\nFailed to open file: " + path + "OF.json";
+        logger->error("Load", msg);
+        return;
+    }
 
-    if (_ctrlJson.size() == 0)
-    {
-        cout << "Warning: control.json is empty" << endl;
-        cout << "end of playing" << endl;
-        cout << "success" << endl;
+    // LED
+    json _LEDJson, _OFJson;
+    LEDfile >> _LEDJson;
+    for (auto& lp : ledPlayers)
+        lp.load(_LEDJson[lp.name]);
+
+    // OF
+    OFfile >> _OFJson;
+    ofPlayer.load(_OFJson);
+
+    _loaded = true;
+    logger->success("Load", msg);
+}
+
+void RPiMgr::play(const bool& givenStartTime, const unsigned& start, const unsigned& delay) {
+    long timeIntoFunc = getsystime();
+    if (!_loaded) {
+        logger->error("Play", "Play failed, need to load first");
+        return;
+    }
+    size_t totalLedFrame = 0;
+    size_t ledEndTime = 0;
+    for (auto& lp : ledPlayers) {
+        totalLedFrame += lp.getFrameNum();
+        ledEndTime = max(ledEndTime, lp.getEndTime());
+    }
+
+    if (totalLedFrame == 0 && ofPlayer.getFrameNum() == 0) {
+        logger->log("Play", "Warning: LED.json and OF.json is empty\nend of play");
         return;
     }
     if (givenStartTime)
         _startTime = start;
-    if (_startTime > _ctrlJson[_ctrlJson.size() - 1]["start"])
-    {
-        cout << "Warning: startTime excess totalTime" << endl;
-        cout << "end of playing" << endl;
-        cout << "success" << endl;
+
+    if (_startTime > max(ledEndTime, ofPlayer.getEndTime())) {
+        logger->log("Play", "Warning: startTime excess both LED.json and OF.json totalTime\nend of playing");
         return;
     }
-    size_t currentFrameId = getFrameId();
-    //cout << "FrameId: " << currentFrameId << endl;
 
     long hadDelay = getsystime() - timeIntoFunc;
     if (hadDelay < delay)
-        std::this_thread::sleep_for(std::chrono::milliseconds(delay - hadDelay));
-    cout << "start play success" << endl;
+        this_thread::sleep_for(chrono::microseconds(delay - hadDelay));
+    logger->success("Play", "Start play loop thread");
 
-    if (_ctrlJson[currentFrameId]["fade"])
-        lightOneStatus(getFadeStatus(_startTime, _ctrlJson[currentFrameId], _ctrlJson[currentFrameId + 1]));
-    else
-        lightOneStatus(_ctrlJson[currentFrameId]["status"]);
+    for (auto& lp : ledPlayers)
+        lightLEDStatus(lp.getFrame(_startTime), lp.channelId);
+
+    lightOFStatus(ofPlayer.getFrame(_startTime));
 
     long sysStartTime = getsystime();
     _playing = true;
-    // system("/home/pi/playSong.sh");
     long startTime = (long)_startTime;
-    while (_playing)
-    {
-        // cout << "Time: " << _startTime << " FrameId: " << currentFrameId << endl;
-        if (_startTime >= _ctrlJson[_ctrlJson.size() - 1]["start"])
-        {
-            lightOneStatus(_ctrlJson[_ctrlJson.size() - 1]["status"]);
-            cout << "end of playing" << endl;
+
+    cout << "start play loop\n";
+    thread loop(&RPiMgr::playLoop, this, startTime);
+    loop.detach();
+    return;
+}
+
+void RPiMgr::stop() {
+    _playing = false;
+    _startTime = 0;
+    // TODO: set LED and OF to 0
+    return;
+}
+
+void RPiMgr::statuslight() {
+    // TODO
+}
+
+void RPiMgr::LEDtest() {
+    // TODO
+    return;
+}
+
+void RPiMgr::OFtest() {
+    // TODO
+    return;
+}
+
+void RPiMgr::list() {
+    string mes = "LEDPARTS:\n";
+    for (auto& lp : ledPlayers) {
+        string part = "\t";
+        part += lp.name;
+        for (int i = 0; i < 15 - lp.name.size(); ++i)
+            part += ' ';
+        part += "channel: " + to_string(lp.channelId) + ", len: " + to_string(lp.len) + '\n';
+        mes += part;
+    }
+    mes += "OFPARTS:\n";
+    mes += ofPlayer.getParts();
+    logger->success("List", mes);
+    return;
+}
+
+void RPiMgr::quit() {
+    return;
+}
+
+// private function
+void RPiMgr::lightLEDStatus(const LEDPlayer::Frame& frame, const int& channelId) {
+    for (int i = 0; i < frame.status.size(); ++i) {
+        char R, G, B;
+        const float alpha = float(frame.status[i].alpha) / ALPHA_RANGE;
+        colorCode2RGB(frame.status[i].colorCode, R, G, B);
+        LEDrgba_to_rgb(LEDBuf[channelId], i, R, G, B, alpha);
+    }
+
+    led_strip->sendToStrip(LEDBuf);
+}
+
+void RPiMgr::lightOFStatus(const OFPlayer::Frame& frame) {
+    for (auto it = frame.status.begin(); it != frame.status.end(); ++it) {
+        char R, G, B;
+        const float alpha = float(it->second.alpha) / ALPHA_RANGE;
+        colorCode2RGB(it->second.colorCode, R, G, B);
+        OFrgba2rgbiref(OFBuf[ofPlayer.getChannelId(it->first)], R, G, B, alpha);
+    }
+    of->WriteAll(OFBuf);
+}
+
+// For threading
+void RPiMgr::playLoop(const long startTime) {
+    const long sysStartTime = getsystime();
+    const long localStartTime = startTime;
+    while (_playing) {
+        bool isFinished = ofPlayer.isFinished();
+        for (auto& lp : ledPlayers)
+            isFinished &= lp.isFinished();
+        if (isFinished) {
             _playing = false;
             break;
         }
-        if (_startTime >= _ctrlJson[currentFrameId + 1]["start"])
-        {
-            currentFrameId++;
-            if (_ctrlJson[currentFrameId]["fade"])
-                lightOneStatus(getFadeStatus(_startTime, _ctrlJson[currentFrameId], _ctrlJson[currentFrameId + 1]));
-            else
-                lightOneStatus(_ctrlJson[currentFrameId]["status"]);
-        	
-		}
-        else
-        {
-            if (_ctrlJson[currentFrameId]["fade"])
-                lightOneStatus(getFadeStatus(_startTime, _ctrlJson[currentFrameId], _ctrlJson[currentFrameId + 1]));
-        }
-        _startTime = startTime + (getsystime() - sysStartTime);
-	/*
-	if (_startTime % 1000 == 0)
-		cerr << "_startTime: " << _startTime << endl;
-    	*/
-	}
-}
 
-void RPiMgr::stop()
-{
-    _startTime = 0;
-    cout << "stop success" << endl;
-    eltest(-1, 0);
-}
+        // LED
+        for (auto& lp : ledPlayers)
+            lightLEDStatus(lp.getFrame(_startTime), lp.channelId);
 
-void RPiMgr::statuslight()
-{
-    ifstream infile("./data/status.json");
-    if (!infile)
-    {
-        cerr << "Error: cannot open ./data/status.json" << endl;
-        return;
-    }
-    json status;
-    infile >> status;
-    lightOneStatus(status);
-    cout << "success" << endl;
-}
+        // OF
+        lightOFStatus(ofPlayer.getFrame(_startTime));
 
-void RPiMgr::list()
-{
-    cout << "ELPARTS:" << endl;
-    for (json::const_iterator it = _ELparts.begin(); it != _ELparts.end(); ++it)
-    {
-        cout << '\t' << setw(15) << left << it.key()
-             << it.value() << endl;
+        // Calculate startTime
+        _startTime = localStartTime + (getsystime() - sysStartTime);
     }
-    cout << "LEDPARTS:" << endl;
-    for (json::const_iterator it = _LEDparts.begin(); it != _LEDparts.end(); ++it)
-    {
-        cout << '\t' << setw(15) << left << it.key()
-             << it.value() << endl;
-    }
-}
-
-void RPiMgr::eltest(int id, unsigned brightness)
-{
-    if (brightness > 4095) {
-	cerr << "Warning: brightness is bigger than 4095, light brightness as 4095" << endl;
-	brightness = 4095;
-    }
-    if (id < 0) {
-	for (int i = 0; i < 32; ++i) {
-	    if (i  < 16)
-                el1.setEL(i, brightness);
-            else
-                el2.setEL(i % 16, brightness);
-	}
-    	return;
-    }
-    if (id < 16)
-        el1.setEL(id, brightness);
-    else
-        el2.setEL(id % 16, brightness);
-    
-}
-
-void RPiMgr::ledtest()
-{
-}
-
-void RPiMgr::quit()
-{
-    cout << "success" << endl;
-}
-
-size_t
-RPiMgr::getFrameId() const
-{
-    size_t totalFrame = _ctrlJson.size();
-    if (totalFrame == 0)
-    {
-        //cout << "Error: totalFrame is 0" << endl;
-        cout << "Warning: totalFrame is 0" << endl;
-        return 0;
-    }
-    if (_startTime > _ctrlJson[totalFrame - 1]["start"])
-    {
-        cout << "Warning: startTime exceed total time" << endl;
-        return 0;
-    }
-    if (_startTime == 0)
-	    return 0;
-    size_t first = 0;
-    size_t last = totalFrame - 1;
-    while (first <= last)
-    {
-        size_t mid = (first + last) / 2;
-        if (_startTime > _ctrlJson[mid]["start"])
-            first = mid + 1;
-        else if (_startTime == _ctrlJson[mid]["start"])
-            return mid;
-        else
-            last = mid - 1;
-    }
-    if (_ctrlJson[first]["start"] > _startTime)
-        first--;
-    return first;
-}
-
-json RPiMgr::getFadeStatus(const size_t &currentTime, const json &firstFrame, const json &secondFrame) const
-{
-    size_t firstTime = firstFrame["start"];
-    size_t secondTime = secondFrame["start"];
-    float rate = (float)(currentTime - firstTime) / (float)(secondTime - firstTime);
-    json ret;
-    for (json::const_iterator it = firstFrame["status"].begin(); it != firstFrame["status"].end(); ++it)
-    {
-        if (_ELparts.find(it.key()) != _ELparts.end())
-        {
-            json::const_iterator it2 = secondFrame["status"].find(it.key());
-            float temp = (1 - rate) * float(it.value()) + rate * float(it2.value());
-            ret[it.key()] = roundf(temp * 10) / 10.0;
-        }
-        else if (_LEDparts.find(it.key()) != _LEDparts.end())
-        {
-            json LEDinfo;
-            LEDinfo["src"] = it.value()["src"];
-            json::const_iterator it2 = secondFrame["status"].find(it.key());
-            float temp = (1 - rate) * float(it.value()["alpha"]) + rate * float(it2.value()["alpha"]);
-            LEDinfo["alpha"] = roundf(temp * 10) / 10.0;
-            /*
-	    if (it.value()["src"] != it2.value()["src"])
-            {
-                cout << "Error: the src in two fade frame is different" << endl;
-            }
-	    */
-            ret[it.key()] = LEDinfo;
-        }
-        else
-            cerr << "Error: light name " << it.key() << " not found!" << endl;
-    }
-    return ret;
-}
-
-void RPiMgr::lightOneStatus(const json &status) const
-{
-    for (json::const_iterator it = status.begin(); it != status.end(); ++it)
-    {
-        json::const_iterator temp = _ELparts.find(it.key());
-        if (temp != _ELparts.end())
-        {
-            //ELparts
-            uint8_t id = temp.value();
-            uint16_t dt = getELBright(it.value());
-            if (id < 16)
-                el1.setEL(id, dt);
-            else
-                el2.setEL(id % 16, dt);
-            /* 
-	    cout
-                 << "ELlightName: " << it.key() << ", "
-                 << "alpha: " << getELBright(it.value()) << ", "
-                 << "number: " << temp.value() << endl;
-           //*/
-	}
-        else
-        {
-         //*
-            temp = _LEDparts.find(it.key());
-            if (temp != _LEDparts.end())
-            { 
-		//LEDparts
-		uint8_t id = temp.value()["id"];
-		size_t len = temp.value()["len"];
-		//			 size_t len = LEDJson[string(it.value()["src"])].size();
-		//*
-		uint8_t* color = new uint8_t[len];
-		//cout << "id: " << (int)id << endl;
-		//cout << "len: " << (int)len << endl;
-		for (int i = 0; i < len; ++i) {
-			color[i] = uint8_t(LEDJson[it.key()][string(it.value()["src"])][i]);
-			//	cout << (int)color[i] << endl;
-		}
-                led_strip->sendToStrip(id, color);
-		/*
-		cout << "LEDlightName: " << it.key() << ", "
-                     << "alpha: " << (it.value()["alpha"]) << ", "
-                     << "number: " << temp.value()["id"] << ", "
-                     << "src: " << (it.value()["src"]) << " "  << LEDJson[string(it.key())][string(it.value()["src"])] << endl;
-            	//*/
-	    	delete[] color;
-	    }
-            else
-                cerr << "Error: lightName " << it.key() << " not found!" << endl;
-        //*/
-        }
-    }
+    cout << "end playing\n";
 }

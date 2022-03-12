@@ -1,4 +1,4 @@
-# 2021-LightDance-RPi
+# 2022-LightDance-RPi
 
 ## Installation
 ### Setup zeromq
@@ -42,12 +42,13 @@ bash scripts/py_lint.sh
 ### Run Controller
 Bulid
 ```
-bash compile.sh
+cd controller
+make
 ```
 
 Run
 ```
-./test_controller/controller
+sudo ./controller/controller <dancerName>
 ```
 
 ### Run CLI
