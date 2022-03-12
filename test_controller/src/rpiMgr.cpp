@@ -183,7 +183,7 @@ void RPiMgr::lightOFStatus(const OFPlayer::Frame& frame) {
         char R, G, B;
         const float alpha = float(it->second.alpha) / ALPHA_RANGE;
         colorCode2RGB(it->second.colorCode, R, G, B);
-        OFrgba_to_rgbiref(OFBuf[ofPlayer.getChannelId(it->first)], R, G, B, alpha);
+        OFrgba2rgbiref(OFBuf[ofPlayer.getChannelId(it->first)], R, G, B, alpha);
     }
     of->WriteAll(OFBuf);
 }

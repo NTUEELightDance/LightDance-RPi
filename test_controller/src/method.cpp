@@ -58,7 +58,7 @@ void StatusLight::method(const vector<string>& cmd, bool& quit) {
 OFtest::OFtest(zmq::socket_t& socket) : BaseMethod(socket){};
 void OFtest::method(const vector<string>& cmd, bool& quit) {
     // rpiMgr->OFtest();
-    logger->success("Eltest");
+    logger->success("OFtest");
 };
 
 LEDtest::LEDtest(zmq::socket_t& socket) : BaseMethod(socket){};
