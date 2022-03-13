@@ -181,7 +181,7 @@ void RPiMgr::lightLEDStatus(const LEDPlayer::Frame& frame, const int& channelId)
 void RPiMgr::lightOFStatus(const OFPlayer::Frame& frame) {
     for (auto it = frame.status.begin(); it != frame.status.end(); ++it) {
         char R, G, B;
-        const float alpha = float(it->second.alpha);
+        const float alpha = float(it->second.alpha) / ALPHA_RANGE;
         colorCode2RGB(it->second.colorCode, R, G, B);
         OFrgba2rgbiref(OFBuf[ofPlayer.getChannelId(it->first)], R, G, B, alpha);
     }
