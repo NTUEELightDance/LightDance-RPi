@@ -30,7 +30,7 @@ cmdlist = [
 class Client:
     def __init__(self):
         super(Client, self).__init__()
-        self.url = "ws://localhost:8082"
+        self.url = "ws://192.168.10.12:8082"
         self.cmd = ""
         self.paylaod = {}
 
@@ -79,7 +79,7 @@ class Client:
         print("Message from server:")
         print(message)
         try:
-            self.dictclient = json.loads(message)
+            message = json.loads(message)
             cmd = message["command"]
             payload = None
             if cmd == "play":
@@ -96,6 +96,8 @@ class Client:
             elif cmd == "uploadControl":
                 payload = None
                 # TODO
+            elif cmd == "load":
+                payload = {"path": "../data/"}
 
             return cmd, payload
         except:
@@ -117,7 +119,7 @@ class Client:
         info = response[-1]
         if command == "boardInfo":
             info = {
-                "type": "RPI",
+                "type": "RPi",
                 "dancerName": response[5],
                 "ip": response[6],
                 "hostName": response[7],
@@ -146,7 +148,7 @@ class Client:
                     "payload": {
                         "success": response[3] == "Success",
                         "info": {
-                            "type": "RPI",
+                            "type": "RPi",
                             "dancerName": response[5],
                             "ip": response[6],
                             "hostName": response[7],
@@ -164,5 +166,6 @@ class Client:
     #     print("The error is %s" %error)
 
 
-Test = Client()
-Test.startclient()
+if __name__ == "__main__":
+    Test = Client()
+    Test.startclient()
