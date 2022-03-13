@@ -30,7 +30,7 @@ cmdlist = [
 class Client:
     def __init__(self):
         super(Client, self).__init__()
-        self.url = "ws://localhost:8080"
+        self.url = "ws://localhost:8082"
         self.cmd = ""
         self.paylaod = {}
 
