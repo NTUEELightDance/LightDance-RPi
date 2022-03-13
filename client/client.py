@@ -10,19 +10,20 @@ from pysocket import ZMQSocket
 
 boardname = "lightdancer-1"  # use"lightdancer-1" to test
 cmdlist = [
-    "reboot",
-    "boardinfo",
+    "sync",
+    "uploadLed",
     "uploadControl",
     "load",
     "play",
     "pause",
     "stop",
-    "statuslight",
-    "eltest",
-    "ledtest",
-    "list",
-    "quit",
-    "send",
+    "lightCurrentStatus",
+    "kick",
+    "shutDown",
+    "reboot",
+    "boardInfo",
+    "init",
+    "test",
 ]
 
 
@@ -37,14 +38,13 @@ class Client:
         self.socket = ZMQSocket(port=8000)
         self.METHODS = {
             "reboot": Reboot(),
-            "boardinfo": BoardInfo(),
+            "boardInfo": BoardInfo(),
             "uploadControl": UploadJsonFile(socket=self.socket),
             "load": Load(socket=self.socket),
             "play": Play(socket=self.socket),
             "pause": Pause(socket=self.socket),
             "stop": Stop(socket=self.socket),
             "statuslight": StatusLight(socket=self.socket),
-            "eltest": ELTest(socket=self.socket),
             "ledtest": LEDTest(socket=self.socket),
             "list": List(socket=self.socket),
             "quit": Quit(socket=self.socket),
@@ -54,39 +54,39 @@ class Client:
 
     def on_message(self, ws, message):
         cmd, payload = self.ParseServerData(message)
-        if self.Check(ws, cmd, payload) != False:
-            if payload == None:
-                response = self.METHODS[cmd]()
-                if cmd == "boardinfo":
-                    ws.send(json.dumps(response[1]))
-                else:
-                    self.parse_response(ws, response)
-            else:
-                response = self.METHODS[cmd](payload)
-                self.parse_response(ws, response)
+        if self.Check(ws, cmd, payload):
+            response = self.METHODS[cmd](payload)
+            self.parse_response(ws, response)
             print("Send message to rpi complete")
         else:
             print("Failed")
 
-    def parse_response(self, ws, response):
-        # print(response)  #print the response
-        command = response.split(" ")[1]
-        status = response.split(" ")[3]
+    def parse_response(self, ws, response: str):
+        print(response)  # print the response
+        response = response.split(" ")
+        command = response[1]
+        status = response[3]
+
+        info = response[-1]
+        if command == "boardInfo":
+            info = {
+                "type": "RPI",
+                "dancerName": response[5],
+                "ip": response[6],
+                "hostName": response[7],
+            }
+        elif command == "sync":
+            # TODO
+            pass
+
         ws.send(
             json.dumps(
-                [
-                    command,
-                    {
-                        "type": "dancer",
-                        "name": boardname,
-                        "OK": True if status == "Success" else False,
-                        "msg": command + " " + status,
-                    },
-                ]
+                {
+                    "command": command,
+                    "payload": {"success": status == "Success", "info": info},
+                }
             )
         )
-        for i in range(1, len(response.split("\n")) - 1):
-            print(response.split("\n")[i])
 
     def on_open(self, ws):
         print("Successfully on_open")  # Print Whether successfully on_open
@@ -105,7 +105,7 @@ class Client:
         )
 
     def on_close(self, ws):
-        print("close")
+        print(f"{os.name} closed")
 
     ####### on_error ########
     # def on_error(self,ws,error):
@@ -127,35 +127,36 @@ class Client:
                 print("Failed to connect")
 
     def ParseServerData(self, message):
-        # print(message)
+        print("Message from server:")
+        print(message)
         try:
-            # print(type(message))
             self.dictclient = json.loads(message)
-            if len(self.dictclient) != 1:
-                return self.dictclient["cmd"], self.dictclient["payload"]
-            else:
-                return self.dictclient["cmd"], None
+            cmd = message["command"]
+            payload = None
+            if cmd == "play":
+                payload = {
+                    "start_time": message["payload"]["startTime"],
+                    "delay_time": message["payload"]["delay"],
+                }
+            elif cmd == "lightCurrentStatus":
+                payload = None
+                # TODO
+            elif cmd == "uploadLed":
+                payload = None
+                # TODO
+            elif cmd == "uploadControl":
+                payload = None
+                # TODO
+
+            return cmd, payload
         except:
-            print("Failed at json")
+            print("Invalid json format:")
+            print(message)
 
     def Check(self, ws, cmd, payload):
-        for i in cmdlist:
-            if i == cmd:
-                return True
-        print("Check Failed")
-        ws.send(
-            json.dumps(
-                [
-                    cmd,
-                    {
-                        "type": "dancer",
-                        "name": boardname,
-                        "OK": False,
-                        "msg": "This Command doesn't exist",
-                    },
-                ]
-            )
-        )
+        if cmd in cmdlist:
+            return True
+        print(f"{cmd} not found in cmdlist: {cmdlist}")
         return False
 
 
