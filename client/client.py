@@ -52,65 +52,6 @@ class Client:
         }
         ##############
 
-    def on_message(self, ws, message):
-        cmd, payload = self.ParseServerData(message)
-        if self.Check(ws, cmd, payload):
-            response = self.METHODS[cmd](payload)
-            self.parse_response(ws, response)
-            print("Send message to rpi complete")
-        else:
-            print("Failed")
-
-    def parse_response(self, ws, response: str):
-        print(response)  # print the response
-        response = response.split(" ")
-        command = response[1]
-        status = response[3]
-
-        info = response[-1]
-        if command == "boardInfo":
-            info = {
-                "type": "RPI",
-                "dancerName": response[5],
-                "ip": response[6],
-                "hostName": response[7],
-            }
-        elif command == "sync":
-            # TODO
-            pass
-
-        ws.send(
-            json.dumps(
-                {
-                    "command": command,
-                    "payload": {"success": status == "Success", "info": info},
-                }
-            )
-        )
-
-    def on_open(self, ws):
-        print("Successfully on_open")  # Print Whether successfully on_open
-        ws.send(
-            json.dumps(
-                [
-                    "boardInfo",
-                    {
-                        "type": "dancer",
-                        "name": boardname,
-                        "OK": True,
-                        "msg": "Connect Success!!!!",
-                    },
-                ]
-            )
-        )
-
-    def on_close(self, ws):
-        print(f"{os.name} closed")
-
-    ####### on_error ########
-    # def on_error(self,ws,error):
-    #     print("The error is %s" %error)
-
     def startclient(self):
         while True:
             try:
@@ -120,11 +61,19 @@ class Client:
                     on_open=self.on_open,
                     on_close=self.on_close,
                 )
-                # on_error = self.on_error)
                 ws.run_forever()
                 time.sleep(3)
             except websocket.WebSocketException:
                 print("Failed to connect")
+
+    def on_message(self, ws, message):
+        cmd, payload = self.ParseServerData(message)
+        if self.Check(ws, cmd, payload):
+            response = self.METHODS[cmd](payload)
+            self.parse_response(ws, response)
+            print("Send message to rpi complete")
+        else:
+            print("Failed")
 
     def ParseServerData(self, message):
         print("Message from server:")
@@ -158,6 +107,61 @@ class Client:
             return True
         print(f"{cmd} not found in cmdlist: {cmdlist}")
         return False
+
+    def parse_response(self, ws, response: str):
+        print(response)  # print the response
+        response = response.split(" ")
+        command = response[1]
+        status = response[3]
+
+        info = response[-1]
+        if command == "boardInfo":
+            info = {
+                "type": "RPI",
+                "dancerName": response[5],
+                "ip": response[6],
+                "hostName": response[7],
+            }
+        elif command == "sync":
+            # TODO
+            pass
+
+        ws.send(
+            json.dumps(
+                {
+                    "command": command,
+                    "payload": {"success": status == "Success", "info": info},
+                }
+            )
+        )
+
+    def on_open(self, ws):
+        print("Successfully on_open")  # Print Whether successfully on_open
+        response = self.METHODS["boardInfo"]()
+        response = response.split(" ")
+        ws.send(
+            json.dumps(
+                {
+                    "command": "boardInfo",
+                    "payload": {
+                        "success": response[3] == "Success",
+                        "info": {
+                            "type": "RPI",
+                            "dancerName": response[5],
+                            "ip": response[6],
+                            "hostName": response[7],
+                        },
+                    },
+                }
+            )
+        )
+
+    def on_close(self, ws):
+        print(f"{os.name} closed")
+
+    ####### on_error ########
+    # def on_error(self,ws,error):
+    #     print("The error is %s" %error)
 
 
 Test = Client()
