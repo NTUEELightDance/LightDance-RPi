@@ -90,6 +90,7 @@ class Client:
                     "start_time": message["payload"]["startTime"],
                     "delay_time": message["payload"]["delay"],
                 }
+                # TODO: calculate message["payload"]["sysTime"]
             elif cmd == "lightCurrentStatus":
                 payload = None
                 # TODO

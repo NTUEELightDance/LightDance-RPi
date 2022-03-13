@@ -5,6 +5,6 @@ from .baseMethod import BaseMethod
 class Play(BaseMethod):
     def method(self, payload=None):
         response = self.socket.send(
-            ["play", payload["start_time"], payload["delay_time"]]
+            ["play", "%d %d" % (payload["start_time"], payload["delay_time"])]
         )
         return response
