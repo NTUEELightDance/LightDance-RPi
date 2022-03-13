@@ -198,6 +198,7 @@ void RPiMgr::playLoop(const long startTime) {
             isFinished &= lp.isFinished();
         if (isFinished) {
             _playing = false;
+            _startTime = 0;
             break;
         }
 
