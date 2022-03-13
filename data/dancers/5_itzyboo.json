@@ -1,0 +1,70 @@
+{
+	"OFPARTS": {
+		"Calf_R": 0,
+        "Thigh_R": 1,
+        "LymphaticDuct_R": 2,
+        "Waist_R": 25,
+        "Arm_R": 5,
+        "Shoulder_R": 6,
+        "CollarBone_R": 7,
+        "Chest": 17,
+        "Visor": 19,
+        "Ear_R": 21,
+        "Calf_L": 23,
+        "Thigh_L": 9,
+        "LymphaticDuct_L": 13,
+        "Waist_L": 14,
+        "CollarBone_L": 3,
+        "Arm_L": 20,
+        "Ear_L": 4,
+        "Shoulder_L": 11,
+        "Glove_L": 18,
+        "Glove_R": 12
+	},
+	"LEDPARTS": {
+        "Glove_L_LED": {
+            "id":0,
+            "len":2
+        },
+        "Glove_R_LED": {
+            "id":1,
+            "len":2
+        },
+        "Visor_LED": {
+            "id":2,
+            "len":2
+        },
+        "CollarBone_R_LED": {
+            "id":3,
+            "len":2
+        },
+        "CollarBone_L_LED": {
+            "id":4,
+            "len":2
+        },
+        "Shoulder_R_LED": {
+            "id":5,
+            "len":2
+        },
+        "Shoulder_L_LED": {
+            "id":6,
+            "len":2
+        },
+        "Hand_R_LED": {
+            "id":7,
+            "len":2
+        },
+        "Hand_L_LED": {
+            "id":8,
+            "len":2
+        },
+        "Shoe_L_LED": {
+            "id":9,
+            "len":2
+        },
+        "Shoe_R_LED": {
+            "id":10,
+            "len":2
+        }
+	}
+}

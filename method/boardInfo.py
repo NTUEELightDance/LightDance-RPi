@@ -15,7 +15,7 @@ class BoardInfo(BaseMethod):
         # return info
         if len(sys.argv) == 2:
             dancerName = sys.argv[1]
-        dancerName = os.name
+        dancerName = "10_dontstop"
         ip = socket.gethostbyname(socket.gethostname())
         hostName = os.name
         return f"[ boardInfo / Success ] {dancerName} {ip} {hostName}"
