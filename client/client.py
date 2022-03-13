@@ -2,6 +2,7 @@
 import websocket
 import os
 import sys
+import time
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 from method import *
@@ -121,6 +122,7 @@ class Client:
                 )
                 # on_error = self.on_error)
                 ws.run_forever()
+                time.sleep(3)
             except websocket.WebSocketException:
                 print("Failed to connect")
 
