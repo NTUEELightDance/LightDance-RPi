@@ -12,7 +12,7 @@ boardname = "lightdancer-1"  # use"lightdancer-1" to test
 cmdlist = [
     "sync",
     "uploadLed",
-    "uploadControl",
+    "uploadOf",
     "load",
     "play",
     "pause",
@@ -25,6 +25,8 @@ cmdlist = [
     "init",
     "test",
 ]
+LED_SAVE_DIR = "../data/LED_test.json"
+OF_SAVE_DIR = "../data/OF_test.json"
 
 
 class Client:
@@ -39,7 +41,7 @@ class Client:
         self.METHODS = {
             "reboot": Reboot(),
             "boardInfo": BoardInfo(),
-            "uploadControl": UploadJsonFile(socket=self.socket),
+            "uploadOf": UploadJsonFile(socket=self.socket),
             "load": Load(socket=self.socket),
             "play": Play(socket=self.socket),
             "pause": Pause(socket=self.socket),
@@ -49,6 +51,7 @@ class Client:
             "list": List(socket=self.socket),
             "quit": Quit(socket=self.socket),
             "send": Send(socket=self.socket),
+            "uploadLed": UploadJsonFile(socket=self.socket),
         }
         ##############
 
@@ -91,11 +94,9 @@ class Client:
                 payload = None
                 # TODO
             elif cmd == "uploadLed":
-                payload = None
-                # TODO
-            elif cmd == "uploadControl":
-                payload = None
-                # TODO
+                payload = {"file": message["payload"], "dir": LED_SAVE_DIR}
+            elif cmd == "uploadOf":
+                payload = {"file": message["payload"], "dir": OF_SAVE_DIR}
             elif cmd == "load":
                 payload = {"path": "../data/"}
 
@@ -116,7 +117,7 @@ class Client:
         command = response[1]
         status = response[3]
 
-        info = response[-1]
+        info = " ".join(response[5:]) if len(response) > 5 else "good!!!"
         if command == "boardInfo":
             info = {
                 "type": "RPi",
