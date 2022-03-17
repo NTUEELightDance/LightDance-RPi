@@ -86,9 +86,9 @@ int PCA995X::SetRGB(int led_address, int Rduty, int Gduty, int Bduty, int Riref,
     IREF[0] = Riref;
     IREF[1] = Giref;
     IREF[2] = Biref;
-    int temp01 = SetPWMAI(led_address * NUM_AN_OF_NEED_PWM + pwm0Reg, PWM, NUM_AN_OF_NEED_PWM);
-    int temp02 = SetIREFAI(led_address * NUM_AN_OF_NEED_IREF + iref0Reg, IREF, NUM_AN_OF_NEED_IREF);
-    return temp01 && temp02;
+    int temp01 = SetPWMAI(led_address * NUM_AN_OF_NEED_PWM, PWM, NUM_AN_OF_NEED_PWM);
+    int temp02 = SetIREFAI(led_address * NUM_AN_OF_NEED_IREF, IREF, NUM_AN_OF_NEED_IREF);
+    return !(!temp01 && !temp02);
 };
 void PCA995X::GetAll() {
     for (int i = 0; i < GetLedChannelNum() * 3; i++) {

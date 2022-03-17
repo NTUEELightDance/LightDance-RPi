@@ -107,8 +107,8 @@ enum {
 // where value equals to 9955 refering to PCA9955B and that of 9956 refering to PCA9956
 // the second element means the I2C address of pca, which will be value between 0 ~ 127
 const int pcaTypeAddr[NUM_PCA][2] = {
-    {_PCA9955B, PCA_ADDR_1},
-    {_PCA9956, PCA_ADDR_2},
+    {_PCA9956, PCA_ADDR_1},
+    {_PCA9955B, PCA_ADDR_2},
     {_PCA9955B, PCA_ADDR_3},
     {_PCA9956, PCA_ADDR_4}};
 
@@ -171,10 +171,11 @@ int PCA::WriteChannel(std::vector<char> &data, int channel) {
         return DATA_SIZE_ERROR;
 
     for (int i = 0; i < PCAs.size(); i++) {
-        if (channel > PCAs[i].GetLedChannelNum())
+        if (channel >= PCAs[i].GetLedChannelNum())
             channel -= PCAs[i].GetLedChannelNum();
         else
-            return PCAs[i].SetRGB(PCAs[i].GetLedChannelNum() - 1 - channel, data[2], data[1], data[0], data[5], data[4], data[3]);
+            return PCAs[i].SetRGB(PCAs[i].GetLedChannelNum() - 1 - channel, data[0], data[1], data[2], data[3], data[4], data[5]);
+
     }
     return 0;
 };
