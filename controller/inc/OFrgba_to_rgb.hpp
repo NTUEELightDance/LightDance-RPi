@@ -14,9 +14,9 @@ void OFrgba2rgbiref(std::vector<char>& OF, const char& R, const char& G, const c
     OF[0] = char(pow(a / 3, gamma_r) * 255);
     OF[1] = char(pow(a / 3, gamma_g) * 255);
     OF[2] = char(pow(a / 3, gamma_b) * 255);
-    OF[3] = R;
+    OF[3] = B;
     OF[4] = G;
-    OF[5] = B;
+    OF[5] = R;
 };
 
 #endif
