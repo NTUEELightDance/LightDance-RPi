@@ -119,14 +119,14 @@ void Pause::method(const vector<string>& cmd, bool& quit) {
     logger->success("Pause");
 };
 
-DarkAll::DarkAll(zmq::socket_t& socket) : BaseMethod(socket) {}
+DarkAll::DarkAll(zmq::socket_t& socket) : BaseMethod(socket){};
 void DarkAll::method(const vector<string>& cmd, bool& quit) {
     rpiMgr->darkAll();
     logger->success("DarkAll");
-}
+};
 
-LightAll::LightAll(zmq::socket_t& socket) : BaseMethod(socket) {}
-void DarkAll::method(const vector<string>& cmd, bool& quit) {
+LightAll::LightAll(zmq::socket_t& socket) : BaseMethod(socket){};
+void LightAll::method(const vector<string>& cmd, bool& quit) {
     if (cmd.size() != 3) {
         logger->error("LightAll", "Usage: <colorCode> <alpha>");
         return;
@@ -142,4 +142,4 @@ void DarkAll::method(const vector<string>& cmd, bool& quit) {
     }
     rpiMgr->lightAll(colorCode, alpha);
     logger->success("LightAll");
-}
+};

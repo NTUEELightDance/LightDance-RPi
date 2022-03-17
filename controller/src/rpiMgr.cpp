@@ -140,7 +140,7 @@ void RPiMgr::LEDtest(const int& channel, int colorCode, int alpha) {
     // Will change led buf;
     const float _alpha = float(alpha) / ALPHA_RANGE;
     char R, G, B;
-    colorCode2RGB(colorCode2RGB, R, G, B);
+    colorCode2RGB(colorCode, R, G, B);
     ledDark();
     for (int i = 0; i < LEDBuf[channel].size() / 3; ++i)
         LEDrgba_to_rgb(LEDBuf[channel], i, R, G, B, _alpha);
@@ -150,12 +150,13 @@ void RPiMgr::LEDtest(const int& channel, int colorCode, int alpha) {
 
 void RPiMgr::OFtest(const int& channel, int colorCode, int alpha) {
     // Will not change of buf
-    vector<char> buf(6);
+    // vector<char> buf(6);
     char R, G, B;
     colorCode2RGB(colorCode, R, G, B);
-    // ofDark();
-    OFrgba2rgbiref(buf, R, G, B, alpha);
-    of->WriteChannel(buf, channel);
+    ofDark();
+    // OFrgba2rgbiref(buf, R, G, B, alpha);
+    OFrgba2rgbiref(OFBuf[channel], R, G, B, alpha);
+    of->WriteAll(OFBuf);
     return;
 }
 

@@ -106,14 +106,14 @@ class DarkAll : public BaseMethod {
 
    protected:
     void method(const vector<string>& cmd, bool& quit);
-}
+};
 
 class LightAll : public BaseMethod {
    public:
-    DarkAll(zmq::socket_t& socket);
+    LightAll(zmq::socket_t& socket);
 
    protected:
     void method(const vector<string>& cmd, bool& quit);
-}
+};
 
 #endif
