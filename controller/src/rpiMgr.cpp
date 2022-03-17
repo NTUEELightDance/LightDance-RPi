@@ -150,13 +150,14 @@ void RPiMgr::LEDtest(const int& channel, int colorCode, int alpha) {
 
 void RPiMgr::OFtest(const int& channel, int colorCode, int alpha) {
     // Will not change of buf
-    // vector<char> buf(6);
+    vector<char> buf(6);
     char R, G, B;
     colorCode2RGB(colorCode, R, G, B);
-    ofDark();
-    // OFrgba2rgbiref(buf, R, G, B, alpha);
-    OFrgba2rgbiref(OFBuf[channel], R, G, B, alpha);
-    of->WriteAll(OFBuf);
+    // ofDark();
+    OFrgba2rgbiref(buf, R, G, B, alpha);
+    // OFrgba2rgbiref(OFBuf[channel], R, G, B, alpha);
+    // of->WriteAll(OFBuf);
+    of->WriteChannel(buf, channel);
     return;
 }
 
