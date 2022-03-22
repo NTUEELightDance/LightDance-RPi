@@ -1,8 +1,10 @@
 from .baseMethod import *
 from .boardInfo import *
+from .darkall import *
 from .eltest import *
 from .kick import *
 from .ledtest import *
+from .lightall import *
 from .list import *
 from .load import *
 from .oftest import *
@@ -16,4 +18,5 @@ from .shutDown import *
 from .statuslight import *
 from .stop import *
 from .sync import *
+from .traversal import *
 from .uploadJsonFile import *
