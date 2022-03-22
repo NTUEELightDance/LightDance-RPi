@@ -100,4 +100,20 @@ class Pause : public BaseMethod {
     void method(const vector<string>& cmd, bool& quit);
 };
 
+class DarkAll : public BaseMethod {
+   public:
+    DarkAll(zmq::socket_t& socket);
+
+   protected:
+    void method(const vector<string>& cmd, bool& quit);
+};
+
+class LightAll : public BaseMethod {
+   public:
+    LightAll(zmq::socket_t& socket);
+
+   protected:
+    void method(const vector<string>& cmd, bool& quit);
+};
+
 #endif

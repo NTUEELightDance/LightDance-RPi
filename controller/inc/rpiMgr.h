@@ -42,16 +42,20 @@ class RPiMgr {
     void load(const string& path = "../asset/");
     void play(const bool& givenStartTime, const unsigned& start, const unsigned& delay = 0);
     void stop();
-    void statuslight();  // TODO
-    void LEDtest();      // TODO
-    void OFtest();       // TODO
+    void statuslight();                                          // TODO
+    void LEDtest(const int& channel, int colorCode, int alpha);  // Will change led buf
+    void OFtest(const int& channel, int colorCode, int alpha);   // Will not change of buf
     void list();
     void quit();
+    void darkAll();
+    void lightAll(int colorCode, int alpha);  // Will change led buf, but not changing of buf
 
    private:
     // Functions
     void lightLEDStatus(const LEDPlayer::Frame& frame, const int& channelId);
     void lightOFStatus(const OFPlayer::Frame& frame);
+    void ledDark();
+    void ofDark();
     // For threading
     void playLoop(const long startTime);
 

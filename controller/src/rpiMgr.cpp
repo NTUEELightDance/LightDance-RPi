@@ -128,7 +128,7 @@ void RPiMgr::play(const bool& givenStartTime, const unsigned& start, const unsig
 void RPiMgr::stop() {
     _playing = false;
     _startTime = 0;
-    // TODO: set LED and OF to 0
+    darkAll();
     return;
 }
 
@@ -136,13 +136,28 @@ void RPiMgr::statuslight() {
     // TODO
 }
 
-void RPiMgr::LEDtest() {
-    // TODO
+void RPiMgr::LEDtest(const int& channel, int colorCode, int alpha) {
+    // Will change led buf;
+    const float _alpha = float(alpha) / ALPHA_RANGE;
+    char R, G, B;
+    colorCode2RGB(colorCode, R, G, B);
+    ledDark();
+    for (int i = 0; i < LEDBuf[channel].size() / 3; ++i)
+        LEDrgba_to_rgb(LEDBuf[channel], i, R, G, B, _alpha);
+    led_strip->sendToStrip(LEDBuf);
     return;
 }
 
-void RPiMgr::OFtest() {
-    // TODO
+void RPiMgr::OFtest(const int& channel, int colorCode, int alpha) {
+    // Will not change of buf
+    vector<char> buf(6);
+    char R, G, B;
+    colorCode2RGB(colorCode, R, G, B);
+    // ofDark();
+    OFrgba2rgbiref(buf, R, G, B, alpha);
+    // OFrgba2rgbiref(OFBuf[channel], R, G, B, alpha);
+    // of->WriteAll(OFBuf);
+    of->WriteChannel(buf, channel);
     return;
 }
 
@@ -166,6 +181,25 @@ void RPiMgr::quit() {
     return;
 }
 
+void RPiMgr::darkAll() {
+    ledDark();
+    ofDark();
+}
+
+void RPiMgr::lightAll(int colorCode, int alpha) {
+    char R, G, B;
+    const float _alpha = float(alpha) / ALPHA_RANGE;
+    colorCode2RGB(colorCode, R, G, B);
+    for (int i = 0; i < LEDBuf.size(); ++i)
+        for (int j = 0; j < LEDBuf[i].size(); ++j)
+            LEDrgba_to_rgb(LEDBuf[i], j, R, G, B, _alpha);
+    for (int i = 0; i < OFBuf.size(); ++i)
+        OFrgba2rgbiref(OFBuf[i], R, G, B, alpha);
+    led_strip->sendToStrip(LEDBuf);
+    of->WriteAll(OFBuf);
+    return;
+}
+
 // private function
 void RPiMgr::lightLEDStatus(const LEDPlayer::Frame& frame, const int& channelId) {
     for (int i = 0; i < frame.status.size(); ++i) {
@@ -185,6 +219,20 @@ void RPiMgr::lightOFStatus(const OFPlayer::Frame& frame) {
         colorCode2RGB(it->second.colorCode, R, G, B);
         OFrgba2rgbiref(OFBuf[ofPlayer.getChannelId(it->first)], R, G, B, alpha);
     }
+    of->WriteAll(OFBuf);
+}
+
+void RPiMgr::ledDark() {
+    for (int i = 0; i < LEDBuf.size(); ++i)
+        for (int j = 0; j < LEDBuf[i].size(); ++j)
+            LEDBuf[i][j] = 0;
+    led_strip->sendToStrip(LEDBuf);
+}
+
+void RPiMgr::ofDark() {
+    for (int i = 0; i < OFBuf.size(); ++i)
+        for (int j = 0; j < OFBuf[i].size(); ++j)
+            OFBuf[i][j] = 0;
     of->WriteAll(OFBuf);
 }
 
