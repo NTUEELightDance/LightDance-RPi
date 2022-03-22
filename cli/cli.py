@@ -1,7 +1,6 @@
+import json
 import os
 import sys
-import json
-
 
 import cmd2
 from cmd2 import Fg, argparse, style
@@ -46,7 +45,9 @@ class LightDanceCLI(cmd2.Cmd):
 
         shortcuts = dict(cmd2.DEFAULT_SHORTCUTS)
 
-        super().__init__(shortcuts=shortcuts, startup_script="./cli/startup", allow_cli_args=False)
+        super().__init__(
+            shortcuts=shortcuts, startup_script="./cli/startup", allow_cli_args=False
+        )
 
         # ZMQ methods init
         self.socket = ZMQSocket(port=8000)
@@ -70,6 +71,7 @@ class LightDanceCLI(cmd2.Cmd):
 
         # vars init
         self.load = False
+        self.control_path = "./data"
         self.dancer = sys.argv[1]
         self.partMap = {}
 
@@ -104,7 +106,7 @@ class LightDanceCLI(cmd2.Cmd):
     # load [path]
     load_parser = cmd2.Cmd2ArgumentParser()
     load_parser.add_argument(
-        "control_path",
+        "controlPath",
         nargs="?",
         default="data/",
         type=dir_path,
@@ -115,19 +117,22 @@ class LightDanceCLI(cmd2.Cmd):
     def do_load(self, args):
         """Load control JSON file"""
 
-        control_path = args.control_path
+        self.controlPath = args.controlPath
+
         file_list = ["LED.json", "OF.json"]
         for file in file_list:
-            with open(os.path.join(control_path, file), "r") as f:
+            with open(os.path.join(self.controlPath, file), "r") as f:
                 control = f.read()
 
             if not control:
                 self.pwarning(f"Warning: {file} is empty")
 
-        with open(os.path.join(control_path, "dancers", f"{self.dancer}.json")) as f:
+        with open(
+            os.path.join(self.controlPath, "dancers", f"{self.dancer}.json")
+        ) as f:
             self.partMap = json.load(f)
 
-        payload = {"path": control_path}
+        payload = {"path": self.controlPath}
         response = self.METHODS["load"](payload)
 
         self.response_parser(response)
@@ -208,6 +213,7 @@ class LightDanceCLI(cmd2.Cmd):
     @cmd2.with_argparser(eltest_parser)
     def do_eltest(self, args):
         """test el"""
+        self.pwarning("DEPRECATED IN 2022")
 
         id = args.id
         brightness = args.brightness
@@ -223,7 +229,7 @@ class LightDanceCLI(cmd2.Cmd):
 
         self.response_parser(response)
 
-    # oftest [id] [brightness]
+    # oftest [id] [color] [alpha]
     oftest_parser = cmd2.Cmd2ArgumentParser()
     oftest_parser.add_argument("channel", type=str, help="channel")
     oftest_parser.add_argument("color", nargs="+", type=str, help="RGB in HEX or R G B")
@@ -282,6 +288,44 @@ class LightDanceCLI(cmd2.Cmd):
         response = self.METHODS["sendlight"](payload)
 
         self.response_parser(response)
+
+    # setofchannel [partName] [channel]
+    setofchannel_parser = cmd2.Cmd2ArgumentParser()
+    setofchannel_parser.add_argument("partName", type=str, help="partName")
+    setofchannel_parser.add_argument("channel", type=int, help="channel")
+
+    @cmd2.with_argparser(setofchannel_parser)
+    def do_setofchannel(self, args):
+        """Set OF Channel"""
+
+        partName = args.partName
+        channel = args.channel
+
+        self.partMap["OFPARTS"][partName] = channel
+
+        with open(
+            os.path.join(self.controlPath, "dancers", f"{self.dancer}.json"), "w"
+        ) as f:
+            json.dump(self.partMap, f)
+
+    # setledchannel [partName] [channel]
+    setledchannel_parser = cmd2.Cmd2ArgumentParser()
+    setledchannel_parser.add_argument("partName", type=str, help="partName")
+    setledchannel_parser.add_argument("channel", type=int, help="channel")
+
+    @cmd2.with_argparser(setledchannel_parser)
+    def do_setledchannel(self, args):
+        """Set LED Channel"""
+
+        partName = args.partName
+        channel = args.channel
+
+        self.partMap["LEDPARTS"][partName]["id"] = channel
+
+        with open(
+            os.path.join(self.controlPath, "dancers", f"{self.dancer}.json"), "w"
+        ) as f:
+            json.dump(self.partMap, f)
 
 
 if __name__ == "__main__":
