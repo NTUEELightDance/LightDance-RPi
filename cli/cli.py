@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -23,11 +24,15 @@ INTRO = r"""
 """
 
 
-def file_path(path):
-    if os.path.isfile(path):
+def dir_path(path):
+    if os.path.isdir(path):
+        file_list = ["LED.json", "OF.json"]
+        for file in file_list:
+            if not os.path.isfile(os.path.join(path, file)):
+                raise argparse.ArgumentTypeError(f"{file} not found!")
         return path
     else:
-        raise argparse.ArgumentTypeError("File not found!")
+        raise argparse.ArgumentTypeError("Directory not found!")
 
 
 class LightDanceCLI(cmd2.Cmd):
@@ -40,7 +45,9 @@ class LightDanceCLI(cmd2.Cmd):
 
         shortcuts = dict(cmd2.DEFAULT_SHORTCUTS)
 
-        super().__init__(shortcuts=shortcuts, startup_script="./cli/startup")
+        super().__init__(
+            shortcuts=shortcuts, startup_script="./cli/startup", allow_cli_args=False
+        )
 
         # ZMQ methods init
         self.socket = ZMQSocket(port=8000)
@@ -55,6 +62,10 @@ class LightDanceCLI(cmd2.Cmd):
             "stop": Stop(socket=self.socket),
             "statuslight": StatusLight(socket=self.socket),
             "eltest": ELTest(socket=self.socket),
+            "oftest": OFTest(socket=self.socket),
+            "lightall": LightAll(socket=self.socket),
+            "darkall": DarkAll(socket=self.socket),
+            "traversal": Traversal(socket=self.socket),
             "ledtest": LEDTest(socket=self.socket),
             "list": List(socket=self.socket),
             "quit": Quit(socket=self.socket),
@@ -63,14 +74,17 @@ class LightDanceCLI(cmd2.Cmd):
 
         # vars init
         self.load = False
+        self.control_path = "./data"
+        self.dancer = sys.argv[1]
+        self.partMap = {}
 
     def response_parser(self, response: str):
-        lines = response.split('\n')
+        lines = response.split("\n")
         status = lines[0]
-        
-        content = '\n'.join(lines[1:]).strip('\n')
-        if content == '':
-            content = 'Success'
+
+        content = "\n".join(lines[1:]).strip("\n")
+        if content == "":
+            content = "Success"
 
         if "error" in status.lower():
             self.perror(content)
@@ -95,25 +109,33 @@ class LightDanceCLI(cmd2.Cmd):
     # load [path]
     load_parser = cmd2.Cmd2ArgumentParser()
     load_parser.add_argument(
-        "control_path",
+        "controlPath",
         nargs="?",
-        default="data/control.json",
-        type=file_path,
-        help="Path to control JSON file.",
+        default="data/",
+        type=dir_path,
+        help="Path to control directory.",
     )
 
     @cmd2.with_argparser(load_parser)
     def do_load(self, args):
         """Load control JSON file"""
 
-        control_path = args.control_path
-        with open(control_path, "r") as f:
-            control = f.read()
+        self.controlPath = args.controlPath
 
-        if not control:
-            self.pwarning("Warning: control.json is empty")
+        file_list = ["LED.json", "OF.json"]
+        for file in file_list:
+            with open(os.path.join(self.controlPath, file), "r") as f:
+                control = f.read()
 
-        payload = {"path": control_path}
+            if not control:
+                self.pwarning(f"Warning: {file} is empty")
+
+        with open(
+            os.path.join(self.controlPath, "dancers", f"{self.dancer}.json")
+        ) as f:
+            self.partMap = json.load(f)
+
+        payload = {"path": self.controlPath}
         response = self.METHODS["load"](payload)
 
         self.response_parser(response)
@@ -194,6 +216,7 @@ class LightDanceCLI(cmd2.Cmd):
     @cmd2.with_argparser(eltest_parser)
     def do_eltest(self, args):
         """test el"""
+        self.pwarning("Warning: DEPRECATED IN 2022")
 
         id = args.id
         brightness = args.brightness
@@ -209,9 +232,114 @@ class LightDanceCLI(cmd2.Cmd):
 
         self.response_parser(response)
 
-    def do_ledtest(self, args):  # TODO
-        """test led"""
-        response = self.METHODS["ledtest"]()
+    # oftest [id] [color] [alpha]
+    oftest_parser = cmd2.Cmd2ArgumentParser()
+    oftest_parser.add_argument("channel", type=str, help="channel")
+    oftest_parser.add_argument("color", nargs="+", type=str, help="RGB in HEX or R G B")
+    oftest_parser.add_argument("alpha", type=int, help="brightness 0~15")
+
+    @cmd2.with_argparser(oftest_parser)
+    def do_oftest(self, args):
+        """Test OF"""
+
+        channel = args.channel
+        color = args.color
+        alpha = args.alpha
+
+        try:
+            channel = int(channel)
+        except:
+            channel = self.partMap["OFPARTS"][channel]
+
+        if alpha > 15:
+            self.pwarning("Warning: alpha is bigger than 15, light alpha as 15")
+            alpha = 15
+
+        if len(color) == 1:
+            if color[0].startswith("0x"):
+                color = int(color[0], 0)
+            else:
+                color = int(color[0], 16)
+        else:
+            color = (int(color[0]) << 16) + (int(color[1]) << 8) + int(color[2])
+
+        payload = {"channel": str(channel), "color": str(color), "alpha": str(alpha)}
+        response = self.METHODS["oftest"](payload)
+
+        self.response_parser(response)
+
+    # lightall [id] [color] [alpha]
+    lightall_parser = cmd2.Cmd2ArgumentParser()
+    lightall_parser.add_argument(
+        "color", nargs="+", type=str, help="RGB in HEX or R G B"
+    )
+    lightall_parser.add_argument("alpha", type=int, help="brightness 0~15")
+
+    @cmd2.with_argparser(lightall_parser)
+    def do_lightall(self, args):
+        """light all"""
+
+        color = args.color
+        alpha = args.alpha
+
+        if alpha > 15:
+            self.pwarning("Warning: alpha is bigger than 15, light alpha as 15")
+            alpha = 15
+
+        if len(color) == 1:
+            if color[0].startswith("0x"):
+                color = int(color[0], 0)
+            else:
+                color = int(color[0], 16)
+        else:
+            color = (int(color[0]) << 16) + (int(color[1]) << 8) + int(color[2])
+
+        payload = {"color": str(color), "alpha": str(alpha)}
+        response = self.METHODS["lightall"](payload)
+
+        self.response_parser(response)
+
+    def do_darkall(self, args):
+        """darkall"""
+        response = self.METHODS["darkall"]()
+        self.response_parser(response)
+
+    # ledtest [id] [color] [alpha]
+    ledtest_parser = cmd2.Cmd2ArgumentParser()
+    ledtest_parser.add_argument("channel", type=str, help="channel")
+    ledtest_parser.add_argument(
+        "color", nargs="+", type=str, help="RGB in HEX or R G B"
+    )
+    ledtest_parser.add_argument("alpha", type=int, help="brightness 0~15")
+
+    @cmd2.with_argparser(oftest_parser)
+    def do_ledtest(self, args):
+        """Test LED"""
+
+        channel = args.channel
+        color = args.color
+        alpha = args.alpha
+
+        try:
+            channel = int(channel)
+        except:
+            channel = self.partMap["LEDPARTS"][channel]
+
+        if alpha > 15:
+            self.pwarning("Warning: alpha is bigger than 15, light alpha as 15")
+            alpha = 15
+
+        if len(color) == 1:
+            if color[0].startswith("0x"):
+                color = int(color[0], 0)
+            else:
+                color = int(color[0], 16)
+        else:
+            color = (int(color[0]) << 16) + (int(color[1]) << 8) + int(color[2])
+
+        payload = {"channel": str(channel), "color": str(color), "alpha": str(alpha)}
+        response = self.METHODS["ledtest"](payload)
+
         self.response_parser(response)
 
     # sendlight [id] [vector]
@@ -231,6 +359,61 @@ class LightDanceCLI(cmd2.Cmd):
         payload = {"id": str(id), "vector": str(vector)}
         response = self.METHODS["sendlight"](payload)
 
+        self.response_parser(response)
+
+    # setofchannel [partName] [channel]
+    setofchannel_parser = cmd2.Cmd2ArgumentParser()
+    setofchannel_parser.add_argument("partName", type=str, help="partName")
+    setofchannel_parser.add_argument("channel", type=int, help="channel")
+
+    @cmd2.with_argparser(setofchannel_parser)
+    def do_setofchannel(self, args):
+        """Set OF Channel"""
+
+        partName = args.partName
+        channel = args.channel
+
+        self.partMap["OFPARTS"][partName] = channel
+
+        with open(
+            os.path.join(self.controlPath, "dancers", f"{self.dancer}.json"), "w"
+        ) as f:
+            json.dump(self.partMap, f)
+
+        payload = {"path": self.controlPath}
+        response = self.METHODS["load"](payload)
+
+        self.response_parser(response)
+        self.load = True
+
+    # setledchannel [partName] [channel]
+    setledchannel_parser = cmd2.Cmd2ArgumentParser()
+    setledchannel_parser.add_argument("partName", type=str, help="partName")
+    setledchannel_parser.add_argument("channel", type=int, help="channel")
+
+    @cmd2.with_argparser(setledchannel_parser)
+    def do_setledchannel(self, args):
+        """Set LED Channel"""
+
+        partName = args.partName
+        channel = args.channel
+
+        self.partMap["LEDPARTS"][partName]["id"] = channel
+
+        with open(
+            os.path.join(self.controlPath, "dancers", f"{self.dancer}.json"), "w"
+        ) as f:
+            json.dump(self.partMap, f)
+
+        payload = {"path": self.controlPath}
+        response = self.METHODS["load"](payload)
+
+        self.response_parser(response)
+        self.load = True
+
+    def do_traversal(self, args):
+        """traversal"""
+        response = self.METHODS["traversal"]()
         self.response_parser(response)
 
 
