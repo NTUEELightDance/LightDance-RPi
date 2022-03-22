@@ -1,10 +1,10 @@
 from .baseMethod import BaseMethod
 
 
-# Play
-class Play(BaseMethod):
+# OFtest
+class OFTest(BaseMethod):
     def method(self, payload=None):
         response = self.socket.send(
-            ["play", f"{payload['start_time']} {payload['delay_time']}"]
+            ["oftest", payload["channel"], payload["color"], payload["alpha"]]
         )
         return response

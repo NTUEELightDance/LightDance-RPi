@@ -1,5 +1,7 @@
 import os
 import sys
+import json
+
 
 import cmd2
 from cmd2 import Fg, argparse, style
@@ -44,7 +46,7 @@ class LightDanceCLI(cmd2.Cmd):
 
         shortcuts = dict(cmd2.DEFAULT_SHORTCUTS)
 
-        super().__init__(shortcuts=shortcuts, startup_script="./cli/startup")
+        super().__init__(shortcuts=shortcuts, startup_script="./cli/startup", allow_cli_args=False)
 
         # ZMQ methods init
         self.socket = ZMQSocket(port=8000)
@@ -59,6 +61,7 @@ class LightDanceCLI(cmd2.Cmd):
             "stop": Stop(socket=self.socket),
             "statuslight": StatusLight(socket=self.socket),
             "eltest": ELTest(socket=self.socket),
+            "oftest": OFTest(socket=self.socket),
             "ledtest": LEDTest(socket=self.socket),
             "list": List(socket=self.socket),
             "quit": Quit(socket=self.socket),
@@ -67,6 +70,8 @@ class LightDanceCLI(cmd2.Cmd):
 
         # vars init
         self.load = False
+        self.dancer = sys.argv[1]
+        self.partMap = {}
 
     def response_parser(self, response: str):
         lines = response.split("\n")
@@ -118,6 +123,9 @@ class LightDanceCLI(cmd2.Cmd):
 
             if not control:
                 self.pwarning(f"Warning: {file} is empty")
+
+        with open(os.path.join(control_path, "dancers", f"{self.dancer}.json")) as f:
+            self.partMap = json.load(f)
 
         payload = {"path": control_path}
         response = self.METHODS["load"](payload)
@@ -217,32 +225,39 @@ class LightDanceCLI(cmd2.Cmd):
 
     # oftest [id] [brightness]
     oftest_parser = cmd2.Cmd2ArgumentParser()
-    oftest_parser.add_argument("channel", nargs="?", default=-1, type=int, help="channel")
-    oftest_parser.add_argument(
-        "colorCode", nargs="?", default="0x0000FF", type=str, help="RGB in HEX"
-    )
-    oftest_parser.add_argument(
-        "alpha", nargs="?", default=10, type=int, help="brightness 0~15"
-    )
+    oftest_parser.add_argument("channel", type=str, help="channel")
+    oftest_parser.add_argument("color", nargs="+", type=str, help="RGB in HEX or R G B")
+    oftest_parser.add_argument("alpha", type=int, help="brightness 0~15")
 
-    @cmd2.with_argparser(eltest_parser)
+    @cmd2.with_argparser(oftest_parser)
     def do_oftest(self, args):
         """Test OF"""
 
-        id = args.id
-        brightness = args.brightness
+        channel = args.channel
+        color = args.color
+        alpha = args.alpha
 
-        if brightness > 4095:
-            self.pwarning(
-                "Warning: brightness is bigger than 4095, light brightness as 4095"
-            )
-            brightness = 4095
+        try:
+            channel = int(channel)
+        except:
+            channel = self.partMap["OFPARTS"][channel]
 
-        payload = {"id": str(id), "brightness": str(brightness)}
-        response = self.METHODS["eltest"](payload)
+        if alpha > 15:
+            self.pwarning("Warning: alpha is bigger than 15, light alpha as 15")
+            alpha = 15
+
+        if len(color) == 1:
+            if color[0].startswith("0x"):
+                color = int(color[0], 0)
+            else:
+                color = int(color[0], 16)
+        else:
+            color = (int(color[0]) << 16) + (int(color[1]) << 8) + int(color[2])
+
+        payload = {"channel": str(channel), "color": str(color), "alpha": str(alpha)}
+        response = self.METHODS["oftest"](payload)
 
         self.response_parser(response)
-
 
     def do_ledtest(self, args):  # TODO
         """test led"""

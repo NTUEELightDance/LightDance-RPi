@@ -1,6 +1,7 @@
 from .baseMethod import *
 from .boardInfo import *
 from .eltest import *
+from .oftest import *
 from .kick import *
 from .ledtest import *
 from .list import *

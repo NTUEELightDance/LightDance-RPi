@@ -1,3 +1,7 @@
 boardinfo
 load
 play
+oftest 1 0xffffff 12
+oftest 1 ffffff 12
+oftest 1 255 255 255 12
+oftest Calf_R 255 255 255 12
