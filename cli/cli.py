@@ -23,11 +23,15 @@ INTRO = r"""
 """
 
 
-def file_path(path):
-    if os.path.isfile(path):
+def dir_path(path):
+    if os.path.isdir(path):
+        file_list = ["LED.json", "OF.json"]
+        for file in file_list:
+            if not os.path.isfile(os.path.join(path, file)):
+                raise argparse.ArgumentTypeError(f"{file} not found!")
         return path
     else:
-        raise argparse.ArgumentTypeError("File not found!")
+        raise argparse.ArgumentTypeError("Directory not found!")
 
 
 class LightDanceCLI(cmd2.Cmd):
@@ -65,12 +69,12 @@ class LightDanceCLI(cmd2.Cmd):
         self.load = False
 
     def response_parser(self, response: str):
-        lines = response.split('\n')
+        lines = response.split("\n")
         status = lines[0]
-        
-        content = '\n'.join(lines[1:]).strip('\n')
-        if content == '':
-            content = 'Success'
+
+        content = "\n".join(lines[1:]).strip("\n")
+        if content == "":
+            content = "Success"
 
         if "error" in status.lower():
             self.perror(content)
@@ -97,9 +101,9 @@ class LightDanceCLI(cmd2.Cmd):
     load_parser.add_argument(
         "control_path",
         nargs="?",
-        default="data/control.json",
-        type=file_path,
-        help="Path to control JSON file.",
+        default="data/",
+        type=dir_path,
+        help="Path to control directory.",
     )
 
     @cmd2.with_argparser(load_parser)
@@ -107,11 +111,13 @@ class LightDanceCLI(cmd2.Cmd):
         """Load control JSON file"""
 
         control_path = args.control_path
-        with open(control_path, "r") as f:
-            control = f.read()
+        file_list = ["LED.json", "OF.json"]
+        for file in file_list:
+            with open(os.path.join(control_path, file), "r") as f:
+                control = f.read()
 
-        if not control:
-            self.pwarning("Warning: control.json is empty")
+            if not control:
+                self.pwarning(f"Warning: {file} is empty")
 
         payload = {"path": control_path}
         response = self.METHODS["load"](payload)
@@ -208,6 +214,35 @@ class LightDanceCLI(cmd2.Cmd):
         response = self.METHODS["eltest"](payload)
 
         self.response_parser(response)
+
+    # oftest [id] [brightness]
+    oftest_parser = cmd2.Cmd2ArgumentParser()
+    oftest_parser.add_argument("channel", nargs="?", default=-1, type=int, help="channel")
+    oftest_parser.add_argument(
+        "colorCode", nargs="?", default="0x0000FF", type=str, help="RGB in HEX"
+    )
+    oftest_parser.add_argument(
+        "alpha", nargs="?", default=10, type=int, help="brightness 0~15"
+    )
+
+    @cmd2.with_argparser(eltest_parser)
+    def do_oftest(self, args):
+        """Test OF"""
+
+        id = args.id
+        brightness = args.brightness
+
+        if brightness > 4095:
+            self.pwarning(
+                "Warning: brightness is bigger than 4095, light brightness as 4095"
+            )
+            brightness = 4095
+
+        payload = {"id": str(id), "brightness": str(brightness)}
+        response = self.METHODS["eltest"](payload)
+
+        self.response_parser(response)
+
 
     def do_ledtest(self, args):  # TODO
         """test led"""
