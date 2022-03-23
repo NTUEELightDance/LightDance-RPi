@@ -10,11 +10,11 @@ module.exports = {
     },
     {
         name: "client",
-        script: "python ./client/client.py",
+        script: "python3 ./client/client.py",
     },
     {
         name: "setdancer",
-        script: "./setDancer.sh",
+        script: "./setDancer.sh; sleep 5",
     }
     ]
 }
