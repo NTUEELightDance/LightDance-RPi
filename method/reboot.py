@@ -6,4 +6,4 @@ from .baseMethod import BaseMethod
 # Reboots RPi
 class Reboot(BaseMethod):
     def method(self, payload=None):
-        os.system("reboot -h 0")
+        os.system("sudo reboot -h 0")

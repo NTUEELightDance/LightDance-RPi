@@ -35,6 +35,7 @@ class Client:
         self.url = "ws://192.168.10.12:8082"
         self.cmd = ""
         self.paylaod = {}
+        self.ntpclient = NTPClient()
 
         ######zmq#######
         self.socket = ZMQSocket(port=8000)
@@ -52,6 +53,8 @@ class Client:
             "quit": Quit(socket=self.socket),
             "send": Send(socket=self.socket),
             "uploadLed": UploadJsonFile(socket=self.socket),
+            "sync": Sync(socket=self.socket),
+            "shutDown": ShutDown(socket=self.socket),
         }
         ##############
 
@@ -72,7 +75,10 @@ class Client:
     def on_message(self, ws, message):
         cmd, payload = self.ParseServerData(message)
         if self.Check(ws, cmd, payload):
-            response = self.METHODS[cmd](payload)
+            if cmd != "sync":
+                response = self.METHODS[cmd](payload)
+            else:
+                response = self.METHODS[cmd](self.ntpclient)
             self.parse_response(ws, response)
             print("Send message to rpi complete")
         else:
@@ -127,7 +133,8 @@ class Client:
                 "hostName": response[7],
             }
         elif command == "sync":
-            # TODO
+            delay, offset = response[5], response[6]
+            info = {"delay": int(delay), "offset": int(offset)}
             pass
 
         ws.send(
