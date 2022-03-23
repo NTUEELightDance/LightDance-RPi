@@ -1,6 +1,6 @@
+import os
 import socket
 from datetime import datetime
-import os
 
 HOST = ("192.168.0.200", 7122)
 

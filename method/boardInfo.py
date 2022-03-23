@@ -1,8 +1,8 @@
 import os
 import socket
-import sys
 
 from .baseMethod import BaseMethod
+
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -10,6 +10,7 @@ def get_ip():
     ip = s.getsockname()[0]
     s.close()
     return ip
+
 
 def get_hostname():
     hostname = socket.getfqdn(socket.gethostname())

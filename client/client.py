@@ -1,8 +1,9 @@
 # from asyncio.windows_events import NULL
-import websocket
 import os
 import sys
 import time
+
+import websocket
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 from method import *
@@ -28,8 +29,9 @@ LED_SAVE_DIR = "../data/LED.json"
 OF_SAVE_DIR = "../data/OF.json"
 
 
-SERVER_IP = os.environ['SERVER_IP']
-SERVER_PORT = os.environ['SERVER_PORT']
+SERVER_IP = os.environ["SERVER_IP"]
+SERVER_PORT = os.environ["SERVER_PORT"]
+
 
 class Client:
     def __init__(self):
