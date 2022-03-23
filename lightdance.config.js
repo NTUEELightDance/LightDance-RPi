@@ -14,7 +14,7 @@ module.exports = {
     },
     {
         name: "setdancer",
-        script: "sudo ./setDancer.sh; sleep 5",
+        script: "sudo bash ./setDancer.sh; sleep 5",
     }
     ]
 }
