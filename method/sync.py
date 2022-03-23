@@ -8,7 +8,10 @@ from datetime import datetime
 # from ntp import NTPClient
 from .baseMethod import BaseMethod
 
-HOST = ("192.168.0.200", 7122)
+SERVER_IP = os.environ["SERVER_IP"]
+SERVER_PORT = os.environ["SERVER_PORT"]
+
+HOST = (SERVER_IP, SERVER_PORT)
 
 
 class NTPClient:
