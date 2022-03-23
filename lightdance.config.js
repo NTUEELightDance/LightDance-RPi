@@ -1,4 +1,4 @@
-const DANCERNAME = "9_monkey"
+const DANCER_NAME = "9_monkey"
 
 module.exports = {
     apps: [{
