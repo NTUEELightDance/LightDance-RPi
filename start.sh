@@ -1,1 +1,1 @@
-sudo node client/src/RpiSocket.js
+sudo ./controller/controller $DANCERNAME
