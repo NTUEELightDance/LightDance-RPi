@@ -36,7 +36,7 @@ SERVER_PORT = os.environ["SERVER_PORT"]
 class Client:
     def __init__(self):
         super(Client, self).__init__()
-        self.url = HOST
+        self.url = f"ws://{SERVER_IP}:{SERVER_PORT}"
         self.cmd = ""
         self.paylaod = {}
         self.ntpclient = NTPClient()
@@ -143,7 +143,6 @@ class Client:
         elif command == "sync":
             delay, offset = response[5], response[6]
             info = {"delay": int(delay), "offset": int(offset)}
-            pass
 
         ws.send(
             json.dumps(

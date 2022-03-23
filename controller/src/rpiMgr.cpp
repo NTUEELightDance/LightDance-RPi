@@ -110,7 +110,7 @@ void RPiMgr::play(const bool& givenStartTime, const unsigned& start, const unsig
 
     long hadDelay = getsystime() - timeIntoFunc;
     if (hadDelay < delay)
-        this_thread::sleep_for(chrono::microseconds(delay - hadDelay));
+        this_thread::sleep_for(chrono::milliseconds(delay - hadDelay));
     logger->success("Play", "Start play loop thread");
 
     for (auto& lp : ledPlayers)

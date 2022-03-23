@@ -9,7 +9,7 @@ from datetime import datetime
 from .baseMethod import BaseMethod
 
 SERVER_IP = os.environ["SERVER_IP"]
-NTP_PORT = os.environ["NTP_PORT"]
+NTP_PORT = int(os.environ["NTP_PORT"])
 
 HOST = (SERVER_IP, NTP_PORT)
 
