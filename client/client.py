@@ -8,7 +8,6 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 from method import *
 from pysocket import ZMQSocket
 
-boardname = "lightdancer-1"  # use"lightdancer-1" to test
 cmdlist = [
     "sync",
     "uploadLed",
@@ -25,17 +24,22 @@ cmdlist = [
     "init",
     "test",
 ]
-LED_SAVE_DIR = "../data/LED_test.json"
-OF_SAVE_DIR = "../data/OF_test.json"
+LED_SAVE_DIR = "../data/LED.json"
+OF_SAVE_DIR = "../data/OF.json"
+HOST = "ws://192.168.10.12:8082"
 
 
 class Client:
     def __init__(self):
         super(Client, self).__init__()
-        self.url = "ws://192.168.10.12:8082"
+        self.url = HOST
         self.cmd = ""
         self.paylaod = {}
         self.ntpclient = NTPClient()
+        if len(sys.argv) != 2:
+            print("Usage: python3 client/client.py <dancerName>")
+            exit()
+        self.dancerName = sys.argv[1]
 
         ######zmq#######
         self.socket = ZMQSocket(port=8000)
@@ -105,7 +109,7 @@ class Client:
             elif cmd == "uploadOf":
                 payload = {"file": message["payload"], "dir": OF_SAVE_DIR}
             elif cmd == "load":
-                payload = {"path": "../data/"}
+                payload = {"path": "./data/"}
 
             return cmd, payload
         except:
@@ -158,9 +162,9 @@ class Client:
                         "success": response[3] == "Success",
                         "info": {
                             "type": "RPi",
-                            "dancerName": response[5],
-                            "ip": response[6],
-                            "hostName": response[7],
+                            "dancerName": self.dancerName,
+                            "ip": response[5],
+                            "hostName": response[6],
                         },
                     },
                 }
@@ -168,7 +172,7 @@ class Client:
         )
 
     def on_close(self, ws):
-        print(f"{os.name} closed")
+        print(f"{self.dancerName} closed")
 
     ####### on_error ########
     # def on_error(self,ws,error):
