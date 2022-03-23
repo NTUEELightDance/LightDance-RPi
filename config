@@ -1,0 +1,4 @@
+export DANCER_NAME=9_monkey
+export SERVER_IP=192.168.10.45
+export SERVER_PORT=8082
+export NTP_PORT=7122

@@ -47,11 +47,24 @@ make
 ```
 
 Run
-```
-sudo ./controller/controller <dancerName>
+``` bash
+sudo ./controller/controller ${dancerName}
+# or
+bash startController.sh
 ```
 
 ### Run CLI
+``` bash
+python3 cli/cli.py ${dancerName}
+# or
+bash startCLI.sh
 ```
-python3 cli/cli.py
+
+### Setup
+``` bash
+# Startup Routine
+bash setup.sh
+
+# CLI
+bash startCLI.sh
 ```
