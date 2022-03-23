@@ -21,9 +21,9 @@ def get_hostname():
 class BoardInfo(BaseMethod):
     def method(self, payload):
         try:
-            ip = socket.gethostbyname(socket.gethostname())
+            ip = get_ip()
         except socket.gaierror:
             ip = "127.0.0.1"
 
-        hostName = os.name
+        hostName = get_hostname()
         return f"[ boardInfo / Success ] {ip} {hostName}"
