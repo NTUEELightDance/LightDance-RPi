@@ -1,20 +1,21 @@
 const DANCER_NAME = "9_monkey"
 
 module.exports = {
-    apps: [{
+    apps: [    {
         name: "controller",
-        script: "./controller/controller $DANCER_NAME",
-        env: {
-            "DANCER_NAME": DANCER_NAME,
-        }
+        script: "./startController.sh"
     },
     {
         name: "client",
-        script: "python3 ./client/client.py",
+        script: "./client/client.py",
+        exec_mode: "fork",
+        wait_ready: true,
+        autorestart: true,
+        interpreter : "python3",
     },
     {
-        name: "setdancer",
-        script: "sudo bash ./setDancer.sh; sleep 5",
+        name: "cli",
+        script: "./tmuxStart.sh"
     }
     ]
 }

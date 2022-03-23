@@ -180,5 +180,6 @@ class Client:
 
 
 if __name__ == "__main__":
+    print("start")
     Test = Client()
     Test.startclient()

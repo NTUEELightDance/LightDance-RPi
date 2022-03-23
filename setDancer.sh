@@ -1,1 +1,0 @@
-export DANCER_NAME=9_monkey
