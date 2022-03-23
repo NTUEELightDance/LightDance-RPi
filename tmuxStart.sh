@@ -1,5 +1,3 @@
-source config
-echo $DANCER_NAME
 tmux kill-session -t lightdance
 tmux new-session -d -s lightdance
 tmux new-window ~/LightDance-RPi/startCLI.sh
