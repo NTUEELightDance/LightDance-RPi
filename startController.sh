@@ -1,2 +1,2 @@
 cd ~/LightDance-RPi
-sudo ./controller/controller $DANCERNAME
+sudo ./controller/controller $DANCER_NAME

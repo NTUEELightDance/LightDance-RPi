@@ -1,1 +1,1 @@
-export DANCERNAME=9_monkey
+export DANCER_NAME=9_monkey
