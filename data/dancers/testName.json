@@ -1,4 +1,5 @@
 {
+    "fps": 30,
 	"OFPARTS": {
 		"Calf_R": 0,
         "Thigh_R": 1,
