@@ -1,1 +1,0 @@
-python .cli/cli.py $DANCERNAME

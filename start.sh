@@ -1,1 +1,0 @@
-sudo ./controller/controller $DANCERNAME
