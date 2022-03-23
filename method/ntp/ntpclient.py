@@ -1,12 +1,6 @@
-import os
-
-# import sys
 import socket
 from datetime import datetime
-
-# sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ntp")
-# from ntp import NTPClient
-from .baseMethod import BaseMethod
+import os
 
 HOST = ("192.168.0.200", 7122)
 
@@ -19,7 +13,7 @@ class NTPClient:
 
     def startTimeSync(self) -> None:
         self.timeData = {
-            "t0": datetime.now().timestamp() * 1000,
+            "t0": datetime.now().timestamp(),
             "t1": None,
             "t2": None,
             "t3": None,
@@ -39,7 +33,7 @@ class NTPClient:
     def setTime(self, serverSysTime: int) -> dict:
         self.timeData["t1"] = serverSysTime
         self.timeData["t2"] = serverSysTime
-        self.timeData["t3"] = datetime.now().timestamp() * 1000
+        self.timeData["t3"] = datetime.now().timestamp()
 
         t0 = self.timeData["t0"]
         t1 = self.timeData["t1"]
@@ -53,13 +47,3 @@ class NTPClient:
 
         print(f"delay: {delay}, offset: {offset}")
         return {"delay": delay, "offset": offset}
-
-
-# Sync
-class Sync(BaseMethod):
-    def method(self, payload: NTPClient):
-        payload.startTimeSync()
-        ntpTime = payload.recvMes()
-        delay, offset = ntpTime["delay"], ntpTime["offset"]
-
-        return f"[ sync / Success ] {delay} {offset}"

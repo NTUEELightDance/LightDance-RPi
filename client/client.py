@@ -35,6 +35,7 @@ class Client:
         self.url = HOST
         self.cmd = ""
         self.paylaod = {}
+        self.ntpclient = NTPClient()
         if len(sys.argv) != 2:
             print("Usage: python3 client/client.py <dancerName>")
             exit()
@@ -57,6 +58,7 @@ class Client:
             "send": Send(socket=self.socket),
             "uploadLed": UploadJsonFile(socket=self.socket),
             "sync": Sync(socket=self.socket),
+            "shutDown": ShutDown(socket=self.socket),
         }
         ##############
 
@@ -77,7 +79,10 @@ class Client:
     def on_message(self, ws, message):
         cmd, payload = self.ParseServerData(message)
         if self.Check(ws, cmd, payload):
-            response = self.METHODS[cmd](payload)
+            if cmd != "sync":
+                response = self.METHODS[cmd](payload)
+            else:
+                response = self.METHODS[cmd](self.ntpclient)
             self.parse_response(ws, response)
             print("Send message to rpi complete")
         else:
@@ -132,7 +137,8 @@ class Client:
                 "hostName": response[7],
             }
         elif command == "sync":
-            # TODO
+            delay, offset = response[5], response[6]
+            info = {"delay": int(delay), "offset": int(offset)}
             pass
 
         ws.send(
