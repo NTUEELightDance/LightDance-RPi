@@ -5,7 +5,7 @@
 RPiMgr::RPiMgr(const string& dancerName) : _dancerName(dancerName) {}
 
 bool RPiMgr::setDancer() {
-    string path = "../data/dancers/" + _dancerName + ".json";
+    string path = "./data/dancers/" + _dancerName + ".json";
     ifstream infile(path.c_str());
     if (!infile) {
         cout << "Cannot open file: " << path << endl;
@@ -14,6 +14,9 @@ bool RPiMgr::setDancer() {
 
     json j;
     infile >> j;
+
+    // FPS
+    fps = int(j["fps"]);
 
     // LED
     ledPlayers.clear();
@@ -259,6 +262,7 @@ void RPiMgr::playLoop(const long startTime) {
 
         // Calculate startTime
         _startTime = localStartTime + (getsystime() - sysStartTime);
+        this_thread::sleep_for(chrono::milliseconds(1000 / fps));
     }
     cout << "end playing\n";
 }

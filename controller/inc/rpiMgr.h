@@ -70,6 +70,7 @@ class RPiMgr {
     atomic<bool> _playing;
     bool _loaded;
     atomic<size_t> _startTime;
+    atomic<int> fps;
     LED_Strip* led_strip;
     PCA* of;
 };
