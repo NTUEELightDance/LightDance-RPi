@@ -1,8 +1,9 @@
 # from asyncio.windows_events import NULL
-import websocket
 import os
 import sys
 import time
+
+import websocket
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 from method import *
@@ -26,7 +27,10 @@ cmdlist = [
 ]
 LED_SAVE_DIR = "../data/LED.json"
 OF_SAVE_DIR = "../data/OF.json"
-HOST = "ws://192.168.10.12:8082"
+
+
+SERVER_IP = os.environ["SERVER_IP"]
+SERVER_PORT = os.environ["SERVER_PORT"]
 
 
 class Client:
@@ -153,6 +157,7 @@ class Client:
     def on_open(self, ws):
         print("Successfully on_open")  # Print Whether successfully on_open
         response = self.METHODS["boardInfo"]()
+        # print(response)
         response = response.split(" ")
         ws.send(
             json.dumps(
@@ -180,5 +185,6 @@ class Client:
 
 
 if __name__ == "__main__":
+    print("Start")
     Test = Client()
     Test.startclient()
