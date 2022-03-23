@@ -168,8 +168,8 @@ class LightDanceCLI(cmd2.Cmd):
 
     def do_quit(self, args):
         """quit"""
-        response = self.METHODS["quit"]()
-        self.response_parser(response)
+        # response = self.METHODS["quit"]()
+        # self.response_parser(response)
         return 1
 
     send_parser = cmd2.Cmd2ArgumentParser()
