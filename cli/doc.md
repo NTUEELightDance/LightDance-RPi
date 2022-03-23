@@ -18,7 +18,11 @@ Load control JSON files
 positional arguments:
   controlPath  Path to control directory.
 ```
-ex: `load ./data`
+ex: 
+```
+load
+load ./data
+```
 
 * setofchannel/setledchannel
 ```
@@ -64,14 +68,22 @@ ledtest Glove_L_LED ffffff 10
 ledtest 0 255 255 255 10
 ```
 
+* lightall
+```
+Usage: lightall color alpha
+
+light all
+
+positional arguments:
+  color       RGB in HEX or R G B
+  alpha       brightness 0~15
+```
+* darkall
 * traversal
-* lightall/darkall
 
 ### System
 * reboot
 * shutdown
-* quit \
-quit both CLI and controller
-
+* quit
 ## Startup Script
 CLI will run commands in `cli/startup` at start. It's useful for debug routine.
