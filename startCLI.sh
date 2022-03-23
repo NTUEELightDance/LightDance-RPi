@@ -1,2 +1,2 @@
 cd LightDance
-python3 .cli/cli.py $DANCERNAME
+python3 ./cli/cli.py $DANCERNAME
