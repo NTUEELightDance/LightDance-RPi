@@ -115,6 +115,7 @@ void RPiMgr::play(const bool& givenStartTime, const unsigned& start, const unsig
 
     for (auto& lp : ledPlayers)
         lightLEDStatus(lp.getFrame(_startTime), lp.channelId);
+    led_strip->sendToStrip(LEDBuf);
 
     lightOFStatus(ofPlayer.getFrame(_startTime));
 
@@ -144,7 +145,7 @@ void RPiMgr::LEDtest(const int& channel, int colorCode, int alpha) {
     const float _alpha = float(alpha) / ALPHA_RANGE;
     char R, G, B;
     colorCode2RGB(colorCode, R, G, B);
-    ledDark();
+    // ledDark();
     for (int i = 0; i < LEDBuf[channel].size() / 3; ++i)
         LEDrgba_to_rgb(LEDBuf[channel], i, R, G, B, _alpha);
     led_strip->sendToStrip(LEDBuf);
@@ -194,7 +195,7 @@ void RPiMgr::lightAll(int colorCode, int alpha) {
     const float _alpha = float(alpha) / ALPHA_RANGE;
     colorCode2RGB(colorCode, R, G, B);
     for (int i = 0; i < LEDBuf.size(); ++i)
-        for (int j = 0; j < LEDBuf[i].size(); ++j)
+        for (int j = 0; j < LEDBuf[i].size() / 3; ++j)
             LEDrgba_to_rgb(LEDBuf[i], j, R, G, B, _alpha);
     for (int i = 0; i < OFBuf.size(); ++i)
         OFrgba2rgbiref(OFBuf[i], R, G, B, alpha);
@@ -212,7 +213,7 @@ void RPiMgr::lightLEDStatus(const LEDPlayer::Frame& frame, const int& channelId)
         LEDrgba_to_rgb(LEDBuf[channelId], i, R, G, B, alpha);
     }
 
-    led_strip->sendToStrip(LEDBuf);
+    // led_strip->sendToStrip(LEDBuf);
 }
 
 void RPiMgr::lightOFStatus(const OFPlayer::Frame& frame) {
@@ -230,6 +231,7 @@ void RPiMgr::ledDark() {
         for (int j = 0; j < LEDBuf[i].size(); ++j)
             LEDBuf[i][j] = 0;
     led_strip->sendToStrip(LEDBuf);
+    this_thread::sleep_for(chrono::milliseconds(100));
 }
 
 void RPiMgr::ofDark() {
@@ -256,6 +258,7 @@ void RPiMgr::playLoop(const long startTime) {
         // LED
         for (auto& lp : ledPlayers)
             lightLEDStatus(lp.getFrame(_startTime), lp.channelId);
+        led_strip->sendToStrip(LEDBuf);
 
         // OF
         lightOFStatus(ofPlayer.getFrame(_startTime));

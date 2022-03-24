@@ -25,8 +25,8 @@ cmdlist = [
     "init",
     "test",
 ]
-LED_SAVE_DIR = "../data/LED.json"
-OF_SAVE_DIR = "../data/OF.json"
+LED_SAVE_DIR = "./data/LED.json"
+OF_SAVE_DIR = "./data/OF.json"
 
 
 SERVER_IP = os.environ["SERVER_IP"]
