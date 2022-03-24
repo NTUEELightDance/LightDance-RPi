@@ -27,41 +27,5 @@
     "Calf_L": 21,
     "Calf_R": 22
   },
-  "LEDPARTS": {
-    "Visor_LED": {
-      "id": 0,
-      "len": 22
-    },
-    "CollarBone_LED": {
-      "id": 1,
-      "len": 28
-    },
-
-    "Shoulder_L_LED": {
-      "id": 2,
-      "len": 24
-    },
-    "Shoulder_R_LED": {
-      "id": 3,
-      "len": 24
-    },
-
-    "Hand_L_LED": {
-      "id": 4,
-      "len": 19
-    },
-    "Hand_R_LED": {
-      "id": 5,
-      "len": 19
-    },
-
-    "Shoe_L_LED": {
-      "id": 6,
-      "len": 74
-    },
-    "Shoe_R_LED": {
-      "id": 7,
-      "len": 74
-    }
-  }
+  "LEDPARTS": {}
 }

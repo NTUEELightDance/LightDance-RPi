@@ -33,34 +33,5 @@
     "Shoe_R_M": 23,
     "Shoe_R_D": 24
   },
-  "LEDPARTS": {
-    "Eyes_LED": {
-      "id": 0,
-      "len": 4
-    },
-    "CollarBone_LED": {
-      "id": 1,
-      "len": 24
-    },
-    "Wrist_L_LED": {
-      "id": 2,
-      "len": 12
-    },
-    "Wrist_R_LED": {
-      "id": 3,
-      "len": 12
-    },
-    "Cape_LED": {
-      "id": 4,
-      "len": 170
-    },
-    "Shoe_L_LED": {
-      "id": 5,
-      "len": 74
-    },
-    "Shoe_R_LED": {
-      "id": 6,
-      "len": 74
-    }
-  }
+  "LEDPARTS": {}
 }
