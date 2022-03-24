@@ -59,7 +59,7 @@ int rgbHexInterpolate(int hex1, int hex2, const float &rate) {
     const int Gi = (1 - rate) * G1 + rate * G2;
     const int Bi = (1 - rate) * B1 + rate * B2;
 
-    return (Ri << 16) + (Gi << 8) + Gi;
+    return (Ri << 16) + (Gi << 8) + Bi;
 }
 
 void colorCode2RGB(int colorCode, char &R, char &G, char &B) {
