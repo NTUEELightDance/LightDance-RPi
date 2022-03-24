@@ -1,0 +1,71 @@
+{
+  "fps": 30,
+  "OFPARTS": {
+    "Helmet_1": 9,
+    "Helmet_2": 10,
+    "Helmet_3": 11,
+
+    "Shoulder_L_1": 7,
+    "Shoulder_L_2": 8,
+
+    "Shoulder_R_1": 12,
+    "Shoulder_R_2": 13,
+
+    "Plackart_1": 4,
+    "Plackart_2": 15,
+
+    "Cuirass_1": 5,
+    "Cuirass_2": 14,
+
+    "Arm_L_1": 3,
+    "Arm_L_2": 2,
+
+    "Arm_R_1": 16,
+    "Arm_R_2": 17,
+
+    "Belt_1": 1,
+    "Belt_2": 18,
+
+    "Thigh_L_1": 19,
+    "Thigh_L_2": 20,
+
+    "Thigh_R_1": 24,
+    "Thigh_R_2": 26,
+
+    "Calf_L_1": 21,
+    "Calf_L_2": 22,
+
+    "Calf_R_1": 23,
+    "Calf_R_2": 25
+  },
+  "LEDPARTS": {
+    "Eyes_LED": {
+      "id": 0,
+      "len": 2
+    },
+    "Shoulder_L_LED": {
+      "id": 1,
+      "len": 24
+    },
+    "Shoulder_R_LED": {
+      "id": 2,
+      "len": 24
+    },
+    "Hand_L_LED": {
+      "id": 3,
+      "len": 19
+    },
+    "Hand_R_LED": {
+      "id": 4,
+      "len": 19
+    },
+    "Shoe_L_LED": {
+      "id": 5,
+      "len": 74
+    },
+    "Shoe_R_LED": {
+      "id": 6,
+      "len": 74
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "fps": 30,
+  "OFPARTS": {
+    "Visor": 10,
+    "Ear": 11,
+    "CollarBone": 12,
+    "Chest": 8,
+
+    "Shoulder_L": 5,
+    "Shoulder_R": 14,
+
+    "Arm_L": 4,
+    "Arm_R": 15,
+
+    "Waist_L": 3,
+    "Waist_R": 16,
+
+    "LymphaticDuct_L_U": 2,
+    "LymphaticDuct_L_D": 19,
+
+    "LymphaticDuct_R_U": 17,
+    "LymphaticDuct_R_D": 26,
+
+    "Thigh_L": 20,
+    "Thigh_R": 24,
+
+    "Calf_L": 22,
+    "Calf_R": 23
+  },
+  "LEDPARTS": {
+    "Visor_LED": {
+      "id": 0,
+      "len": 22
+    },
+    "CollarBone_LED": {
+      "id": 1,
+      "len": 28
+    },
+
+    "Shoulder_L_LED": {
+      "id": 2,
+      "len": 24
+    },
+    "Shoulder_R_LED": {
+      "id": 3,
+      "len": 24
+    },
+
+    "Hand_L_LED": {
+      "id": 4,
+      "len": 19
+    },
+    "Hand_R_LED": {
+      "id": 5,
+      "len": 19
+    },
+
+    "Shoe_L_LED": {
+      "id": 6,
+      "len": 74
+    },
+    "Shoe_R_LED": {
+      "id": 7,
+      "len": 74
+    }
+  }
+}
