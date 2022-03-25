@@ -27,6 +27,16 @@ LEDPlayer::Frame& LEDPlayer::Frame::operator=(const LEDPlayer::Frame& f) {
 }
 
 void LEDPlayer::load(const json& pl) {
+    if (pl.size() == 0){
+        Frame frame;
+        frame.start = 0;
+        frame.fade = false;
+        for (int i = 0; i < len; ++i)
+            frame.status.push_back(LEDStatus(0, 0));
+
+        playList.push_back(frame);
+        return;
+    }
     playList.reserve(pl.size());
     for (auto& f : pl) {
         Frame frame(f["start"], f["fade"], f["status"]);
