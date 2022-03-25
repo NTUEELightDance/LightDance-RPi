@@ -35,40 +35,15 @@ PCA995X::PCA995X(int Address, int pca_type, int iref0Reg, int pwm0Reg, int ledCh
     fd = wiringPiI2CSetup(PCA995X_Address);
 };
 int PCA995X::SetPWMAI(int channel, int *PWM, int size) {
-    if (!CheckChannelLegal(channel)) return false;
-
-    union i2c_smbus_data regData;
-
-    regData.block[0] = size - 1;
-    for (int i = 1; i < size; i++) {
-        regData.block[i] = PWM[i];
-    }
-
-    struct i2c_smbus_ioctl_data args;
-    args.rw = 0;
-    args.cmd = channel + pwm0Reg + AUTO_INCREMENT;
-    args.size = I2C_SMBUS_BLOCK_DATA;
-    args.data = &regData;
-
-    return !(!ioctl(fd, I2C_SMBUS, &args) && !SetPWM(channel, PWM[0]));
+    for (int i = 0; i < size; i++)
+        SetPWM(channel + i, PWM[i]);
+    return 0;
 };
 int PCA995X::SetIREFAI(int channel, int *IREF, int size) {
     if (!CheckChannelLegal(channel)) return false;
-
-    union i2c_smbus_data regData;
-
-    regData.block[0] = size - 1;
-    for (int i = 1; i < size; i++) {
-        regData.block[i] = IREF[i];
-    }
-
-    struct i2c_smbus_ioctl_data args;
-    args.rw = 0;
-    args.cmd = channel + iref0Reg + AUTO_INCREMENT;
-    args.size = I2C_SMBUS_BLOCK_DATA;
-    args.data = &regData;
-
-    return !(!ioctl(fd, I2C_SMBUS, &args) && !SetIREF(channel, IREF[0]));
+    for (int i = 0; i < size; i++)
+        SetIREF(channel + i, IREF[i]);
+    return 0;
 };
 int PCA995X::SetPWMIREFAI(int *data) {
     SetPWMAI(0, data, GetLedChannelNum() * NUM_AN_OF_NEED_PWM);
