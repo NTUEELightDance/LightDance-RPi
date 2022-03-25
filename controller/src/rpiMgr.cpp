@@ -212,8 +212,6 @@ void RPiMgr::lightLEDStatus(const LEDPlayer::Frame& frame, const int& channelId)
         colorCode2RGB(frame.status[i].colorCode, R, G, B);
         LEDrgba_to_rgb(LEDBuf[channelId], i, R, G, B, alpha);
     }
-
-    // led_strip->sendToStrip(LEDBuf);
 }
 
 void RPiMgr::lightOFStatus(const OFPlayer::Frame& frame) {
