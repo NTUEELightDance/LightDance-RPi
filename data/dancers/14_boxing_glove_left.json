@@ -1,0 +1,43 @@
+{
+  "OFPARTS": {
+    "Thumb": 0,
+    "Fore_Finger_1": 1,
+    "Fore_Finger_2": 2,
+    "Middle_Finger_1": 3,
+    "Middle_Finger_2": 4,
+    "Ring_Finger_1": 5,
+    "Ring_Finger_2": 6,
+    "Little_Finger_1": 7,
+    "Little_Finger_2": 8,
+    "F_Diamond": 9,
+    "B_Diamond": 10,
+    "Palm_F_Side": 11,
+    "Palm_B_Side": 12,
+    "Palm_Shield": 13,
+    "Palm": 14,
+    "Arm_F_Side": 15,
+    "Arm_F_Shield": 16,
+    "Arm_B_Shield": 17,
+    "Arm_B_Side": 18,
+    "Arm_Inside": 19
+  },
+
+  "LEDPARTS": {
+    "Finger_LED": {
+      "id": 0,
+      "len": 28
+    },
+    "Lower_Energy_LED": {
+      "id": 1,
+      "len": 33
+    },
+    "Upper_Energy_LED": {
+      "id": 2,
+      "len": 69
+    },
+    "Arm_Inside_LED": {
+      "id": 3,
+      "len": 20
+    }
+  }
+}

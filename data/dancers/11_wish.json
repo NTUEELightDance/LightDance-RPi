@@ -33,5 +33,14 @@
     "Shoe_R_M": 23,
     "Shoe_R_D": 24
   },
-  "LEDPARTS": {}
+  "LEDPARTS": {
+    "Shoe_L_LED": {
+      "id": 0,
+      "len": 74
+    },
+    "Shoe_R_LED": {
+      "id": 1,
+      "len": 74
+    }
+  }
 }

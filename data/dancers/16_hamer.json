@@ -1,0 +1,55 @@
+{
+  "OFPARTS": {
+    "outer1": 0,
+    "outer2": 1,
+    "outer3": 2,
+    "outer4": 3,
+    "outer5": 4,
+    "outer6": 5,
+    "outer7": 6,
+    "outer8": 7,
+    "circle1": 8,
+    "circle2": 9,
+    "circle3": 10,
+    "circle4": 11,
+    "circle5": 12,
+    "circle6": 13,
+    "circle7": 14,
+    "circle8": 15,
+    "vertical1": 16,
+    "vertical2": 17,
+    "vertical3": 18,
+    "vertical4": 19,
+    "upper1": 20,
+    "upper2": 21,
+    "lower1": 22,
+    "lower2": 23
+  },
+
+  "LEDPARTS": {
+    "shaft_up": {
+      "id": 0,
+      "len": 14
+    },
+    "shaft_low": {
+      "id": 1,
+      "len": 76
+    },
+    "cool_up": {
+      "id": 2,
+      "len": 128
+    },
+    "cool_low": {
+      "id": 3,
+      "len": 122
+    },
+    "cute_up": {
+      "id": 4,
+      "len": 136
+    },
+    "cute_low": {
+      "id": 5,
+      "len": 100
+    }
+  }
+}
