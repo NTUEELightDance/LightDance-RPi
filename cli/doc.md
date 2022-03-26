@@ -79,7 +79,8 @@ positional arguments:
   alpha       brightness 0~15
 ```
 * darkall
-* traversal
+* traversal # Processing
+* red/green/blue
 
 ### System
 * reboot
