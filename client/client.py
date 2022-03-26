@@ -114,6 +114,8 @@ class Client:
                 payload = {"file": message["payload"], "dir": OF_SAVE_DIR}
             elif cmd == "load":
                 payload = {"path": "./data/"}
+            elif cmd == "statuslight":
+                payload = {"status": message["payload"]}
 
             return cmd, payload
         except:

@@ -1,38 +1,14 @@
-from .baseMethod import BaseMethod
-from .oftest import OFTest
-from .ledtest import LEDTest
 import json
 import os
+import sys
 
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
+from method import *
+from pysocket import ZMQSocket
 
-# Statuslight
-class StatusLight(BaseMethod):
-    def method(self, payload=None):
-        # response = self.socket.send("statuslight")
-        statusList = json.loads(payload)
+mysocket = ZMQSocket(port=8000)
 
-        dancer = os.environ["DANCER_NAME"]
-
-        with open(os.path.join("./data", "dancers", f"{dancer}.json")) as f:
-            partMap = json.load(f)
-    
-        for status in statusList["OFPARTS"].items():
-            payload = {
-                "channel": str(partMap["OFPARTS"][status[0]]),
-                "color": str(status[1]["colorCode"]),
-                "alpha": str(status[1]["alpha"]),
-            }
-            OFTest(self.socket)(payload)
-
-        for status in statusList["LEDPARTS"].items():
-            payload = {
-                "channel": str(partMap["LEDPARTS"][status[0]]["id"]),
-                "color": str(status[1][0]["colorCode"]),
-                "alpha": str(status[1][0]["alpha"]),
-            }
-            LEDTest(self.socket)(payload)
-
-"""
+status = """
 {
     "OFPARTS":{
             "Calf_R": { "colorCode": 16711680, "alpha": 10 },
@@ -57,14 +33,16 @@ class StatusLight(BaseMethod):
             "Glove_R": { "colorCode": 16711680, "alpha": 10 }
         },
         "LEDPARTS":{
-            Glove_L_LED:[
+            "Glove_L_LED":[
                 { "colorCode": 16777005, "alpha": 10 },
                 { "colorCode": 16777005, "alpha": 10 }
             ],
-            Glove_R_LED:[
+            "Glove_R_LED":[
                 { "colorCode": 16777005, "alpha": 10 },
                 { "colorCode": 16777005, "alpha": 10 }
             ]
         }
 }
 """
+
+StatusLight(socket=mysocket)(status)
