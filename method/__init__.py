@@ -1,7 +1,9 @@
 from .baseMethod import *
+from .blue import *
 from .boardInfo import *
 from .darkall import *
 from .eltest import *
+from .green import *
 from .kick import *
 from .ledtest import *
 from .lightall import *
@@ -12,6 +14,7 @@ from .pause import *
 from .play import *
 from .quit import *
 from .reboot import *
+from .red import *
 from .send import *
 from .sendLight import *
 from .shutDown import *
@@ -20,6 +23,3 @@ from .stop import *
 from .sync import *
 from .traversal import *
 from .uploadJsonFile import *
-from .red import *
-from .green import *
-from .blue import *

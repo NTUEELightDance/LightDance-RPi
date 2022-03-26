@@ -1,8 +1,9 @@
-from .baseMethod import BaseMethod
-from .oftest import OFTest
-from .ledtest import LEDTest
 import json
 import os
+
+from .baseMethod import BaseMethod
+from .ledtest import LEDTest
+from .oftest import OFTest
 
 
 # Statuslight
@@ -15,7 +16,7 @@ class StatusLight(BaseMethod):
 
         with open(os.path.join("./data", "dancers", f"{dancer}.json")) as f:
             partMap = json.load(f)
-    
+
         for status in statusList["OFPARTS"].items():
             payload = {
                 "channel": str(partMap["OFPARTS"][status[0]]),
@@ -31,6 +32,7 @@ class StatusLight(BaseMethod):
                 "alpha": str(status[1][0]["alpha"]),
             }
             LEDTest(self.socket)(payload)
+
 
 """
 {
