@@ -63,6 +63,9 @@ class Client:
             "uploadLed": UploadJsonFile(socket=self.socket),
             "sync": Sync(socket=self.socket),
             "shutDown": ShutDown(socket=self.socket),
+            "red": Red(socket=self.socket),
+            "green": Green(socket=self.socket),
+            "blue": Blue(socket=self.socket),
         }
         ##############
 
@@ -114,7 +117,7 @@ class Client:
                 payload = {"file": message["payload"], "dir": OF_SAVE_DIR}
             elif cmd == "load":
                 payload = {"path": "./data/"}
-            elif cmd == "statuslight":
+            else:
                 payload = {"status": message["payload"]}
 
             return cmd, payload

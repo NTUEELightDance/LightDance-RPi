@@ -20,3 +20,6 @@ from .stop import *
 from .sync import *
 from .traversal import *
 from .uploadJsonFile import *
+from .red import *
+from .green import *
+from .blue import *
