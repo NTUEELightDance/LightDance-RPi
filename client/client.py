@@ -24,6 +24,9 @@ cmdlist = [
     "boardInfo",
     "init",
     "test",
+    "red",
+    "green",
+    "blue"
 ]
 LED_SAVE_DIR = "./data/LED.json"
 OF_SAVE_DIR = "./data/OF.json"
@@ -117,9 +120,10 @@ class Client:
                 payload = {"file": message["payload"], "dir": OF_SAVE_DIR}
             elif cmd == "load":
                 payload = {"path": "./data/"}
-            else:
+            elif cmd == "statuslight":
                 payload = {"status": message["payload"]}
 
+            print(cmd, payload)
             return cmd, payload
         except:
             print("Invalid json format:")

@@ -3,5 +3,5 @@ from .baseMethod import BaseMethod
 
 class Red(BaseMethod):
     def method(self, payload=None):
-        response = self.socket.send(["lightall", int("0xff0000", -1), 10])
+        response = self.socket.send(["lightall", str(int("ff0000", 16)), str(10)])
         return response

@@ -78,7 +78,7 @@ class LightDanceCLI(cmd2.Cmd):
         # vars init
         self.load = False
         self.control_path = "./data"
-        self.dancer = sys.argv[1]
+        self.dancer = os.environ["DANCER_NAME"]
         self.partMap = {}
 
     def response_parser(self, response: str):
