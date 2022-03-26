@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include <iostream>
-#define MAX_BRIGHTNESS 200
+#define MAX_BRIGHTNESS 255
 using namespace std;
 
 Color_regulator::Color_regulator(float g) {
