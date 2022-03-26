@@ -10,10 +10,11 @@
 #define gamma_b 1.66
 
 void OFrgba2rgbiref(std::vector<char>& OF, const char& R, const char& G, const char& B, const float& alpha) {
-    float a = alpha > 12 ? 1 : alpha / 12;
-    OF[0] = char(pow(a / 3, gamma_r) * 255);
-    OF[1] = char(pow(a / 3, gamma_g) * 255);
-    OF[2] = char(pow(a / 3, gamma_b) * 255);
+    float a = alpha > 12 ? 1 : alpha / 12; // a <= 1
+    float theta = 1.5; // as theta smaller, OF[0] ~ [3] will bigger (approaching 255)
+    OF[0] = char(pow(a / theta, gamma_r) * 255);
+    OF[1] = char(pow(a / theta, gamma_g) * 255);
+    OF[2] = char(pow(a / theta, gamma_b) * 255);
     OF[3] = B;
     OF[4] = G;
     OF[5] = R;
