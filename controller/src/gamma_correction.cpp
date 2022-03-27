@@ -4,6 +4,7 @@
 
 #include <iostream>
 #define MAX_BRIGHTNESS 255
+#define LED_STRIP_BRIGHTNESS_SCALE 0.08
 using namespace std;
 
 Color_regulator::Color_regulator(float g) {
@@ -30,11 +31,7 @@ void LEDrgba_to_rgb(vector<char>& LED, const int& index, const char& R, const ch
     float g = float(G) / float(R + G + B);
     float b = float(B) / float(R + G + B);
     // LED format, not error
-    LED[3 * index] = char(g * a * MAX_BRIGHTNESS);
-    LED[3 * index + 1] = char(r * a * MAX_BRIGHTNESS);
-    LED[3 * index + 2] = char(b * a * MAX_BRIGHTNESS);
+    LED[3 * index] = char(g * a * MAX_BRIGHTNESS * LED_STRIP_BRIGHTNESS_SCALE);
+    LED[3 * index + 1] = char(r * a * MAX_BRIGHTNESS * LED_STRIP_BRIGHTNESS_SCALE);
+    LED[3 * index + 2] = char(b * a * MAX_BRIGHTNESS * LED_STRIP_BRIGHTNESS_SCALE);
 }
-// int main(int argc, char *argv[])
-// {
-//   return 0;
-// }
