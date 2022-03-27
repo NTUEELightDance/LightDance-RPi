@@ -70,12 +70,15 @@ class LightDanceCLI(cmd2.Cmd):
             "list": List(socket=self.socket),
             "quit": Quit(socket=self.socket),
             "send": Send(socket=self.socket),
+            "red": Red(socket=self.socket),
+            "green": Green(socket=self.socket),
+            "blue": Blue(socket=self.socket),
         }
 
         # vars init
         self.load = False
         self.control_path = "./data"
-        self.dancer = sys.argv[1]
+        self.dancer = os.environ["DANCER_NAME"]
         self.partMap = {}
 
     def response_parser(self, response: str):
@@ -105,6 +108,18 @@ class LightDanceCLI(cmd2.Cmd):
     def do_shutdown(self, args):
         """shutdown"""
         self.METHODS["shutdown"]()
+
+    def do_red(self, args):
+        """red"""
+        self.METHODS["red"]()
+
+    def do_green(self, args):
+        """green"""
+        self.METHODS["green"]()
+
+    def do_blue(self, args):
+        """blue"""
+        self.METHODS["blue"]()
 
     # load [path]
     load_parser = cmd2.Cmd2ArgumentParser()

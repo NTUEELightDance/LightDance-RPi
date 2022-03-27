@@ -1,6 +1,5 @@
 import random
 import time
-from logging import warning
 
 import zmq
 
