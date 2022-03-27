@@ -8,7 +8,9 @@
 #include "LED_strip.h"
 
 #include <errno.h>
+#include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
@@ -17,6 +19,14 @@
 #include <vector>
 
 using namespace std;
+
+void sighandler(int signo) {
+    if (signo == SIGINT || signo == SIGTERM) {
+        cout << "exit SIGINT SIGTERM" << endl;
+        pinMode(0, INPUT);
+        exit(0);
+    }
+}
 
 /*
   @brief constructor of LED strip, initialize UART communication.
@@ -53,12 +63,16 @@ void LED_Strip::initialize(vector<uint16_t>& nLEDs) {
     initialized = true;
 }
 void LED_Strip::StmInit() {
+    struct sigaction act;
+    act.sa_handler = sighandler;
+    sigaction(SIGINT, &act, NULL);
+    sigaction(SIGTERM, &act, NULL);
     pinMode(0, OUTPUT);  // reset pin, actually GPIO 17
     digitalWrite(0, 0);
     usleep(100 * 1000);  // pulse
     digitalWrite(0, 1);
-    sleep(2);           // recover
-    pinMode(0, INPUT);  // cheat
+    sleep(2);  // recover
+    // pinMode(0, INPUT); // cheat
 
     // initializing
     for (int i = 0; i < 3; ++i) {
