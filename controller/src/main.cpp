@@ -33,6 +33,7 @@ map<string, BaseMethod *> setup_method_map(zmq::socket_t &socket) {
     method_map.insert(pair<string, BaseMethod *>("pause", new Pause(socket)));
     method_map.insert(pair<string, BaseMethod *>("darkall", new DarkAll(socket)));
     method_map.insert(pair<string, BaseMethod *>("lightall", new LightAll(socket)));
+    method_map.insert(pair<string, BaseMethod *>("stmInit", new StmInit(socket)));
     return method_map;
 }
 

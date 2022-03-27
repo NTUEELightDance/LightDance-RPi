@@ -2,6 +2,7 @@
 import os
 import sys
 import time
+from method.stminit import StmInit
 
 import websocket
 
@@ -26,7 +27,9 @@ cmdlist = [
     "test",
     "red",
     "green",
-    "blue"
+    "blue",
+    "darkall",
+    "stmInit",
 ]
 LED_SAVE_DIR = "./data/LED.json"
 OF_SAVE_DIR = "./data/OF.json"
@@ -69,6 +72,8 @@ class Client:
             "red": Red(socket=self.socket),
             "green": Green(socket=self.socket),
             "blue": Blue(socket=self.socket),
+            "darkall": DarkAll(socket=self.socket),
+            "stmInit": StmInit(socket=self.socket),
         }
         ##############
 
