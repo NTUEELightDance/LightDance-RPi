@@ -2,7 +2,6 @@
 import os
 import sys
 import time
-from method.stminit import StmInit
 
 import websocket
 

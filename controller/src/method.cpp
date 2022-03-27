@@ -145,7 +145,7 @@ void LightAll::method(const vector<string>& cmd, bool& quit) {
 };
 
 StmInit::StmInit(zmq::socket_t& socket) : BaseMethod(socket){};
-void Init::method(const vector<string>& cmd, bool& quit) {
+void StmInit::method(const vector<string>& cmd, bool& quit) {
     rpiMgr->stmInit();
-    logger.success("StmInit");
+    logger->success("StmInit");
 };
