@@ -27,5 +27,14 @@
     "Calf_L": 21,
     "Calf_R": 22
   },
-  "LEDPARTS": {}
+  "LEDPARTS": {
+    "Shoe_L_LED": {
+      "id": 0,
+      "len": 74
+    },
+    "Shoe_R_LED": {
+      "id": 1,
+      "len": 74
+    }
+  }
 }

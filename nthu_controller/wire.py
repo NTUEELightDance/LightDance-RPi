@@ -13,11 +13,15 @@ def log(msg):
     print(msg)
     sys.stdout.flush()
 
-
 class Wire:
     def __init__(self) -> None:
         self.socket = ZMQSocket(port=8000)
+        
         self.play = Play(self.socket)
+        self.load =Load(self.socket)
+        
+        self.load({"path": "./data/"})
+
 
     def signalHandler(self, sig, frame):
         GPIO.cleanup()
