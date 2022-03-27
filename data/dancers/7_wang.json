@@ -42,11 +42,11 @@
   "LEDPARTS": {
     "Shoe_L_LED": {
       "id": 0,
-      "len": 74
+      "len": 37
     },
     "Shoe_R_LED": {
       "id": 1,
-      "len": 74
+      "len": 37
     }
   }
 }
