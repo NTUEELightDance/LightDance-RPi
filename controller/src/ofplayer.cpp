@@ -18,6 +18,20 @@ void OFPlayer::init(const json& OFparts) {
 }
 
 void OFPlayer::load(const json& pl) {
+    Frame darkFrame;
+    darkFrame.start = 0;
+    darkFrame.fade = false;
+    for (auto it = channelId.begin(); it != channelId.end(); ++it)
+        darkFrame.status.insert(pair<string, OFStatus>(it->first, OFStatus(0, 0)));
+    if (pl.size() == 0) {
+        playList.push_back(darkFrame);
+        return;
+    }
+    auto it = pl.begin();
+    const size_t firstStartTime = it.value()["start"];
+    if (firstStartTime != 0)
+        playList.push_back(darkFrame);
+
     playList.reserve(pl.size());
     for (auto& f : pl) {
         Frame frame(f["start"], f["fade"], f["status"]);
