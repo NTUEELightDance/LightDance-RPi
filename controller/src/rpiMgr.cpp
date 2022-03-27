@@ -14,6 +14,7 @@ bool RPiMgr::setDancer() {
 
     json j;
     infile >> j;
+    infile.close();
 
     // FPS
     fps = int(j["fps"]);
@@ -74,10 +75,12 @@ void RPiMgr::load(const string& path) {
     LEDfile >> _LEDJson;
     for (auto& lp : ledPlayers)
         lp.load(_LEDJson[lp.name]);
+    LEDfile.close();
 
     // OF
     OFfile >> _OFJson;
     ofPlayer.load(_OFJson);
+    OFfile.close();
 
     _loaded = true;
     logger->success("Load", msg);
