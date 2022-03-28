@@ -20,7 +20,10 @@ class Wire:
         
         self.play = Play(self.socket)
         self.load =Load(self.socket)
+        self.restartController = RestartController(self.socket)
         
+        self.restartController()
+        time.sleep(10) # wait for controller to restart
         self.load({"path": "./data/"})
 
 
