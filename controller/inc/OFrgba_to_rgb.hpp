@@ -9,14 +9,18 @@
 #define gamma_g 1.8
 #define gamma_b 1.66
 
-void OFrgba2rgbiref(std::vector<char>& OF, const char& R, const char& G, const char& B, const float& alpha) {
+float sigmoid(float gamma, float a) {
     const float exp = 2.71828;
+    const int max_scale = 140;
+    return 1 / (pow(exp, -5 * gamma * (a - 0.5)) + 1) * max_scale;
+}
+
+void OFrgba2rgbiref(std::vector<char>& OF, const char& R, const char& G, const char& B, const float& alpha) {
     float a = alpha > 12 ? 1 : alpha / 12;  // a <= 1
-    float theta = 1.5;                      // as theta smaller, OF[0] ~ [3] will bigger (approaching 255)
     // Sigmoid function for fade in/out
-    OF[0] = char(1 / (pow(exp, -5 * gamma_r * (a - 0.5)) + 1) * 140);
-    OF[1] = char(1 / (pow(exp, -5 * gamma_g * (a - 0.5)) + 1) * 140);
-    OF[2] = char(1 / (pow(exp, -5 * gamma_b * (a - 0.5)) + 1) * 140);
+    OF[0] = char(int8_t(sigmoid(gamma_r, a) - sigmoid(gamma_r, 0)));
+    OF[1] = char(int8_t(sigmoid(gamma_g, a) - sigmoid(gamma_g, 0)));
+    OF[2] = char(int8_t(sigmoid(gamma_b, a) - sigmoid(gamma_b, 0)));
     OF[3] = B;
     OF[4] = G;
     OF[5] = R;
