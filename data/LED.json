@@ -1,288 +1,628 @@
 {
-    "Glove_L_LED": [
+    "Visor_LED": [],
+    "Shoulder_L_LED": [],
+    "Shoulder_R_LED": [],
+    "Hand_L_LED": [],
+    "Hand_R_LED": [],
+    "Shoe_R_LED": [
         {
             "start": 0,
-            "fade": true,
+            "fade": false,
             "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                }
             ]
         },
         {
-            "start": 100,
+            "start": 1792,
             "fade": false,
             "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 200,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        }
-    ],
-    "Glove_R_LED": [
-        {
-            "start": 0,
-            "fade": true,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 100,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 200,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        }
-    ],
-    "Visor_LED": [
-        {
-            "start": 0,
-            "fade": true,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 100,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 200,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        }
-    ],
-    "CollarBone_R_LED": [
-        {
-            "start": 0,
-            "fade": true,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 100,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 200,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        }
-    ],
-    "CollarBone_L_LED": [
-        {
-            "start": 0,
-            "fade": true,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 100,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 200,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        }
-    ],
-    "Shoulder_R_LED": [
-        {
-            "start": 0,
-            "fade": true,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 100,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 200,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        }
-    ],
-    "Shoulder_L_LED": [
-        {
-            "start": 0,
-            "fade": true,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 100,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 200,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        }
-    ],
-    "Hand_R_LED": [
-        {
-            "start": 0,
-            "fade": true,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 100,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 200,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        }
-    ],
-    "Hand_L_LED": [
-        {
-            "start": 0,
-            "fade": true,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 100,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 200,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                }
             ]
         }
     ],
     "Shoe_L_LED": [
         {
             "start": 0,
-            "fade": true,
+            "fade": false,
             "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                }
             ]
         },
         {
-            "start": 100,
+            "start": 1792,
             "fade": false,
             "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 200,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                }
             ]
         }
     ],
-    "Shoe_R_LED": [
-        {
-            "start": 0,
-            "fade": true,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 100,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        },
-        {
-            "start": 200,
-            "fade": false,
-            "status": [
-                { "colorCode": 16777005, "alpha": 10 },
-                { "colorCode": 16777005, "alpha": 10 }
-            ]
-        }
-    ]
+    "CollarBone_LED": []
 }
