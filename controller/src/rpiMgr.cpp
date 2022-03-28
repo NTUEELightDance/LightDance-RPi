@@ -270,3 +270,9 @@ void RPiMgr::playLoop(const long startTime) {
     }
     cout << "end playing\n";
 }
+
+// StmInit
+void RPiMgr::stmInit() {
+    led_strip->StmInit();
+    cout << "stmInit\n";
+}

@@ -26,7 +26,10 @@ cmdlist = [
     "test",
     "red",
     "green",
-    "blue"
+    "blue",
+    "darkall",
+    "stmInit",
+    "restartController",
 ]
 LED_SAVE_DIR = "./data/LED.json"
 OF_SAVE_DIR = "./data/OF.json"
@@ -69,6 +72,9 @@ class Client:
             "red": Red(socket=self.socket),
             "green": Green(socket=self.socket),
             "blue": Blue(socket=self.socket),
+            "darkall": DarkAll(socket=self.socket),
+            "stmInit": StmInit(socket=self.socket),
+            "restartController": RestartController(socket=self.socket),
         }
         ##############
 

@@ -116,4 +116,12 @@ class LightAll : public BaseMethod {
     void method(const vector<string>& cmd, bool& quit);
 };
 
+class StmInit : public BaseMethod {
+   public:
+    StmInit(zmq::socket_t& socket);
+
+   protected:
+    void method(const vector<string>& cmd, bool& quit);
+};
+
 #endif

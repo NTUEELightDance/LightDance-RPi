@@ -49,6 +49,7 @@ class RPiMgr {
     void quit();
     void darkAll();
     void lightAll(int colorCode, int alpha);  // Will change led buf, but not changing of buf
+    void stmInit();
 
    private:
     // Functions

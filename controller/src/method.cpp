@@ -143,3 +143,9 @@ void LightAll::method(const vector<string>& cmd, bool& quit) {
     rpiMgr->lightAll(colorCode, alpha);
     logger->success("LightAll");
 };
+
+StmInit::StmInit(zmq::socket_t& socket) : BaseMethod(socket){};
+void StmInit::method(const vector<string>& cmd, bool& quit) {
+    rpiMgr->stmInit();
+    logger->success("StmInit");
+};

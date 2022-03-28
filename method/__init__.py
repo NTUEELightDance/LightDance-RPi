@@ -15,10 +15,12 @@ from .play import *
 from .quit import *
 from .reboot import *
 from .red import *
+from .restartController import *
 from .send import *
 from .sendLight import *
 from .shutDown import *
 from .statuslight import *
+from .stmInit import *
 from .stop import *
 from .sync import *
 from .traversal import *

@@ -73,6 +73,8 @@ class LightDanceCLI(cmd2.Cmd):
             "red": Red(socket=self.socket),
             "green": Green(socket=self.socket),
             "blue": Blue(socket=self.socket),
+            "stmInit": StmInit(socket=self.socket),
+            "restartController": RestartController(socket=self.socket),
         }
 
         # vars init
@@ -120,6 +122,14 @@ class LightDanceCLI(cmd2.Cmd):
     def do_blue(self, args):
         """blue"""
         self.METHODS["blue"]()
+    
+    def do_stmInit(self, args):
+        """stmInit"""
+        self.METHODS["stmInit"]()
+
+    def do_restartController(self, args):
+        """restartController"""
+        self.METHODS["restartController"]()
 
     # load [path]
     load_parser = cmd2.Cmd2ArgumentParser()
