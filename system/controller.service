@@ -3,6 +3,7 @@ Description=controller
 
 [Service]
 User=pi
+ExecStartPre=/bin/sleep 20
 WorkingDirectory=/home/pi/LightDance-RPi
 ExecStart=/home/pi/LightDance-RPi/startController.sh
 Restart=always
