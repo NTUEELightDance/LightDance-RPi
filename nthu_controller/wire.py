@@ -19,13 +19,19 @@ class Wire:
         self.socket = ZMQSocket(port=8000)
         
         self.play = Play(self.socket)
-        self.load =Load(self.socket)
+        self.stop = Stop(self.socket)
+        self.load = Load(self.socket)
         self.restartController = RestartController(self.socket)
-        
-        self.restartController()
-        time.sleep(10) # wait for controller to restart
-        self.load({"path": "./data/"})
+        self.darkAll = DarkAll(self.socket)
+        self.lightAll = LightAll(self.socket)
 
+
+        log("Start to lightall")
+        self.lightAll({"color": "16711680", "alpha": "10"})
+
+        time.sleep(10)
+        self.darkAll()
+        self.load({"path": "./data/"})
 
     def signalHandler(self, sig, frame):
         GPIO.cleanup()
@@ -41,9 +47,13 @@ class Wire:
 
     def button_pressed_up_callback(self, channel):
         # Trigger only when delta_T is between 0.47 second ~ 0.53 second (the siganal should be at 0.5 second)
-        if (time.time() - self.recv_time > 0.47 and time.time() - self.recv_time < 0.53):
+        if (time.time() - self.recv_time > 0.3 and time.time() - self.recv_time < 0.7):
             log("Sending Play request ...")
             response = self.play({"start_time": 0, "delay_time": 0})
+            log("Response: " + response)
+        elif (time.time() - self.recv_time > 0.8 and time.time() - self.recv_time < 1.2):
+            log("Sending Stop request ...")
+            response = self.stop()
             log("Response: " + response)
 
         # clean event listener and start listenting rising event
