@@ -24,3 +24,4 @@ from .sync import *
 from .traversal import *
 from .uploadJsonFile import *
 from .stmInit import *
+from .restartController import *
