@@ -86,5 +86,8 @@ positional arguments:
 * reboot
 * shutdown
 * quit
+* restartController
+* stmInit
+
 ## Startup Script
 CLI will run commands in `cli/startup` at start. It's useful for debug routine.
