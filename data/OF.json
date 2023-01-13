@@ -1,0 +1,26 @@
+[
+    {
+        "start": 0,
+        "fade": false,
+        "status": {
+            "of_a1": { "colorCode": 0, "alpha": 0 },
+            "of_a2": { "colorCode": 0, "alpha": 0 },
+            "of_a3": { "colorCode": 0, "alpha": 0 },
+            "of_a4": { "colorCode": 0, "alpha": 0 },
+            "of_a5": { "colorCode": 0, "alpha": 0 },
+            "of_a6": { "colorCode": 0, "alpha": 0 },
+            "of_a7": { "colorCode": 0, "alpha": 0 },
+            "of_a8": { "colorCode": 0, "alpha": 0 },
+            "of_b1": { "colorCode": 0, "alpha": 0 },
+            "of_b2": { "colorCode": 0, "alpha": 0 },
+            "of_b3": { "colorCode": 0, "alpha": 0 },
+            "of_b4": { "colorCode": 0, "alpha": 0 },
+            "of_b5": { "colorCode": 0, "alpha": 0 },
+            "of_b6": { "colorCode": 0, "alpha": 0 },
+            "of_b7": { "colorCode": 0, "alpha": 0 },
+            "of_b8": { "colorCode": 0, "alpha": 0 },
+            "of_pillar_l": { "colorCode": 0, "alpha": 0 },
+            "of_pillar_r": { "colorCode": 0, "alpha": 0 }
+        }
+    }
+]

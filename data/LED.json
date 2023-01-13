@@ -1,0 +1,628 @@
+{
+    "Visor_LED": [],
+    "Shoulder_L_LED": [],
+    "Shoulder_R_LED": [],
+    "Hand_L_LED": [],
+    "Hand_R_LED": [],
+    "Shoe_R_LED": [
+        {
+            "start": 0,
+            "fade": false,
+            "status": [
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                }
+            ]
+        },
+        {
+            "start": 1792,
+            "fade": false,
+            "status": [
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                }
+            ]
+        }
+    ],
+    "Shoe_L_LED": [
+        {
+            "start": 0,
+            "fade": false,
+            "status": [
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 255,
+                    "alpha": 10
+                }
+            ]
+        },
+        {
+            "start": 1792,
+            "fade": false,
+            "status": [
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                },
+                {
+                    "colorCode": 0,
+                    "alpha": 10
+                }
+            ]
+        }
+    ],
+    "CollarBone_LED": []
+}
