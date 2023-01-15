@@ -2,7 +2,7 @@
 
 to store all STL structure into BIN
 
-## Officail setup
+## Official setup
 
 please follow exactly the steps in the [website](https://www.boost.org/doc/libs/1_81_0/more/getting_started/unix-variants.html)
 
@@ -19,7 +19,7 @@ and you will find there has errors occured ; )
 tar --bzip2 -xf /path/to/boost_1_81_0.tar.bz2
 ```
 
-( "`/path/to/`" has highly prob. to be "`~/Downloads`")
+( "`/path/to/`" has highly prob. to be "`~/Downloads/`")
 
 (e.g.
 I installed it under "`~/`"

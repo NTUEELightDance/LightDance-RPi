@@ -51,6 +51,7 @@ string Player::list()const{
     
     return ostr.str();
 }
+
 template<class Archive>
 void Player::serialize(Archive & ar, const unsigned int version){
     ar & dancerName;
@@ -60,7 +61,7 @@ void Player::serialize(Archive & ar, const unsigned int version){
 };
 
 
-ostream & operator<<(std::ostream &os, const Player &player)
+ostream & operator<<(ostream &os, const Player &player)
 {
     os<<player.list();
     return os;

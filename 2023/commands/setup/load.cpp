@@ -14,13 +14,10 @@ using json = nlohmann::json;
 
 int main(int argc, char *argv[]) {
     if (argc != 4) {
-        cerr << "Error: missing parameters! (input type, dancer, json file are needed)" << endl;
+        cerr << "Error: missing parameters! (input type, dancer name, json file are needed)" << endl;
         exit(0); // or 1?
     }
 
-    /*
-    in
-    */
     string dataType = argv[1];
     string dancerName = argv[2];
     string path = argv[3];
@@ -42,20 +39,20 @@ int main(int argc, char *argv[]) {
         cout<<dancer.list()<<endl;
 
         string ofileName(boost::archive::tmpdir());
-        ofileName += "/"+dancerName+"_DancerData";
+        ofileName += "/data/"+dancerName+"_DancerData";
         savePlayer(dancer,ofileName.c_str());
     }
 
 
-    string fileName(boost::archive::tmpdir());
-    fileName += "/"+dancerName+"_DancerData";
-    Player new_dancer;
-    if(!restorePlayer(new_dancer,fileName.c_str())){
-        exit(0);
-    };
+    // string fileName(boost::archive::tmpdir());
+    // fileName += "/data/"+dancerName+"_DancerData";
+    // Player new_dancer;
+    // if(!restorePlayer(new_dancer,fileName.c_str())){
+    //     exit(0);
+    // };
 
-    cout<<"Date restore as below\n";
-    cout<<new_dancer<<endl;
+    // cout<<"Date restore as below\n";
+    // cout<<new_dancer<<endl;
 
     return 0;
 }
