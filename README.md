@@ -1,70 +1,61 @@
-# 2022-LightDance-RPi
+# 2023-LightDance-RPi
 
-## Installation
-### Setup zeromq
+## playloop
 
-You must first install `cppzmq` to enable the usage of controller
+### OF
 
--   Installation on Mac:
-    Type in the following script:
+```c++
+struct Status {
+	int r;
+	int g;
+	int b;
+	int a;
+};
 
-    ```shell
-    cd LightDance-RPi/scripts/
-    bash install_zeromq_mac.sh
-    ```
+vector<vector<Status>> frames;
 
-    Reference link: https://github.com/zeromq/cppzmq
+class OpticalFiberController {
+	public:
+		OpticalFiberController();
+		int init(vector<int> map);
+		int sendAll(vector<Status> status); // lightall, darkall
+};
 
--   Installation on RPi:
-    Type in the following script:
-
-    ```shell
-    cd LightDance-RPi/scripts/
-    bash install_zeromq_rpi.sh
-    ```
-
-    Reference link: http://osdevlab.blogspot.com/2015/12/how-to-install-zeromq-package-in.html
-
-### Install Python Dependencies
-```
-# At LightDance-RPi/
-pip3 install -r requirements.txt
+// logic
+while(1) {
+	status = findFrame(getTime());
+	sendAll(status);
+	sleep(5ms);
+}
 ```
 
-### Formatter & Linter
-```
-bash scripts/py_formatter.sh
+### LED
 
-bash scripts/py_lint.sh
-```
+```c++
+struct Status {
+	int r;
+	int g;
+	int b;
+	int a;
+};
 
-## Run
-### Run Controller
-Bulid
-```
-cd controller
-make
-```
+vector<LEDStatus> stripStatus(size);
 
-Run
-``` bash
-sudo ./controller/controller ${dancerName}
-# or
-bash startController.sh
-```
+class LEDStripController {
+	public:
+		LEDStripController();
+		int init(vector<int> shape);
+		int checkReady();
+		int sendAll(vector<vector<Status>> status);
+};
 
-### Run CLI
-``` bash
-python3 cli/cli.py ${dancerName}
-# or
-bash startCLI.sh
-```
-
-### Setup
-``` bash
-# Startup Routine
-bash setup.sh
-
-# CLI
-bash startCLI.sh
+// logic
+while(1) {
+	while(checkReady() == 0){
+		sleep(1ms);
+  }
+	status = findFrame(getTime());
+	sendAll(status);
+	sleep(5ms);
+}
 ```
