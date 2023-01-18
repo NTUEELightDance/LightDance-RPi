@@ -3,7 +3,7 @@
 
 namespace OFPlayer {
 
-void loop();
+void *loop(void *ptr);
 
 };
 
