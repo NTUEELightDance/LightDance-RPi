@@ -14,13 +14,12 @@ Status::Status() : r(0), g(0), b(0), a(0) {}
 Status::Status(const uint &_r, const uint &_g, const uint &_b, const uint &_a)
     : r(_r), g(_g), b(_b), a(_a) {}
 
-Status::Status(const uint &colorCode, const uint &alpha) {
-    // TODO: clearify colorCode format
-    this->r = (colorCode >> 24) & 0xff;
-    this->g = (colorCode >> 16) & 0xff;
-    this->b = (colorCode >> 8) & 0xff;
-    this->a = alpha;
-}
+// Status::Status(const uint &colorCode, const uint &alpha) {
+//     this->r = (colorCode >> 24) & 0xff;
+//     this->g = (colorCode >> 16) & 0xff;
+//     this->b = (colorCode >> 8) & 0xff;
+//     this->a = alpha;
+// }
 
 // ==================== Frame definition =====================
 
@@ -32,7 +31,7 @@ Frame::Frame(const int &_start, const bool &_fade, const json &_status_json) {
     this->statusList.clear();
     for (auto &status_json : _status_json) {
         this->statusList.push_back(
-            Status(status_json["colorCode"], status_json["alpha"]));
+            Status(status_json[0], status_json[1], status_json[2], status_json[3]));
     }
 }
 
@@ -59,7 +58,7 @@ void load(const json &data_json, const json &parts_json, const int &_fps) {
     // TODO: set total part number, instead of using max id plus 1
     int partNum = 0;
     for (auto &part : parts_json) {
-        int id = part["id"];
+        const int id = part["id"];
         partNum = max(id + 1, (int)partNum);
     }
     // printf("part number: %d\n", partNum);
@@ -75,13 +74,13 @@ void load(const json &data_json, const json &parts_json, const int &_fps) {
     frameLists.resize(partNum);
 
     for (auto &part_it : parts_json.items()) {
-        string partName = part_it.key();
-        json part = part_it.value();
+        const string partName = part_it.key();
+        const json part = part_it.value();
 
         const json &frames_json = data_json[partName];
 
-        int id = part["id"];
-        int len = part["len"];
+        const int id = part["id"];
+        const int len = part["len"];
 
         stripShapes[id] = len;
 
@@ -98,7 +97,7 @@ void load(const json &data_json, const json &parts_json, const int &_fps) {
             frameLists[id].push_back(darkFrame);
         }
 
-        for (auto &frame_json : frames_json) {
+        for (const json &frame_json : frames_json) {
             if (frame_json["status"].size() != len) {
                 // TODO: print size mismatch warning
                 continue;
@@ -119,6 +118,8 @@ void load(const json &data_json, const json &parts_json, const int &_fps) {
     //         printf("    status number: %d\n", (int)frame.statusList.size());
     //     }
     // }
+
+    // TODO: init hardware with shapes
 }
 
 long getElapsedTime(const struct timeval &base, const struct timeval &current) {
@@ -212,7 +213,7 @@ void *loop(void *ptr) {
         if (playing) {
             gettimeofday(&currentTime, NULL);
             const long elapsedTime = getElapsedTime(baseTime, currentTime);
-            // printf("Time: %f\n", elapsedTime / 1000000.0f);
+            printf("Time: %f\n", elapsedTime / 1000000.0f);
 
             const int currentTimeId = getTimeId(elapsedTime);
             // printf("Time Id: %d\n", currentTimeId);
@@ -238,9 +239,9 @@ void *loop(void *ptr) {
                 const Frame &frame = frameList[frameId];
                 if (frame.fade) {
                     const long startTime =
-                        (long)frameList[frameId].start * 1000000l / fps;
+                        (long)frameList[frameId].start * 1000000l / (long)fps;
                     const long endTime =
-                        (long)frameList[frameId + 1].start * 1000000l / fps;
+                        (long)frameList[frameId + 1].start * 1000000l / (long)fps;
                     const float rate =
                         (float)(elapsedTime - startTime) / (float)(endTime - startTime);
                     statusLists.push_back(

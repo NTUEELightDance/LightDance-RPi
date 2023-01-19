@@ -22,7 +22,7 @@ typedef struct Status {
     int r, g, b, a;
     Status();
     Status(const uint &_r, const uint &_g, const uint &_b, const uint &_a);
-    Status(const uint &colorCode, const uint &alpha);
+    // Status(const uint &colorCode, const uint &alpha);
 } Status;
 
 typedef struct Frame {
@@ -45,7 +45,8 @@ long getElapsedTime(const struct timeval &base, const struct timeval &current);
 int getTimeId(const long &elapsedTime);
 // frame calculation
 void calculateFrameIds(const int &timeId);
-vector<Status> interpolateFadeFrame(const Frame &origin, const Frame &target, const float &rate);
+vector<Status> interpolateFadeFrame(const Frame &origin, const Frame &target,
+                                    const float &rate);
 // threading function
 void *loop(void *ptr);
 
