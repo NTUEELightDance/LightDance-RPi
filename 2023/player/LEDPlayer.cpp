@@ -1,5 +1,6 @@
 #include "LEDPlayer.h"
 #include <cmath>
+#include <unistd.h>
 
 extern bool playing;
 extern struct timeval baseTime;
@@ -10,10 +11,10 @@ namespace LEDPlayer {
 
 Status::Status() : r(0), g(0), b(0), a(0) {}
 
-Status::Status(const int &_r, const int &_g, const int &_b, const int &_a)
+Status::Status(const uint &_r, const uint &_g, const uint &_b, const uint &_a)
     : r(_r), g(_g), b(_b), a(_a) {}
 
-Status::Status(const int &colorCode, const int &alpha) {
+Status::Status(const uint &colorCode, const uint &alpha) {
     // TODO: clearify colorCode format
     this->r = (colorCode >> 24) & 0xff;
     this->g = (colorCode >> 16) & 0xff;
@@ -53,13 +54,15 @@ vector<int> stripShapes;
 
 void load(const json &data_json, const json &parts_json, const int &_fps) {
     fps = _fps;
+    // printf("FPS: %d\n", fps);
 
-    // TODO: ask total part number, instead of using max id plus 1
+    // TODO: set total part number, instead of using max id plus 1
     int partNum = 0;
     for (auto &part : parts_json) {
         int id = part["id"];
         partNum = max(id + 1, (int)partNum);
     }
+    // printf("part number: %d\n", partNum);
 
     frameIds.clear();
     frameIds.resize(partNum);
@@ -82,12 +85,14 @@ void load(const json &data_json, const json &parts_json, const int &_fps) {
 
         stripShapes[id] = len;
 
+        // If no frames are given, push only dark frame
         const Frame darkFrame(0, false, len);
         if (frames_json.size() == 0) {
             frameLists[id].push_back(darkFrame);
             continue;
         }
 
+        // If not starting at time = 0, use dark frame as first frame
         const int firstStartTime = frames_json.begin().value()["start"];
         if (firstStartTime != 0) {
             frameLists[id].push_back(darkFrame);
@@ -102,37 +107,48 @@ void load(const json &data_json, const json &parts_json, const int &_fps) {
                 Frame(frame_json["start"], frame_json["fade"], frame_json["status"]));
         }
     }
+
+    // for (int i = 0; i < frameLists.size(); i++) {
+    //     const vector<Frame> &frameList = frameLists[i];
+    //     printf("part Id: %d\n", i);
+    //     for (int j = 0; j < frameList.size(); j++) {
+    //         const Frame &frame = frameList[j];
+    //         printf("  frame Id: %d\n", j);
+    //         printf("    start: %d\n", frame.start);
+    //         printf("    fade: %s\n", frame.fade ? "true" : "false");
+    //         printf("    status number: %d\n", (int)frame.statusList.size());
+    //     }
+    // }
 }
 
-// TODO: implement other util functions
-
 long getElapsedTime(const struct timeval &base, const struct timeval &current) {
-    return (current.tv_sec - base.tv_sec) * 1000000 +
-           (current.tv_sec - base.tv_sec);
+    // Get time elapsed from start time in microsecond
+    return (long)(current.tv_sec - base.tv_sec) * 1000000l +
+           (long)(current.tv_usec - base.tv_usec);
 }
 
 int getTimeId(const long &elapsedTime) {
+    // Get id of elapsed time
     return (elapsedTime * (long)fps) / 1000000l;
 }
 
 void calculateFrameIds(const int &timeId) {
+    // Find current frame by time id
     for (int i = 0; i < frameIds.size(); i++) {
-        if (timeId < 0) {
+        const vector<Frame> &frameList = frameLists[i];
+
+        // Do not process if no frame is empty or time is invalid
+        if (frameList.size() == 0 || timeId < 0) {
             frameIds[i] = -1;
             continue;
         }
-
-        const vector<Frame> &frameList = frameLists[i];
-
-        if (frameList.size() == 0 || timeId == 0) {
-            frameIds[i] = 0;
-            continue;
-        }
-        if (frameList.back().start == 0) {
+        // Use last frame if time exceeded the limit
+        if (timeId >= frameList.back().start) {
             frameIds[i] = frameLists[i].size() - 1;
             continue;
         }
 
+        // Check if simple move is available
         const int currFrameId = frameIds[i];
         if (currFrameId >= 0 && timeId >= frameList[currFrameId].start) {
             if (currFrameId < frameList.size() - 1 &&
@@ -143,13 +159,15 @@ void calculateFrameIds(const int &timeId) {
                     timeId >= frameList[currFrameId + 1].start &&
                     timeId < frameList[currFrameId + 2].start) {
                 frameIds[i] = currFrameId + 1;
+                continue;
             }
         }
 
+        // Otherwise, apply binary search
         int left = 0;
-        int right = frameList.size();
-        while (left <= right) {
-            int mid = (left + right) >> 2;
+        int right = frameList.size() - 1;
+        while (left < right) {
+            int mid = (left + right) >> 1;
             if (timeId < frameList[mid].start) {
                 right = mid - 1;
             } else if (timeId > frameList[mid].start) {
@@ -164,7 +182,7 @@ void calculateFrameIds(const int &timeId) {
     }
 }
 
-vector<Status> fadeFrameInterpolate(const Frame &origin, const Frame &target,
+vector<Status> interpolateFadeFrame(const Frame &origin, const Frame &target,
                                     const float &rate) {
     vector<Status> statusList(0);
     for (int i = 0; i < origin.statusList.size(); i++) {
@@ -190,12 +208,21 @@ void *loop(void *ptr) {
     vector<vector<Status>> statusLists;
 
     while (true) {
+        // if (playing && checkReady()) {
         if (playing) {
             gettimeofday(&currentTime, NULL);
             const long elapsedTime = getElapsedTime(baseTime, currentTime);
+            // printf("Time: %f\n", elapsedTime / 1000000.0f);
 
             const int currentTimeId = getTimeId(elapsedTime);
+            // printf("Time Id: %d\n", currentTimeId);
             calculateFrameIds(currentTimeId);
+
+            // printf("Frame Ids: ");
+            // for (const int &id : frameIds) {
+            //     printf(" %d", id);
+            // }
+            // printf("\n");
 
             statusLists.clear();
             for (int i = 0; i < frameIds.size(); i++) {
@@ -210,18 +237,31 @@ void *loop(void *ptr) {
 
                 const Frame &frame = frameList[frameId];
                 if (frame.fade) {
-                    const long currTime = (long)currentTimeId * 1000000l;
-                    const long nextTime = (long)frameList[frameId].start * 1000000l;
+                    const long startTime =
+                        (long)frameList[frameId].start * 1000000l / fps;
+                    const long endTime =
+                        (long)frameList[frameId + 1].start * 1000000l / fps;
                     const float rate =
-                        (float)(elapsedTime - currTime) / (float)(nextTime - currTime);
-                    statusLists.push_back(fadeFrameInterpolate(frameList[frameId],
-                                          frameList[frameId], rate));
+                        (float)(elapsedTime - startTime) / (float)(endTime - startTime);
+                    statusLists.push_back(
+                        interpolateFadeFrame(frame, frameList[frameId + 1], rate));
                 } else {
                     statusLists.push_back(frameList[frameId].statusList);
                 }
+
+                // printf("  Frame: %d\n", i);
+                // const vector<Status> &statusList = statusLists[i];
+                // for (int j = 0; j < 1; j++) {
+                //     printf("    status: %d\n", j);
+                //     printf("      r: %d\n", statusList[j].r);
+                //     printf("      g: %d\n", statusList[j].g);
+                //     printf("      b: %d\n", statusList[j].b);
+                //     printf("      a: %d\n", statusList[j].a);
+                // }
             }
 
-            // TODO: send status
+            // sendAll(statusList);
+            usleep(1000);
         }
     }
 
