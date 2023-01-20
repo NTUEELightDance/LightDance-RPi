@@ -1,14 +1,15 @@
 #include "LEDPlayer.h"
 
 #include <fstream>
-#include <pthread.h>
 #include <stdio.h>
 #include <sys/select.h>
+#include <thread>
 #include <time.h>
 #include <unistd.h>
 
 #include "nlohmann/json.hpp"
 
+using namespace std;
 using json = nlohmann::json;
 
 bool playing;
@@ -24,9 +25,7 @@ int main() {
     LEDPlayer::load(LEDJson, dancerJson["LEDPARTS"], dancerJson["fps"]);
 
     playing = false;
-
-    pthread_t id;
-    pthread_create(&id, NULL, LEDPlayer::loop, NULL);
+    thread led_loop(LEDPlayer::loop);
 
     gettimeofday(&baseTime, NULL);
     playing = true;

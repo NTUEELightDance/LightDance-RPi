@@ -1,8 +1,6 @@
 #ifndef LED_PLAYER
 #define LED_PLAYER
 
-#include <algorithm>
-#include <bits/types/struct_timeval.h>
 #include <iostream>
 #include <vector>
 
@@ -48,7 +46,7 @@ void calculateFrameIds(const int &timeId);
 vector<Status> interpolateFadeFrame(const Frame &origin, const Frame &target,
                                     const float &rate);
 // threading function
-void *loop(void *ptr);
+void loop();
 
 }; // namespace LEDPlayer
 

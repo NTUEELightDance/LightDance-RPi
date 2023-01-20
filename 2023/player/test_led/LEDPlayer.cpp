@@ -199,7 +199,7 @@ vector<Status> interpolateFadeFrame(const Frame &origin, const Frame &target,
     return statusList;
 }
 
-void *loop(void *ptr) {
+void loop() {
     struct timeval currentTime;
     vector<vector<Status>> statusLists;
 
@@ -260,8 +260,6 @@ void *loop(void *ptr) {
             usleep(1000);
         }
     }
-
-    return NULL;
 }
 
 }; // namespace LEDPlayer
