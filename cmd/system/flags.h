@@ -20,8 +20,7 @@ enum flag{ //captial of the flag
 class Flags{
     public:
         Flags(char ** begin, char ** end){
-             
-            char* a;
+            //expect to get (argv, argv+argc)
             int option=-1;
             for (int i=0;i<sizeof(ffs);i++){
                 itr = std::find(begin, end, ffs[i]);
