@@ -6,6 +6,7 @@ BIN = ./bin
 OBJ = ./obj
 
 all : playLoop LEDPlayer OFPlayer
+	@mkdir -p bin obj
 	$(CC) -o $(BIN)/playLoop $(OBJ)/playLoop.o $(OBJ)/LEDPlayer.o $(OBJ)/OFPlayer.o $(CFLAGS)
 
 playLoop :
