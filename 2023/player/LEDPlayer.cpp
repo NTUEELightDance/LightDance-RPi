@@ -55,13 +55,8 @@ void load(const json &data_json, const json &parts_json, const int &_fps) {
     fps = _fps;
     // printf("FPS: %d\n", fps);
 
-    // TODO: set total part number, instead of using max id plus 1
-    int partNum = 0;
-    for (auto &part : parts_json) {
-        const int id = part["id"];
-        partNum = max(id + 1, (int)partNum);
-    }
-    // printf("part number: %d\n", partNum);
+    // TODO: load from .h file, instead of hard coded
+    int partNum = 16;
 
     frameIds.clear();
     frameIds.resize(partNum);
@@ -119,7 +114,7 @@ void load(const json &data_json, const json &parts_json, const int &_fps) {
     //     }
     // }
 
-    // TODO: init hardware with shapes
+    // init(stripShapes);
 }
 
 long getElapsedTime(const struct timeval &base, const struct timeval &current) {
