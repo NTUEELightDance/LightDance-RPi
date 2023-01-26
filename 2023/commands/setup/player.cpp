@@ -53,11 +53,11 @@ string Player::list()const{
 }
 
 template<class Archive>
-void Player::serialize(Archive & ar, const unsigned int version){
-    ar & dancerName;
-    ar & fps;
-    ar & OFPARTS;
-    ar & LEDPARTS;
+void Player::serialize(Archive & archive, const unsigned int version){
+    archive & dancerName;
+    archive & fps;
+    archive & OFPARTS;
+    archive & LEDPARTS;
 };
 
 
@@ -67,7 +67,7 @@ ostream & operator<<(ostream &os, const Player &player)
     return os;
 }
 
-void savePlayer(const Player &s, const char * filename){
+void savePlayer(const Player &savePlayer, const char * filename){
     // make an archive
     ofstream ofs(filename);
     if(!ofs){
@@ -75,10 +75,10 @@ void savePlayer(const Player &s, const char * filename){
         return;
     }
     boost::archive::text_oarchive oa(ofs);
-    oa << s;
+    oa << savePlayer;
 }
 
-bool restorePlayer(Player &s, const char * filename)
+bool restorePlayer(Player &savePlayer, const char * filename)
 {
     // open the archive
     ifstream ifs(filename);
@@ -89,7 +89,7 @@ bool restorePlayer(Player &s, const char * filename)
     boost::archive::text_iarchive ia(ifs);
 
     // restore the schedule from the archive
-    ia >> s;
+    ia >> savePlayer;
 
     return true;
 

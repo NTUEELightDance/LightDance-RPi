@@ -29,11 +29,11 @@ struct OFStatus {
     OFStatus(){};
     OFStatus(const int &_r,const int &_g,const int &_b,const int &_a):r(_r),g(_g),b(_b),a(_a){};
     template<class Archive>
-    void serialize(Archive & ar, const unsigned int version){ 
-        ar & r;
-        ar & g;
-        ar & b;
-        ar & a;
+    void serialize(Archive & archive, const unsigned int version){ 
+        archive & r;
+        archive & g;
+        archive & b;
+        archive & a;
     };
 
 	int r;
@@ -45,11 +45,11 @@ struct LEDStatus {
     LEDStatus(){};
     LEDStatus(const int &_r,const int &_g,const int &_b,const int &_a):r(_r),g(_g),b(_b),a(_a){};
     template<class Archive>
-    void serialize(Archive & ar, const unsigned int version){ 
-        ar & r;
-        ar & g;
-        ar & b;
-        ar & a;
+    void serialize(Archive & archive, const unsigned int version){ 
+        archive & r;
+        archive & g;
+        archive & b;
+        archive & a;
     };
 	int r;
 	int g;
@@ -60,9 +60,9 @@ struct LEDStripeSetting {
     LEDStripeSetting(){};
     LEDStripeSetting(const int &_id,const int &_len):id(_id),len(_len){};
     template<class Archive>
-    void serialize(Archive & ar, const unsigned int version){ 
-        ar & id;
-        ar & len;
+    void serialize(Archive & archive, const unsigned int version){ 
+        archive & id;
+        archive & len;
     };
 	int id;
     int len;
@@ -76,7 +76,7 @@ class Player {
     string list()const;
 
     template<class Archive>
-    void serialize(Archive & ar, const unsigned int version);
+    void serialize(Archive & archive, const unsigned int version);
     
    private:
     // Functions
@@ -94,8 +94,8 @@ class Player {
     friend class boost::serialization::access;
     friend ostream & operator<<(ostream &os, const Player &player);
 };
-void savePlayer(const Player &s, const char * filename);
-bool restorePlayer(Player &s, const char * filename);
+void savePlayer(const Player &savePlayer, const char * filename);
+bool restorePlayer(Player &savePlayer, const char * filename);
 
 
 #endif

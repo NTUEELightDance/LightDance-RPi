@@ -14,7 +14,7 @@ using json = nlohmann::json;
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         cerr << "Error: missing parameters! (dancerName is needed)" << endl;
-        exit(0); // or 1?
+        exit(1);
     }
 
     /*
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     if(!restorePlayer(new_dancer,fileName.c_str())){
         exit(1);
     };
-    cout<<dancerName<<"'s date restore as below\n";
+    cout<<dancerName<<"'s data restore as below\n";
     cout<<new_dancer<<endl;
     
     return 0;

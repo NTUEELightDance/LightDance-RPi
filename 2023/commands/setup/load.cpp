@@ -13,20 +13,36 @@ using namespace std;
 using json = nlohmann::json;
 
 int main(int argc, char *argv[]) {
-    if (argc != 4) {
-        cerr << "Error: missing parameters! (input type, dancer name, json file are needed)" << endl;
-        exit(0); // or 1?
+    if (argc != 3) {
+        cerr << "Error: missing parameters! (input type, json file are needed)" << endl;
+        exit(1);
     }
 
     string dataType = argv[1];
-    string dancerName = argv[2];
-    string path = argv[3];
+
+    // string dancerName = argv[2];
+    // string path = argv[3];
+
+    string path = argv[2];
+    if( path.length() < 6){
+        cout << "Invalid file name: " << argv[2];
+        cout << "\n.json file is needed!"<< endl;
+        exit(1);
+    }
+    if( path.compare(path.length()-5,5,".json")!=0){
+        cout << "Invalid file name: " << argv[2];
+        cout << "\n.json file is needed!"<< endl;
+        exit(1);
+    }
+
     ifstream infile(path.c_str());
     if (!infile) {
         cout << "Cannot open file: " << path << endl;
-        exit(0);
+        exit(1);
     }
-
+    size_t fileNameStart = path.find_last_of("/\\")+1;
+    string dancerName=path.substr(fileNameStart,path.find_last_of(".")-fileNameStart);
+    // cout<< dancerName<<' '<<fileNameStart<<" "<<path.find_last_of(".")<<endl;
     json jsonFile;
     infile >> jsonFile;
     infile.close();
@@ -35,11 +51,12 @@ int main(int argc, char *argv[]) {
     if(dataType.compare("dancer")==0){
         Player dancer;
         dancer.setDancer(dancerName, jsonFile);
-        cout<<"Date set as below\n";
+        cout<<"Data set as below\n";
         cout<<dancer.list()<<endl;
 
         string ofileName(boost::archive::tmpdir());
         ofileName += "/data/"+dancerName+"_DancerData";
+        cout << ofileName<<endl;
         savePlayer(dancer,ofileName.c_str());
     }
 
@@ -51,7 +68,7 @@ int main(int argc, char *argv[]) {
     //     exit(0);
     // };
 
-    // cout<<"Date restore as below\n";
+    // cout<<"Data restore as below\n";
     // cout<<new_dancer<<endl;
 
     return 0;
