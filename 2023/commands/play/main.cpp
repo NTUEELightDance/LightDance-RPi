@@ -1,16 +1,17 @@
-#include "command.h"
-#include<stdio.h>
-#include<stdlib.h>   // exit
-#include<fcntl.h>    // O_WRONLY
-#include<sys/stat.h>
-#include<time.h>     // time
-#include<unistd.h>
-#include<string>
-#include <set>
+#include <fcntl.h>  // O_WRONLY
+#include <stdio.h>
+#include <stdlib.h>  // exit
+#include <sys/stat.h>
+#include <time.h>  // time
+#include <unistd.h>
 
 #include <algorithm>
 #include <cctype>
+#include <set>
 #include <string>
+#include <string>
+
+#include "command.h"
 
 using namespace std;
 
@@ -36,10 +37,11 @@ class Play : public Command {
                 return 1;
             }
         }
-        if(argc>=2 ){
+        if (argc >= 2) {
             string cmd = argv[1];
-            transform(cmd.begin(), cmd.end(), cmd.begin(), [](unsigned char c){ return tolower(c); });
-            if (set<string>{"pause", "quit", "restart", "stop"}.count(cmd) > 0){
+            transform(cmd.begin(), cmd.end(), cmd.begin(),
+                      [](unsigned char c) { return tolower(c); });
+            if (set<string>{"pause", "quit", "restart", "stop"}.count(cmd) > 0) {
                 sendToPlayLoop(cmd);
             }
         }
@@ -51,22 +53,20 @@ class Play : public Command {
         cout << "start: " << start << " end: " << end << endl;
         return 0;
     }
-    int sendToPlayLoop(string msg){
-
+    int sendToPlayLoop(string msg) {
         int fd;
         int n;
         char buf[1024];
 
-        if((fd = open("fifo1", O_WRONLY)) < 0) // 以写打开一个FIFO 
+        if ((fd = open("fifo1", O_WRONLY)) < 0)  // 以写打开一个FIFO
         {
             perror("Open FIFO Failed");
             return 1;
         }
-        
-        n=sprintf(buf,"Process %d, %s",getpid(),msg.c_str());
+
+        n = sprintf(buf, "Process %d, %s", getpid(), msg.c_str());
         printf("Send message: %s", buf);
-        if(write(fd, buf, n+1) < 0)
-        {
+        if (write(fd, buf, n + 1) < 0) {
             perror("Write FIFO Failed");
             close(fd);
             return 1;

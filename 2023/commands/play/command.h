@@ -12,8 +12,7 @@ class Command {
     void addFlag(string flag, string description);
     void help();
     bool cmdOptionExists(char** begin, char** end, const string& option);
-    vector<string> getCmdOptionStr(char** begin, char** end,
-                                   const string& option);
+    vector<string> getCmdOptionStr(char** begin, char** end, const string& option);
     vector<int> getCmdOptionInt(char** begin, char** end, const string& option);
 
    private:
@@ -22,9 +21,7 @@ class Command {
 
 Command::Command() {}
 
-void Command::addFlag(string flag, string description) {
-    flags[flag] = description;
-}
+void Command::addFlag(string flag, string description) { flags[flag] = description; }
 
 void Command::help() {
     cout << "Usage: " << endl;
@@ -37,8 +34,7 @@ bool Command::cmdOptionExists(char** begin, char** end, const string& option) {
     return std::find(begin, end, option) != end;
 }
 
-vector<string> Command::getCmdOptionStr(char** begin, char** end,
-                                        const string& option) {
+vector<string> Command::getCmdOptionStr(char** begin, char** end, const string& option) {
     char** itr = std::find(begin, end, option);
     vector<string> result;
     if (itr != end && ++itr != end) {
@@ -50,8 +46,7 @@ vector<string> Command::getCmdOptionStr(char** begin, char** end,
     return result;
 }
 
-vector<int> Command::getCmdOptionInt(char** begin, char** end,
-                                     const string& option) {
+vector<int> Command::getCmdOptionInt(char** begin, char** end, const string& option) {
     vector<string> str = getCmdOptionStr(begin, end, option);
     vector<int> result;
     for (auto it = str.begin(); it != str.end(); ++it) {
