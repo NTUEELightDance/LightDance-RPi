@@ -1,10 +1,12 @@
-//load given json file to a BIN file
+// load given json file to a BIN file
 #include <math.h>
+#include <string.h>
 #include <sys/time.h>
 #include <time.h>
-#include <iostream>
+
 #include <fstream>
-#include <string.h>
+#include <iostream>
+
 #include "nlohmann/json.hpp"
 #include "player.h"
 // #include <boost/serialization/list.hpp>
@@ -24,14 +26,14 @@ int main(int argc, char *argv[]) {
     // string path = argv[3];
 
     string path = argv[2];
-    if( path.length() < 6){
+    if (path.length() < 6) {
         cout << "Invalid file name: " << argv[2];
-        cout << "\n.json file is needed!"<< endl;
+        cout << "\n.json file is needed!" << endl;
         exit(1);
     }
-    if( path.compare(path.length()-5,5,".json")!=0){
+    if (path.compare(path.length() - 5, 5, ".json") != 0) {
         cout << "Invalid file name: " << argv[2];
-        cout << "\n.json file is needed!"<< endl;
+        cout << "\n.json file is needed!" << endl;
         exit(1);
     }
 
@@ -40,26 +42,25 @@ int main(int argc, char *argv[]) {
         cout << "Cannot open file: " << path << endl;
         exit(1);
     }
-    size_t fileNameStart = path.find_last_of("/\\")+1;
-    string dancerName=path.substr(fileNameStart,path.find_last_of(".")-fileNameStart);
+    size_t fileNameStart = path.find_last_of("/\\") + 1;
+    string dancerName = path.substr(fileNameStart, path.find_last_of(".") - fileNameStart);
     // cout<< dancerName<<' '<<fileNameStart<<" "<<path.find_last_of(".")<<endl;
     json jsonFile;
     infile >> jsonFile;
     infile.close();
 
     // cout<<jsonFile["OFPARTS"]["Arm_L"]<<endl;
-    if(dataType.compare("dancer")==0){
+    if (dataType.compare("dancer") == 0) {
         Player dancer;
         dancer.setDancer(dancerName, jsonFile);
-        cout<<"Data set as below\n";
-        cout<<dancer.list()<<endl;
+        cout << "Data set as below\n";
+        cout << dancer.list() << endl;
 
         string ofileName(boost::archive::tmpdir());
-        ofileName += "/data/"+dancerName+"_DancerData";
-        cout << ofileName<<endl;
-        savePlayer(dancer,ofileName.c_str());
+        ofileName += "/data/" + dancerName + "_DancerData";
+        cout << ofileName << endl;
+        savePlayer(dancer, ofileName.c_str());
     }
-
 
     // string fileName(boost::archive::tmpdir());
     // fileName += "/data/"+dancerName+"_DancerData";

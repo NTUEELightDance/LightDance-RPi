@@ -1,10 +1,12 @@
-//load given json file to a BIN file
+// load given json file to a BIN file
 #include <math.h>
+#include <string.h>
 #include <sys/time.h>
 #include <time.h>
-#include <iostream>
+
 #include <fstream>
-#include <string.h>
+#include <iostream>
+
 #include "nlohmann/json.hpp"
 #include "player.h"
 
@@ -22,13 +24,13 @@ int main(int argc, char *argv[]) {
     */
     string dancerName = argv[1];
     string fileName(boost::archive::tmpdir());
-    fileName += "/data/"+dancerName+"_DancerData";
+    fileName += "/data/" + dancerName + "_DancerData";
     Player new_dancer;
-    if(!restorePlayer(new_dancer,fileName.c_str())){
+    if (!restorePlayer(new_dancer, fileName.c_str())) {
         exit(1);
     };
-    cout<<dancerName<<"'s data restore as below\n";
-    cout<<new_dancer<<endl;
-    
+    cout << dancerName << "'s data restore as below\n";
+    cout << new_dancer << endl;
+
     return 0;
 }
