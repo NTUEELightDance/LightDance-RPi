@@ -1,6 +1,4 @@
-*
-!/**/
-!*.*
+*.dat
 # Logs
 logs
 *.log

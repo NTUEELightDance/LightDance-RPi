@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
         cout << dancer.list() << endl;
 
         string ofileName("./data/");
-        ofileName += dancerName + "_DancerData";
+        ofileName += dancerName + "_DancerData.dat";
         cout << "stored at: " << ofileName << endl;
         savePlayer(dancer, ofileName.c_str());
     }

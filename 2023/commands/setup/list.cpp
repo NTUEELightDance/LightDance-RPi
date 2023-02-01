@@ -23,8 +23,8 @@ int main(int argc, char *argv[]) {
     in
     */
     string dancerName = argv[1];
-    string fileName(boost::archive::tmpdir());
-    fileName += "/data/" + dancerName + "_DancerData";
+    string fileName("./data/");
+    fileName += dancerName + "_DancerData.dat";
     Player new_dancer;
     if (!restorePlayer(new_dancer, fileName.c_str())) {
         exit(1);
