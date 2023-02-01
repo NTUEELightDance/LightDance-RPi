@@ -43,6 +43,7 @@ int main(int argc, char* argv[]){
     return test.execute(argc, argv);
 }
 
+
 // void Command::OFtest(const int& channel, Status status) {
 
 //     vector<Status> OF_buf(OF_SIZE, Status(0, 0, 0, 0));
