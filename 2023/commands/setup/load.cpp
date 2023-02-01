@@ -44,33 +44,21 @@ int main(int argc, char *argv[]) {
     }
     size_t fileNameStart = path.find_last_of("/\\") + 1;
     string dancerName = path.substr(fileNameStart, path.find_last_of(".") - fileNameStart);
-    // cout<< dancerName<<' '<<fileNameStart<<" "<<path.find_last_of(".")<<endl;
     json jsonFile;
     infile >> jsonFile;
     infile.close();
 
-    // cout<<jsonFile["OFPARTS"]["Arm_L"]<<endl;
     if (dataType.compare("dancer") == 0) {
         Player dancer;
         dancer.setDancer(dancerName, jsonFile);
         cout << "Data set as below\n";
         cout << dancer.list() << endl;
 
-        string ofileName(boost::archive::tmpdir());
-        ofileName += "/data/" + dancerName + "_DancerData";
-        cout << ofileName << endl;
+        string ofileName("./data/");
+        ofileName += dancerName + "_DancerData";
+        cout << "stored at: " << ofileName << endl;
         savePlayer(dancer, ofileName.c_str());
     }
-
-    // string fileName(boost::archive::tmpdir());
-    // fileName += "/data/"+dancerName+"_DancerData";
-    // Player new_dancer;
-    // if(!restorePlayer(new_dancer,fileName.c_str())){
-    //     exit(0);
-    // };
-
-    // cout<<"Data restore as below\n";
-    // cout<<new_dancer<<endl;
 
     return 0;
 }

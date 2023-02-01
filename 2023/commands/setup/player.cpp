@@ -62,9 +62,9 @@ void Player::serialize(Archive &archive, const unsigned int version) {
     archive &LEDPARTS;
 };
 
-ostream &operator<<(ostream &os, const Player &player) {
-    os << player.list();
-    return os;
+ostream &operator<<(ostream &ostream, const Player &player) {
+    ostream << player.list();
+    return ostream;
 }
 
 void savePlayer(const Player &savePlayer, const char *filename) {

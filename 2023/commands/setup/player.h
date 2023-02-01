@@ -95,7 +95,7 @@ class Player {
 
     // serialization
     friend class boost::serialization::access;
-    friend ostream &operator<<(ostream &os, const Player &player);
+    friend ostream &operator<<(ostream &ostream, const Player &player);
 };
 void savePlayer(const Player &savePlayer, const char *filename);
 bool restorePlayer(Player &savePlayer, const char *filename);
