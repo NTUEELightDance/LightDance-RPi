@@ -75,6 +75,7 @@ class Player {
    public:
     Player(){};
     Player(const string &_dancerName) : dancerName(_dancerName){};
+    bool loaded;
     bool setDancer(const string &_dancerName, json &dancerData);
     string list() const;
 
