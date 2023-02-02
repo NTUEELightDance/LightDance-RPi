@@ -17,7 +17,7 @@ timeval baseTime;
 
 int main() {
     LEDPlayer player;
-    restoreLEDPlayer(player, "data");
+    restoreLEDPlayer(player, "data/10_dontstop.dat");
 
     playing = false;
     thread led_loop(&LEDPlayer::loop, &player, &playing, &baseTime);

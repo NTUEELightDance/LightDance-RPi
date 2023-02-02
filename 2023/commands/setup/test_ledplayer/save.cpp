@@ -76,7 +76,7 @@ int main() {
     json dancerJson = json::parse(dancerIfs);
 
     LEDPlayer player = load(LEDJson, dancerJson["LEDPARTS"], dancerJson["fps"]);
-    saveLEDPlayer(player, "data");
+    saveLEDPlayer(player, "data/10_dontstop.dat");
 
     return 0;
 }
