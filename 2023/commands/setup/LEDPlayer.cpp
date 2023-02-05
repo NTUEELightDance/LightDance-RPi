@@ -16,8 +16,7 @@ void LEDStatus::serialize(Archive &archive, const unsigned int version) {
 
 LEDStatus::LEDStatus() : r(0), g(0), b(0), a(0) {}
 
-LEDStatus::LEDStatus(const uint &_r, const uint &_g, const uint &_b,
-                     const uint &_a)
+LEDStatus::LEDStatus(const uint &_r, const uint &_g, const uint &_b, const uint &_a)
     : r(_r), g(_g), b(_b), a(_a) {}
 
 // ==================== LEDFrame =============================
@@ -33,8 +32,7 @@ void LEDFrame::serialize(Archive &archive, const unsigned int version) {
 
 LEDFrame::LEDFrame() : start(0), fade(false) {}
 
-LEDFrame::LEDFrame(const int &_start, const bool &_fade,
-                   const vector<LEDStatus> &_statusList) {
+LEDFrame::LEDFrame(const int &_start, const bool &_fade, const vector<LEDStatus> &_statusList) {
     start = _start;
     fade = _fade;
     statusList.clear();
@@ -64,6 +62,19 @@ void LEDPlayer::serialize(Archive &archive, const unsigned int version) {
 string LEDPlayer::list() const {
     stringstream ostr;
     ostr << "*************** LEDPlayer ***************\n";
+    for (auto part_it : frameLists) {
+        ostr << "[";
+        for (auto frame_it : part_it) {
+            ostr << "\n\t{\n\tstart: " << frame_it.start << ",\n\tfade: " << frame_it.fade
+                 << ",\n\tstatus: [\n";
+            for (auto status_it : frame_it.statusList) {
+                ostr << "\t\t[ " << status_it.r << " , " << status_it.g << " , " << status_it.b
+                     << " , " << status_it.a << " ],\n";
+            }
+            ostr << "\t]\n\t},\n";
+        }
+        ostr << "],\n";
+    }
     ostr << "*****************************************\n";
 
     return ostr.str();
@@ -74,7 +85,7 @@ ostream &operator<<(ostream &os, const LEDPlayer &player) {
     return os;
 }
 
-void saveLEDPlayer(LEDPlayer &player, const char *filename) {
+void saveLEDPlayer(const LEDPlayer &player, const char *filename) {
     // make an archive
     ofstream ofs(filename);
     if (!ofs) {
@@ -102,8 +113,7 @@ bool restoreLEDPlayer(LEDPlayer &player, const char *filename) {
 
 LEDPlayer::LEDPlayer() : fps(0) {}
 
-LEDPlayer::LEDPlayer(const int &_fps,
-                     const vector<vector<LEDFrame>> &_frameLists,
+LEDPlayer::LEDPlayer(const int &_fps, const vector<vector<LEDFrame>> &_frameLists,
                      const vector<int> &_stripShapes) {
     fps = _fps;
     frameLists.assign(_frameLists.begin(), _frameLists.end());
@@ -113,11 +123,9 @@ LEDPlayer::LEDPlayer(const int &_fps,
     fill(frameIds.begin(), frameIds.end(), -1);
 }
 
-long LEDPlayer::getElapsedTime(const struct timeval &base,
-                               const struct timeval &current) {
+long LEDPlayer::getElapsedTime(const struct timeval &base, const struct timeval &current) {
     // Get time elapsed from start time in microsecond
-    return (long)(current.tv_sec - base.tv_sec) * 1000000l +
-           (long)(current.tv_usec - base.tv_usec);
+    return (long)(current.tv_sec - base.tv_sec) * 1000000l + (long)(current.tv_usec - base.tv_usec);
 }
 
 int LEDPlayer::getTimeId(const long &elapsedTime) {
@@ -144,12 +152,10 @@ void LEDPlayer::calculateFrameIds(const int &timeId) {
         // Check if simple move is available
         const int currFrameId = frameIds[i];
         if (currFrameId >= 0 && timeId >= frameList[currFrameId].start) {
-            if (currFrameId < frameList.size() - 1 &&
-                timeId < frameList[currFrameId + 1].start) {
+            if (currFrameId < frameList.size() - 1 && timeId < frameList[currFrameId + 1].start) {
                 continue;
             }
-            if (currFrameId < frameList.size() - 2 &&
-                timeId >= frameList[currFrameId + 1].start &&
+            if (currFrameId < frameList.size() - 2 && timeId >= frameList[currFrameId + 1].start &&
                 timeId < frameList[currFrameId + 2].start) {
                 frameIds[i] = currFrameId + 1;
                 continue;
@@ -175,22 +181,21 @@ void LEDPlayer::calculateFrameIds(const int &timeId) {
     }
 }
 
-vector<LEDStatus> LEDPlayer::interpolateFadeFrame(const LEDFrame &origin,
-                                                  const LEDFrame &target,
+vector<LEDStatus> LEDPlayer::interpolateFadeFrame(const LEDFrame &origin, const LEDFrame &target,
                                                   const float &rate) {
     vector<LEDStatus> statusList(0);
     for (int i = 0; i < origin.statusList.size(); i++) {
         const LEDStatus &originLEDStatus = origin.statusList[i];
         const LEDStatus &targetLEDStatus = target.statusList[i];
 
-        const int &r = (int)round((1 - rate) * (float)originLEDStatus.r +
-                                  rate * (float)targetLEDStatus.r);
-        const int &g = (int)round((1 - rate) * (float)originLEDStatus.g +
-                                  rate * (float)targetLEDStatus.g);
-        const int &b = (int)round((1 - rate) * (float)originLEDStatus.b +
-                                  rate * (float)targetLEDStatus.b);
-        const int &a = (int)round((1 - rate) * (float)originLEDStatus.a +
-                                  rate * (float)targetLEDStatus.a);
+        const int &r =
+            (int)round((1 - rate) * (float)originLEDStatus.r + rate * (float)targetLEDStatus.r);
+        const int &g =
+            (int)round((1 - rate) * (float)originLEDStatus.g + rate * (float)targetLEDStatus.g);
+        const int &b =
+            (int)round((1 - rate) * (float)originLEDStatus.b + rate * (float)targetLEDStatus.b);
+        const int &a =
+            (int)round((1 - rate) * (float)originLEDStatus.a + rate * (float)targetLEDStatus.a);
         statusList.push_back(LEDStatus(r, g, b, a));
     }
 
@@ -231,14 +236,12 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime) {
 
                 const LEDFrame &frame = frameList[frameId];
                 if (frame.fade) {
-                    const long startTime =
-                        (long)frameList[frameId].start * 1000000l / (long)fps;
-                    const long endTime = (long)frameList[frameId + 1].start *
-                                         1000000l / (long)fps;
-                    const float rate = (float)(elapsedTime - startTime) /
-                                       (float)(endTime - startTime);
-                    statusLists.push_back(interpolateFadeFrame(
-                        frame, frameList[frameId + 1], rate));
+                    const long startTime = (long)frameList[frameId].start * 1000000l / (long)fps;
+                    const long endTime = (long)frameList[frameId + 1].start * 1000000l / (long)fps;
+                    const float rate =
+                        (float)(elapsedTime - startTime) / (float)(endTime - startTime);
+                    statusLists.push_back(
+                        interpolateFadeFrame(frame, frameList[frameId + 1], rate));
                 } else {
                     statusLists.push_back(frameList[frameId].statusList);
                 }

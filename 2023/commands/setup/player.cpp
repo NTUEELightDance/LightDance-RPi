@@ -60,6 +60,7 @@ void Player::serialize(Archive &archive, const unsigned int version) {
     archive &fps;
     archive &OFPARTS;
     archive &LEDPARTS;
+    archive &myLEDPlayer;
 };
 
 ostream &operator<<(ostream &ostream, const Player &player) {
@@ -92,3 +93,61 @@ bool restorePlayer(Player &savePlayer, const char *filename) {
 
     return true;
 }
+
+void LEDload(Player &Player, json &data_json) {
+    vector<vector<LEDFrame>> frameLists;
+    vector<int> stripShapes;
+
+    // TODO: load from .h file, instead of hard coded
+    const int partNum = 16;
+
+    stripShapes.resize(partNum);
+    fill(stripShapes.begin(), stripShapes.end(), 0);
+
+    frameLists.clear();
+    frameLists.resize(partNum);
+
+    for (map<string, LEDStripeSetting>::iterator part_it = Player.LEDPARTS.begin();
+         part_it != Player.LEDPARTS.end(); ++part_it) {
+        const string partName = part_it->first;
+        const unsigned int id = part_it->second.id;
+        const unsigned int len = part_it->second.len;
+
+        const json &frames_json = data_json[partName];
+
+        stripShapes[id] = len;
+
+        // If no frames are given, push only dark frame
+        const LEDFrame darkFrame(0, false, len);
+        if (frames_json.size() == 0) {
+            frameLists[id].push_back(darkFrame);
+            continue;
+        }
+
+        // If not starting at time = 0, use dark frame as first frame
+        const int firstStartTime = frames_json.begin().value()["start"];
+        if (firstStartTime != 0) {
+            frameLists[id].push_back(darkFrame);
+        }
+
+        vector<LEDStatus> statusList;
+        for (const json &frame_json : frames_json) {
+            if (frame_json["status"].size() != len) {
+                // TODO: print size mismatch warning
+                continue;
+            }
+            statusList.clear();
+            for (auto &status_json : frame_json["status"]) {
+                statusList.push_back(
+                    LEDStatus(status_json[0], status_json[1], status_json[2], status_json[3]));
+            }
+
+            frameLists[id].push_back(LEDFrame(frame_json["start"], frame_json["fade"], statusList));
+        }
+    }
+
+    Player.myLEDPlayer = LEDPlayer(Player.fps, frameLists, stripShapes);
+    Player.LEDloaded = true;
+}
+
+void OFload(Player &Player, json &data_json) {}

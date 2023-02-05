@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "LEDPlayer.h"
 #include "nlohmann/json.hpp"
 #include "player.h"
 // #include <boost/serialization/list.hpp>
@@ -27,19 +28,19 @@ int main(int argc, char *argv[]) {
 
     string path = argv[2];
     if (path.length() < 6) {
-        cout << "Invalid file name: " << argv[2];
-        cout << "\n.json file is needed!" << endl;
+        cerr << "Invalid file name: " << argv[2];
+        cerr << "\n.json file is needed!" << endl;
         exit(1);
     }
     if (path.compare(path.length() - 5, 5, ".json") != 0) {
-        cout << "Invalid file name: " << argv[2];
-        cout << "\n.json file is needed!" << endl;
+        cerr << "Invalid file name: " << argv[2];
+        cerr << "\n.json file is needed!" << endl;
         exit(1);
     }
 
     ifstream infile(path.c_str());
     if (!infile) {
-        cout << "Cannot open file: " << path << endl;
+        cerr << "Cannot open file: " << path << endl;
         exit(1);
     }
     size_t fileNameStart = path.find_last_of("/\\") + 1;
@@ -58,6 +59,34 @@ int main(int argc, char *argv[]) {
         ofileName += dancerName + "_DancerData.dat";
         cout << "stored at: " << ofileName << endl;
         savePlayer(dancer, ofileName.c_str());
+        return 0;
+    }
+
+    string fileName("./data/");
+    fileName += dancerName + "_DancerData.dat";
+    Player dancerData;
+    if (!restorePlayer(dancerData, fileName.c_str())) {
+        cerr << "Please Load dancer's ( " << dancerName << " ) data first !" << endl;
+        exit(1);
+    };
+
+    if (dataType.compare("LED") == 0) {
+        LEDload(dancerData, jsonFile);
+        cout << "LED data loaded successfully\n";
+        cout << "stored at: " << fileName << endl;
+        savePlayer(dancerData, fileName.c_str());
+
+        // Player clarifyPlayer;
+        // restorePlayer(clarifyPlayer, fileName.c_str());
+        // cout << clarifyPlayer.myLEDPlayer;
+        return 0;
+    }
+    if (dataType.compare("OF") == 0) {
+        OFload(dancerData, jsonFile);
+        cout << "OF data loaded successfully\n";
+        cout << "stored at: " << fileName << endl;
+        savePlayer(dancerData, fileName.c_str());
+        return 0;
     }
 
     return 0;

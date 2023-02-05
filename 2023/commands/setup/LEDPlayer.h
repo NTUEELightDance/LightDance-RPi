@@ -42,8 +42,7 @@ struct LEDFrame {
     vector<LEDStatus> statusList;
     LEDFrame();
     LEDFrame(const int &_start, const bool &_fade, const int &len);
-    LEDFrame(const int &_start, const bool &_fade,
-             const vector<LEDStatus> &_statusList);
+    LEDFrame(const int &_start, const bool &_fade, const vector<LEDStatus> &_statusList);
 
     template <class Archive>
     void serialize(Archive &archive, const unsigned int version);
@@ -68,13 +67,11 @@ class LEDPlayer {
     vector<int> stripShapes;
 
     // time calculation
-    long getElapsedTime(const struct timeval &base,
-                        const struct timeval &current);
+    long getElapsedTime(const struct timeval &base, const struct timeval &current);
     int getTimeId(const long &elapsedTime);
     // frame calculation
     void calculateFrameIds(const int &timeId);
-    vector<LEDStatus> interpolateFadeFrame(const LEDFrame &origin,
-                                           const LEDFrame &target,
+    vector<LEDStatus> interpolateFadeFrame(const LEDFrame &origin, const LEDFrame &target,
                                            const float &rate);
 
     // serialization
@@ -82,7 +79,7 @@ class LEDPlayer {
     friend ostream &operator<<(ostream &os, const LEDPlayer &player);
 };
 
-void saveLEDPlayer(LEDPlayer &player, const char *filename);
+void saveLEDPlayer(const LEDPlayer &player, const char *filename);
 bool restoreLEDPlayer(LEDPlayer &player, const char *filename);
 
 #endif  // LED_PLAYER
