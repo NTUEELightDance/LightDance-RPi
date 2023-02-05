@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <cctype>
 #include <set>
-#include <string>
+#include <sstream>
 #include <string>
 
 #include "command.h"
@@ -50,6 +50,10 @@ class Play : public Command {
 
    private:
     int play(int start, int end) {
+        stringstream cmd;
+        cmd << "play " << start << " " << end;
+        string mycmd = cmd.str();
+        sendToPlayLoop(mycmd);
         cout << "start: " << start << " end: " << end << endl;
         return 0;
     }
