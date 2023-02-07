@@ -4,26 +4,54 @@ class LEDtest: public Command{
     public:
     LEDtest(): Command(){
         addFlag("-h", "help");
-        addFlag("-o", "options");
+        addFlag("--rgb", "RGB values");
+        addFlag("--hex", "colorcode");
+        addFlag("-a", "alpha");
     }
     int execute(int argc, char* argv[]){
-        if (cmdOptionExists(argv, argv + argc, "-h")) {
+        // cout<<argc<<"\n";
+        if (argc <= 1 || cmdOptionExists(argv, argv + argc, "-h")) {
             help();
             return 0;
         }
-        if(cmdOptionExists(argv, argv + argc, "-o")) {
-            vector<int> options = getCmdOptionInt(argv, argv + argc, "-o");
-            if (options.size() == 3){
-                return Test(options[0], options[1], options[2]);
+        int channel = atoi(argv[1]), R = 0, G = 0, B = 0, alpha = 1;
+        if (cmdOptionExists(argv, argv + argc, "--rgb")) {
+            vector<int> rgb = getCmdOptionInt(argv, argv + argc, "--rgb");
+            if (rgb.size() >= 3){
+                R = rgb[0];
+                G = rgb[1];
+                B = rgb[2];
+
             } else{
-                cout<<"Expected 3 arguments (Channel ColorCode Alpha), got " << options.size() << ".\n";
+                cout<<"Wrong RGB length\n";
                 return 0;
             }
+        } else if (cmdOptionExists(argv, argv + argc, "--hex")){
+            string hex = getCmdOptionStr(argv, argv + argc, "--hex")[0];
+            colorCode2RGB(hex, R, G, B);
         }
-        return 0;
+        if (cmdOptionExists(argv, argv + argc, "-a")) {
+            alpha = getCmdOptionInt(argv, argv + argc, "-a")[0];
+        }
+        return Test(channel, R, G, B, alpha);
     }
     private:
-    int Test(const int& channel, int colorCode, int alpha){
+    map<char, int> hexCode = {
+        {'0', 0}, {'1', 1}, {'2', 2}, {'3', 3}, {'4', 4},
+        {'5', 5}, {'6', 6}, {'7', 7}, {'8', 8}, {'9', 9},
+        {'A', 10}, {'B', 11}, {'C', 12}, {'D', 13}, {'E', 14}, {'F', 15}, 
+        {'a', 10}, {'b', 11}, {'c', 12}, {'d', 13}, {'e', 14}, {'f', 15}};
+
+    void colorCode2RGB(string hex, int &R, int &G, int &B){
+        if (hex.size() == 6){
+            R = hexCode[hex[0]] * 16 + hexCode[hex[1]];
+            G = hexCode[hex[2]] * 16 + hexCode[hex[3]];
+            B = hexCode[hex[4]] * 16 + hexCode[hex[5]];
+        } else{
+            cout<<"Colorcode length error!\n";
+        }
+    }
+    int Test(const int& channel, int R, int G, int B, int alpha){
         //Todo : Convert colorCode and alpha to status object
 
         //Todo : Use sendAll to send information to hardware
@@ -33,7 +61,7 @@ class LEDtest: public Command{
 
         cout<<"Doing LED test:\n";
         cout<<"Channel: "<<channel<<"\n";
-        cout<<"ColorCode: "<<colorCode<<"\n";
+        cout<<"RGB: "<<R<<" "<<G<<" "<<B<<"\n";
         cout<<"Alpha: "<<alpha<<"\n";
         
         return 0;
@@ -77,3 +105,5 @@ int main(int argc, char* argv[]){
 //     led_strip->sendToStrip(LEDBuf);
 //     return;
 // }
+
+// sudo apt-get install libboost-all-dev
