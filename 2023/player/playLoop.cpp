@@ -1,41 +1,52 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <cstring>
-#include <string>
+#include <string.h>
 
 #include "LEDPlayer.h"
 #include "OFPlayer.h"
-#include "Player.h"
+#include "../commands/setup/player.h"
 
 #define MAXLEN 20
 
 bool playing;
-timeval baseTime;
-enum CMD { SET, PLAY, PAUSE, RESUME, STOP };
+timeval baseTime, assignedTime;
+enum CMD {LOAD, PAUSE, RESUME, PLAY, STOP, QUIT};
+const char *cmds[10] = {"load","pause","resume","play","stop","quit"};
 Player player;
 const char* fileName;
 
-int parse_command(char cmd[]) {
-    // TBD with the person who wrote the commands
-    if (strcmp(cmd, "set\n") == 0) {
-        // NOTE: this should be "load" 
-        return SET;
-    } else if (strcmp(cmd, "play\n") == 0) {
-        // TODO: parse start time and duration
-        return PLAY;
-    } else if (strcmp(cmd, "pause\n") == 0) {
-        return PAUSE;
-    } else if (strcmp(cmd, "resume\n") == 0) {
-        return RESUME;
-    } else if (strcmp(cmd, "stop\n") == 0) {
-        return STOP;
+// commands can be  "load", "pause", "resume", "stop", "quit", "play -t 12 123", "play"
+
+int parse_command(char str[]) {
+    printf("cmd: %s\n",str);
+    char *cmd[6];
+    const char *sep = " ";
+    int len = 0, i;
+    cmd[len] = strtok(str, sep);
+    
+    while (cmd[len] != NULL) {
+        len++;
+        cmd[len] = strtok(NULL, sep);
     }
+    for(i=0; i<6; i++) {
+    	if(!strcmp(cmd[0],cmds[i])) {
+            if(i == PLAY) {
+                if(len > 1) {
+                    assignedTime.tv_sec = atoi(cmd[2]);
+                    assignedTime.tv_usec = atoi(cmd[3]);
+                }
+                else assignedTime.tv_sec = assignedTime.tv_usec = 0;
+            }
+            return i;
+        }
+	}
     return -1;
 }
 
@@ -48,14 +59,24 @@ timeval getCalculatedTime(timeval subtrahend) {
     return time;
 }
 
+void chk() {
+    timeval currentTime;
+    gettimeofday(&currentTime, NULL);
+    
+    printf("\nbase time:    %ld %ld\n",baseTime.tv_sec,baseTime.tv_usec);
+    printf("current time: %ld %ld\n",currentTime.tv_sec,currentTime.tv_usec);
+}
+
 int main(int argc, char* argv[]) {
-    std::string fileName = argv[1];
+    std::string dancerName = argv[1];
+    std::string fileName("../commands/setup/data/");
+    fileName += dancerName + "_DancerData.dat";
+    printf("restorePlayer path: %s\n", fileName.c_str());
 
     // read command
     int fd;
     // TODO: separate in/out fifo
-    const char* fifo = "/tmp/fifo";
-    printf("%s\n", fileName.c_str());
+    const char* fifo = "fifo";
 
     mkfifo(fifo, 0666);
 
@@ -64,23 +85,22 @@ int main(int argc, char* argv[]) {
     timeval playedTime;
 
     while (1) {
-        // TODO: fool proofing, return error with fifo
         fd = open(fifo, O_RDONLY);
         read(fd, cmd, MAXLEN);
 
-        // printf("received: %s", cmd);
         close(fd);
 
         switch (parse_command(cmd)) {
-            case SET:
+            case LOAD:
                 playing = false;
-                if (!restorePlayer(player, fileName.c_str())) {
-                    exit(1);
-                };
+                // there's some error running restorePlayer here
+                // if(!restorePlayer(player, fileName.c_str())) {
+                //     exit(1);
+                // }
                 break;
             case PLAY:
                 playing = false;
-                gettimeofday(&baseTime, NULL);
+                baseTime = getCalculatedTime(assignedTime);
                 playing = true;
                 break;
             case PAUSE:
@@ -89,17 +109,19 @@ int main(int argc, char* argv[]) {
                 break;
             case RESUME:
                 playing = true;
-                timeval currentTime;
-                gettimeofday(&currentTime, NULL);
                 baseTime = getCalculatedTime(playedTime);
                 break;
             case STOP:
                 playing = false;
-                // darkAll();
+                break;
+            case QUIT:
+                playing = false;
                 break;
             default:
                 break;
         }
+        chk();
+        break;
     }
     return 0;
 }
