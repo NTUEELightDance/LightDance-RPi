@@ -1,53 +1,88 @@
 #ifndef LED_PLAYER
 #define LED_PLAYER
 
-#include <iostream>
-#include <vector>
-
 #include <stdio.h>
+#include <string.h>
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
 
-#include "nlohmann/json.hpp"
+#include <algorithm>
+#include <atomic>
+#include <cmath>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <vector>
+
+// serialize
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/tmpdir.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/version.hpp>
 
 using namespace std;
-using json = nlohmann::json;
 
-namespace LEDPlayer {
-
-typedef struct Status {
+struct LEDStatus {
     int r, g, b, a;
-    Status();
-    Status(const uint &_r, const uint &_g, const uint &_b, const uint &_a);
-    // Status(const uint &colorCode, const uint &alpha);
-} Status;
+    LEDStatus();
+    LEDStatus(const uint &_r, const uint &_g, const uint &_b, const uint &_a);
 
-typedef struct Frame {
+    template <class Archive>
+    void serialize(Archive &archive, const unsigned int version);
+};
+
+struct LEDFrame {
     int start;
     bool fade;
-    vector<Status> statusList;
-    Frame();
-    Frame(const int &_start, const bool &_fade, const int &len);
-    Frame(const int &_start, const bool &_fade, const json &_status);
-} Frame;
+    vector<LEDStatus> statusList;
+    LEDFrame();
+    LEDFrame(const int &_start, const bool &_fade, const int &len);
+    LEDFrame(const int &_start, const bool &_fade,
+             const vector<LEDStatus> &_statusList);
 
-extern int fps;
-extern vector<vector<LEDPlayer::Frame>> frameLists;
-extern vector<int> frameIds;
-extern vector<int> stripShapes;
+    template <class Archive>
+    void serialize(Archive &archive, const unsigned int version);
+};
 
-void load(const json &data, const json &parts, const int &_fps);
-// time calculation
-long getElapsedTime(const struct timeval &base, const struct timeval &current);
-int getTimeId(const long &elapsedTime);
-// frame calculation
-void calculateFrameIds(const int &timeId);
-vector<Status> interpolateFadeFrame(const Frame &origin, const Frame &target,
-                                    const float &rate);
-// threading function
-void loop();
+class LEDPlayer {
+   public:
+    LEDPlayer();
+    LEDPlayer(const int &_fps, const vector<vector<LEDFrame>> &_frameLists,
+              const vector<int> &_stripShapes);
+    // threading function
+    void loop(const bool *playing, const timeval *baseTime);
 
-}; // namespace LEDPlayer
+    template <class Archive>
+    void serialize(Archive &archive, const unsigned int version);
+    string list() const;
 
-#endif // LED_PLAYER
+   private:
+    int fps;
+    vector<vector<LEDFrame>> frameLists;
+    vector<int> frameIds;
+    vector<int> stripShapes;
+
+    // time calculation
+    long getElapsedTime(const struct timeval &base,
+                        const struct timeval &current);
+    int getTimeId(const long &elapsedTime);
+    // frame calculation
+    void calculateFrameIds(const int &timeId);
+    vector<LEDStatus> interpolateFadeFrame(const LEDFrame &origin,
+                                           const LEDFrame &target,
+                                           const float &rate);
+
+    // serialization
+    friend class boost::serialization::access;
+    friend ostream &operator<<(ostream &os, const LEDPlayer &player);
+};
+
+void saveLEDPlayer(LEDPlayer &player, const char *filename);
+bool restoreLEDPlayer(LEDPlayer &player, const char *filename);
+
+#endif  // LED_PLAYER
