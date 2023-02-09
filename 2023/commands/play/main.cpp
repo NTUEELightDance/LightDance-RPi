@@ -26,23 +26,56 @@ class Play : public Command {
             help();
             return 0;
         }
-        if (cmdOptionExists(argv, argv + argc, "-t")) {
-            vector<int> time = getCmdOptionInt(argv, argv + argc, "-t");
-            if (time.size() == 1) {
-                return play(time[0], -1);
-            } else if (time.size() == 2) {
-                return play(time[0], time[1]);
-            } else {
-                cout << "Error in -t option" << endl;
-                return 1;
-            }
-        }
         if (argc >= 2) {
             string cmd = argv[1];
             transform(cmd.begin(), cmd.end(), cmd.begin(),
                       [](unsigned char c) { return tolower(c); });
             if (set<string>{"pause", "quit", "restart", "stop"}.count(cmd) > 0) {
                 sendToPlayLoop(cmd);
+            }
+            if (cmd.compare("play") == 0) {
+                if (cmdOptionExists(argv, argv + argc, "-s")) {
+                    vector<float> ftime = getCmdOptionFloat(argv, argv + argc, "-s");
+                    for (auto i : ftime) {
+                        cout << "hi" << i << endl;
+                        if (int(i * 1000) < -1.0) {
+                            cout << "It might be overflowed.\nPlease check your input!." << endl;
+                            return 1;
+                        }
+                    }
+                    if (ftime.size() == 1) {
+                        return play(int(ftime[0] * 1000), -1);
+                    } else if (ftime.size() == 2) {
+                        return play(int(ftime[0] * 1000), int(ftime[1] * 1000));
+                    } else {
+                        if (argc == 2) {
+                            cout << "Error in -s option.";
+                            cout << "Please it should have time after -s flag." << endl;
+                            return 1;
+                        }
+                        cout << "Error in -s option.\nPlease use \"-h\" for help." << endl;
+                        return 1;
+                    }
+                }
+                vector<int> time = getCmdOptionInt(argv, argv + argc, "play");
+                for (auto i : time) {
+                    if (i < -1) {
+                        cout << "It might be overflowed.\nPlease check your input!." << endl;
+                        return 1;
+                    }
+                }
+                if (time.size() == 1) {
+                    return play(time[0], -1);
+                } else if (time.size() == 2) {
+                    return play(time[0], time[1]);
+                } else {
+                    if (argc == 2) return play(0, -1);
+                    cout << "Error in command play.\n";
+                    cout << "It should be \"play <start time(int)(option)> <end "
+                            "time(int)(option)>\".\n";
+                    cout << "Please use \"-h\" for help." << endl;
+                    return 1;
+                }
             }
         }
         return 0;
@@ -69,7 +102,7 @@ class Play : public Command {
         }
 
         n = sprintf(buf, "Process %d, %s", getpid(), msg.c_str());
-        printf("Send message: %s", buf);
+        printf("Send message: %s\n", buf);
         if (write(fd, buf, n + 1) < 0) {
             perror("Write FIFO Failed");
             close(fd);
