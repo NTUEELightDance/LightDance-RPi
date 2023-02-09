@@ -78,7 +78,7 @@ class Player {
     bool loaded;
     bool setDancer(const string &_dancerName, json &dancerData);
     string list() const;
-
+    string getDancerName();
     template <class Archive>
     void serialize(Archive &archive, const unsigned int version);
 
@@ -98,6 +98,7 @@ class Player {
     friend class boost::serialization::access;
     friend ostream &operator<<(ostream &ostream, const Player &player);
 };
+
 void savePlayer(const Player &savePlayer, const char *filename);
 bool restorePlayer(Player &savePlayer, const char *filename);
 

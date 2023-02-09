@@ -1,5 +1,9 @@
 #include "player.h"
 
+string Player::getDancerName(){
+    return dancerName;
+};
+
 bool Player::setDancer(const string &_dancerName, json &dancerData) {
     // name
     dancerName = _dancerName;
