@@ -86,6 +86,11 @@ int main(int argc, char *argv[]) {
         cout << "OF data loaded successfully\n";
         cout << "stored at: " << fileName << endl;
         savePlayer(dancerData, fileName.c_str());
+        cout << dancerData.myOFPlayer;
+
+        Player clarifyPlayer;
+        restorePlayer(clarifyPlayer, fileName.c_str());
+        cout << clarifyPlayer.myOFPlayer;
         return 0;
     }
 

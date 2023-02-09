@@ -9,6 +9,7 @@
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <unordered_map>
 
 #include "nlohmann/json.hpp"
 
@@ -24,7 +25,7 @@
 // LED
 #include "LEDPlayer.h"
 // OF
-// #include "OFPlayer.h"
+#include "OFPlayer.h"
 using namespace std;
 using json = nlohmann::json;
 
@@ -54,9 +55,10 @@ class Player {
     bool LEDloaded, OFloaded;
     int fps;
 
-    map<string, int> OFPARTS;
-    map<string, LEDStripeSetting> LEDPARTS;
+    unordered_map<string, int> OFPARTS;
+    unordered_map<string, LEDStripeSetting> LEDPARTS;
     LEDPlayer myLEDPlayer;
+    OFPlayer myOFPlayer;
 
    private:
     // Functions

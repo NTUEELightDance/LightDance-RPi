@@ -33,7 +33,8 @@ string Player::list() const {
     ostr << "******************************\ndancerName:  " << dancerName << "\n";
     ostr << "fps:  " << fps << "\n";
     ostr << "OFPARTS:\n\n";
-    for (map<string, int>::const_iterator it = OFPARTS.begin(); it != OFPARTS.end(); ++it) {
+    for (unordered_map<string, int>::const_iterator it = OFPARTS.begin(); it != OFPARTS.end();
+         ++it) {
         string part = "    ";
         part += it->first;
         for (int i = 0; i < max(short(20 - it->first.size()), (short)0); ++i) {
@@ -44,8 +45,8 @@ string Player::list() const {
     }
 
     ostr << "\nLEDPARTS:\n\n";
-    for (map<string, LEDStripeSetting>::const_iterator it = LEDPARTS.begin(); it != LEDPARTS.end();
-         ++it) {
+    for (unordered_map<string, LEDStripeSetting>::const_iterator it = LEDPARTS.begin();
+         it != LEDPARTS.end(); ++it) {
         ostr << it->first + ":{\n    id: " + to_string(it->second.id) +
                     ",\n    len: " + to_string(it->second.len) + "\n}\n";
     }
@@ -61,6 +62,7 @@ void Player::serialize(Archive &archive, const unsigned int version) {
     archive &OFPARTS;
     archive &LEDPARTS;
     archive &myLEDPlayer;
+    archive &myOFPlayer;
 };
 
 ostream &operator<<(ostream &ostream, const Player &player) {
@@ -107,7 +109,7 @@ void LEDload(Player &Player, json &data_json) {
     frameLists.clear();
     frameLists.resize(partNum);
 
-    for (map<string, LEDStripeSetting>::iterator part_it = Player.LEDPARTS.begin();
+    for (unordered_map<string, LEDStripeSetting>::iterator part_it = Player.LEDPARTS.begin();
          part_it != Player.LEDPARTS.end(); ++part_it) {
         const string partName = part_it->first;
         const unsigned int id = part_it->second.id;
@@ -150,4 +152,48 @@ void LEDload(Player &Player, json &data_json) {
     Player.LEDloaded = true;
 }
 
-void OFload(Player &Player, json &data_json) {}
+void OFload(Player &Player, json &data_json) {
+    vector<OFFrame> frameLists;
+    vector<vector<OFStatus>> statusList;
+
+    // TODO: load from .h file, instead of hard coded
+    const int partNum = 26;
+
+    frameLists.clear();
+    statusList.clear();
+
+    const OFFrame darkFrame;
+    const OFStatus darkStatus;
+
+    for (const json &frame_json : data_json) {
+        vector<OFStatus> status;
+        status.clear();
+        status.resize(partNum);
+        vector<pair<string, OFStatus>> frameStatus;
+        frameStatus.clear();
+        if (frame_json.empty()) {
+            // If no frames are given, push only dark frame
+            frameLists.push_back(darkFrame);
+            fill(status.begin(), status.end(), darkStatus);
+            statusList.push_back(status);
+            continue;
+        }
+        const json &status_json = frame_json["status"];
+        for (unordered_map<string, int>::iterator part_it = Player.OFPARTS.begin();
+             part_it != Player.OFPARTS.end(); ++part_it) {
+            const string partName = part_it->first;
+            const int id = part_it->second;
+
+            const OFStatus currentStatus(status_json[partName][0], status_json[partName][1],
+                                         status_json[partName][2], status_json[partName][3]);
+            status[id] = currentStatus;
+            frameStatus.push_back(make_pair(partName, currentStatus));
+        }
+        OFFrame currentFrame(frame_json["start"], frame_json["fade"], frameStatus);
+        frameLists.push_back(currentFrame);
+        statusList.push_back(status);
+    }
+
+    Player.myOFPlayer = OFPlayer(Player.fps, frameLists, statusList);
+    Player.OFloaded = true;
+}

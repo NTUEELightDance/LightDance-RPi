@@ -5,9 +5,9 @@ LIBS = -lpthread -lboost_serialization
 all:
 	make clean list load
 clean:
-	rm -f list.o
-	rm -f load.o
+	rm -f list.out
+	rm -f load.out
 list:
-	$(CC) list.cpp player.cpp LEDPlayer.cpp -o list.o $(CFLAGS) $(LIBS)
+	$(CC) list.cpp player.cpp LEDPlayer.cpp OFPlayer.cpp -o list.out $(CFLAGS) $(LIBS)
 load:
-	$(CC) load.cpp player.cpp LEDPlayer.cpp -o load.o $(CFLAGS) $(LIBS)
+	$(CC) load.cpp player.cpp LEDPlayer.cpp OFPlayer.cpp -o load.out $(CFLAGS) $(LIBS)
