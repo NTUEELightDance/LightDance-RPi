@@ -69,7 +69,7 @@ class Play : public Command {
                 } else if (time.size() == 2) {
                     return play(time[0], time[1]);
                 } else {
-                    if (argc == 2) return play(0, -1);
+                    if (argc == 2) return sendToPlayLoop("play");
                     cout << "Error in command play.\n";
                     cout << "It should be \"play <start time(int)(option)> <end "
                             "time(int)(option)>\".\n";
