@@ -1,0 +1,45 @@
+{
+    "fps": 30,
+    "hostname": "",
+    "OFPARTS": {
+        "Helmet_1": 8,
+        "Helmet_2": 9,
+        "Helmet_3": 10,
+        "Shoulder_L_1": 6,
+        "Shoulder_L_2": 7,
+        "Shoulder_R_1": 11,
+        "Shoulder_R_2": 12,
+        "Plackart_1": 3,
+        "Plackart_2": 14,
+        "Cuirass_1": 4,
+        "Cuirass_2": 13,
+        "Arm_L_1": 2,
+        "Arm_L_2": 1,
+        "Arm_R_1": 15,
+        "Arm_R_2": 16,
+        "Belt_1": 0,
+        "Belt_2": 17,
+        "Thigh_L_1": 18,
+        "Thigh_L_2": 19,
+        "Thigh_R_1": 23,
+        "Thigh_R_2": 25,
+        "Calf_L_1": 20,
+        "Calf_L_2": 21,
+        "Calf_R_1": 22,
+        "Calf_R_2": 24
+    },
+    "LEDPARTS": {
+        "Shoe_L_LED": {
+            "id": 0,
+            "len": 37
+        },
+        "Shoe_R_LED": {
+            "id": 1,
+            "len": 37
+        },
+        "Hand_R_LED": {
+            "id": 3,
+            "len": 1
+        }
+    }
+}
