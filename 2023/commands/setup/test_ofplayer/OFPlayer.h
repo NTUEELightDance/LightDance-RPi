@@ -7,7 +7,8 @@
 #include <unistd.h>
 
 #include <algorithm>
-#include <map>
+#include <unordered_map>
+#include <cmath>
 #include <vector>
 #include <atomic>
 #include <fstream>
@@ -25,15 +26,14 @@
 
 using namespace std;
 
-
 struct OFStatus {
     int r, g, b, a;
     OFStatus();
     OFStatus(const int &_r, const int &_g, const int &_b, const int &_a);
 
-    template <class Archive>;
+    template <class Archive>
     void serialize(Archive &archive, const unsigned int version);
-}
+};
 
 struct OFFrame {
     int start;
@@ -44,12 +44,12 @@ struct OFFrame {
 
     template <class Archive>
     void serialize(Archive &archive, const unsigned int version);
-}
+};
 
 class OFPlayer {
     public:
         OFPlayer();
-        OFPlayer(const int &_fps, const vector<OFFrame> &_frameList, const vector<vector<OFStatus>> &_statusList)
+        OFPlayer(const int &_fps, const vector<OFFrame> &_frameList, const vector<vector<OFStatus>> &_statusList, const unordered_map<string, int> &_channelIds);
         // threading function
         void loop(const bool *playing, const timeval *baseTime);
 

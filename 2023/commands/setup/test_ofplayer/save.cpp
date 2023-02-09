@@ -12,12 +12,14 @@
 using namespace std;
 using json = nlohmann::json;
 
-void OFPlayer::load(const json &data_json, const json &parts_json, const int &fps) {
+OFPlayer load(const json &data_json, const json &parts_json, const int &fps) {
     vector<OFFrame> frameList;
     vector<vector<OFStatus>> statusList;
+    unordered_map<string, int> channelIds;
 
     frameList.clear();
     statusList.clear();
+    channelIds.clear();
     
     // build frames
     for (auto &data : data_json) {
@@ -49,7 +51,7 @@ void OFPlayer::load(const json &data_json, const json &parts_json, const int &fp
         vector<OFStatus> newStatus;
         newStatus.resize(26);
 
-        vector<pair<string, OFStatus>> _statusList
+        vector<pair<string, OFStatus>> _statusList;
 
         // init channelId
         for (auto &part : parts_json.items()) {
@@ -67,12 +69,12 @@ void OFPlayer::load(const json &data_json, const json &parts_json, const int &fp
                     it.key(), OFStatus(it.value()[0], it.value()[1], it.value()[2],
                                  it.value()[3])));
             }
-
+        }
         statusList.push_back(newStatus);
         frameList.push_back(OFFrame(_start, _fade, _statusList));
     }
 
-    return OFPlayer(fps, frameList, statusList);
+    return OFPlayer(fps, frameList, statusList, channelIds);
 }
 
 int main() {
