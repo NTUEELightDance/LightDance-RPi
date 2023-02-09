@@ -101,7 +101,7 @@ class Play : public Command {
             return 1;
         }
 
-        n = sprintf(buf, "Process %d, %s", getpid(), msg.c_str());
+        n = sprintf(buf, "%s", msg.c_str());
         printf("Send message: %s\n", buf);
         if (write(fd, buf, n + 1) < 0) {
             perror("Write FIFO Failed");
