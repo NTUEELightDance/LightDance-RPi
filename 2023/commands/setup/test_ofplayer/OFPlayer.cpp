@@ -84,10 +84,11 @@ bool restoreOFPlayer(OFPlayer &player, const char *filename) {
 
 OFPlayer::OFPlayer() : fps(0) {}
 
-OFPlayer::OFPlayer(const int &_fps, const vector<OFFrame> &_frameList, const vector<vector<OFStatus>> &_statusList) {
+OFPlayer::OFPlayer(const int &_fps, const vector<OFFrame> &_frameList, const vector<vector<OFStatus>> &_statusList, const unordered_map<string, int> &_channelIds) {
     fps = _fps;
     frameList.assign(_frameList.begin(), _frameList.end());
     statusList.assign(_statusList.begin(), _statusList.end());
+    channelIds = _channelIds;
     
     //TODO: assign channel number to part name
     //TODO: assign status to every part
@@ -95,12 +96,6 @@ OFPlayer::OFPlayer(const int &_fps, const vector<OFFrame> &_frameList, const vec
     //done in save.cpp
 }
 
-long OFPlayer::getElapsedTime(const struct timeval &base,
-                               const struct timeval &current) {
-    // Get time elapsed from start time in microsecond
-    return (long)(current.tv_sec - base.tv_sec) * 1000000l +
-           (long)(current.tv_usec - base.tv_usec);
-}
 
 vector<OFStatus> OFPlayer::findFrameStatus(const long &time) {
     frameId = findFrameId(time);
@@ -190,7 +185,7 @@ void OFPlayer::loop(const bool *playing, const timeval *baseTime) {
 
             // find status
             statusList = findFrameStatus(elapsedTime/1000l);
-            cout << "Helmet_1's status:" << ": " << status[8].r << " " << status[8].g << " " << status[8].b << " " << status[8].a << endl;
+            cout << "Helmet_1's status:" << ": " << statusList[8].r << " " << statusList[8].g << " " << statusList[8].b << " " << statusList[8].a << endl;
             cout << "=================frame end===============" << endl;
             cout << "=================frame end===============" << endl;
             usleep((long)(1000000 / fps));
