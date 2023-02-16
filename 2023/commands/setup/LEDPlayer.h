@@ -25,6 +25,8 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/version.hpp>
 
+#include "hardware/LEDController.h"
+
 using namespace std;
 
 struct LEDStatus {
@@ -42,8 +44,7 @@ struct LEDFrame {
     vector<LEDStatus> statusList;
     LEDFrame();
     LEDFrame(const int &_start, const bool &_fade, const int &len);
-    LEDFrame(const int &_start, const bool &_fade,
-             const vector<LEDStatus> &_statusList);
+    LEDFrame(const int &_start, const bool &_fade, const vector<LEDStatus> &_statusList);
 
     template <class Archive>
     void serialize(Archive &archive, const unsigned int version);
@@ -54,8 +55,10 @@ class LEDPlayer {
     LEDPlayer();
     LEDPlayer(const int &_fps, const vector<vector<LEDFrame>> &_frameLists,
               const vector<int> &_stripShapes);
+
+    void init();
     // threading function
-    void loop(const bool *playing, const timeval *baseTime);
+    void loop(const bool *playing, const timeval *baseTime, const bool *toTerminate);
 
     template <class Archive>
     void serialize(Archive &archive, const unsigned int version);
@@ -67,15 +70,16 @@ class LEDPlayer {
     vector<int> frameIds;
     vector<int> stripShapes;
 
+    LEDController controller;
+
     // time calculation
-    long getElapsedTime(const struct timeval &base,
-                        const struct timeval &current);
+    long getElapsedTime(const struct timeval &base, const struct timeval &current);
     int getTimeId(const long &elapsedTime);
     // frame calculation
     void calculateFrameIds(const int &timeId);
-    vector<LEDStatus> interpolateFadeFrame(const LEDFrame &origin,
-                                           const LEDFrame &target,
+    vector<LEDStatus> interpolateFadeFrame(const LEDFrame &origin, const LEDFrame &target,
                                            const float &rate);
+    vector<vector<int>> castStatusLists(const vector<vector<LEDStatus>> statusLists);
 
     // serialization
     friend class boost::serialization::access;

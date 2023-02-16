@@ -1,16 +1,34 @@
 CC = g++
-CFLAGS = -lpthread
+CFLAGS = -std=c++14
+LIBS = -lpthread -lboost_serialization
 
-SRC = ./
+SRC = .
 BIN = ./bin
 OBJ = ./obj
 
-all : playLoop LEDPlayer
-	@mkdir -p bin obj
-	$(CC) -o $(BIN)/playLoop $(OBJ)/playLoop.o $(OBJ)/LEDPlayer.o $(CFLAGS)
+all : playLoop LEDPlayer LEDController
+	@mkdir -p $(BIN)
+	$(CC) -o $(BIN)/playLoop \
+		$(OBJ)/playLoop.o \
+		$(OBJ)/LEDPlayer.o \
+		$(OBJ)/hardware/LEDController.o \
+		$(CFLAGS) $(LIBS)
 
 playLoop :
-	$(CC) -o $(OBJ)/playLoop.o -c playLoop.cpp
+	@mkdir -p $(OBJ)
+	$(CC) -o $(OBJ)/playLoop.o \
+		-c $(SRC)/playLoop.cpp \
+		$(CFLAGS)
 
-LEDPlayer :
-	$(CC) -o $(OBJ)/LEDPlayer.o -c LEDPlayer.cpp
+LEDPlayer : 
+	@mkdir -p $(OBJ)
+	$(CC) -o $(OBJ)/LEDPlayer.o \
+		-c $(SRC)/LEDPlayer.cpp \
+		$(CFLAGS)
+
+LEDController : 
+	@mkdir -p $(OBJ)/hardware
+	$(CC) -o $(OBJ)/hardware/LEDController.o \
+		-c $(SRC)/hardware/LEDController.cpp \
+		$(CFLAGS)
+
