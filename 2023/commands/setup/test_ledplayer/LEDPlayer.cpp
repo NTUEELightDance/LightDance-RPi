@@ -4,8 +4,6 @@
 
 // ==================== LEDStatus ============================
 
-// TODO: implement archive
-
 template <class Archive>
 void LEDStatus::serialize(Archive &archive, const unsigned int version) {
     archive &r;
@@ -20,8 +18,6 @@ LEDStatus::LEDStatus(const uint &_r, const uint &_g, const uint &_b, const uint 
     : r(_r), g(_g), b(_b), a(_a) {}
 
 // ==================== LEDFrame =============================
-
-// TODO: implement archive
 
 template <class Archive>
 void LEDFrame::serialize(Archive &archive, const unsigned int version) {
@@ -49,8 +45,6 @@ LEDFrame::LEDFrame(const int &_start, const bool &_fade, const int &_len) {
 }
 
 // ==================== LEDPlayer ============================
-
-// TODO: implement archive, list, save, and restore
 
 template <class Archive>
 void LEDPlayer::serialize(Archive &archive, const unsigned int version) {
@@ -199,12 +193,39 @@ vector<LEDStatus> LEDPlayer::interpolateFadeFrame(const LEDFrame &origin, const 
     return statusList;
 }
 
-void LEDPlayer::loop(const bool *playing, const timeval *baseTime) {
+vector<vector<int>> LEDPlayer::castStatusLists(const vector<vector<LEDStatus>> statusLists) {
+    vector<vector<int>> castedLists(statusLists.size());
+    for (const vector<LEDStatus> &statusList : statusLists) {
+        for (int i = 0; i < statusList.size(); i++) {
+            const LEDStatus &status = statusList[i];
+            castedLists[i].push_back((status.r << 24) + (status.g << 16) + (status.b << 8) +
+                                    (status.a << 0));
+        }
+    }
+
+    return castedLists;
+}
+
+void LEDPlayer::init() {
+    frameIds.resize(stripShapes.size());
+    fill(frameIds.begin(), frameIds.end(), -1);
+
+    controller.init(stripShapes);
+}
+
+void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *toTerminate) {
     timeval currentTime;
     vector<vector<LEDStatus>> statusLists;
 
     while (true) {
-        // if (playing && checkReady()) {
+        if (*toTerminate) {
+            for (int i = 0; i < frameIds.size(); i++) {
+                // dark all
+                statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
+            }
+            controller.sendAll(castStatusLists(statusLists));
+            break;
+        }
         if (*playing) {
             gettimeofday(&currentTime, NULL);
             const long elapsedTime = getElapsedTime(*baseTime, currentTime);
@@ -226,7 +247,7 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime) {
                 const vector<LEDFrame> &frameList = frameLists[i];
 
                 if (frameId < 0) {
-                    // TODO: handle invalid time or non-exist part
+                    // use dark frame for invalid time or non-exist part
                     statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
                     continue;
                 }
@@ -254,7 +275,7 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime) {
                 // }
             }
 
-            // sendAll(statusList);
+            controller.sendAll(castStatusLists(statusLists));
             usleep(1000);
         }
     }

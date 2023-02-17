@@ -1,33 +1,36 @@
-#include "LEDPlayer.h"
-
-#include <fstream>
 #include <stdio.h>
 #include <sys/select.h>
-#include <thread>
 #include <time.h>
 #include <unistd.h>
 
+#include <fstream>
+#include <thread>
+
+#include "LEDPlayer.h"
 #include "nlohmann/json.hpp"
 
 using namespace std;
 using json = nlohmann::json;
 
 bool playing;
-struct timeval baseTime;
+timeval baseTime;
+bool toTerminate;
 
 int main() {
-    ifstream LEDIfs("./LED.json");
-    json LEDJson = json::parse(LEDIfs);
-
-    ifstream dancerIfs("./10_dontstop.json");
-    json dancerJson = json::parse(dancerIfs);
-
-    LEDPlayer::load(LEDJson, dancerJson["LEDPARTS"], dancerJson["fps"]);
+    LEDPlayer player;
+    restoreLEDPlayer(player, "data/10_dontstop.dat");
 
     playing = false;
-    thread led_loop(LEDPlayer::loop);
+    thread led_loop(&LEDPlayer::loop, &player, &playing, &baseTime, &toTerminate);
 
     gettimeofday(&baseTime, NULL);
+    playing = true;
+
+    sleep(3);
+    playing = false;
+
+    sleep(3);
+    baseTime.tv_sec += 3;
     playing = true;
 
     while (true) {
