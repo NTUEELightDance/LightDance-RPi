@@ -31,6 +31,10 @@ int main(int argc, char *argv[]) {
     };
     cout << dancerName << "'s data restore as below\n";
     cout << new_dancer << endl;
+    cout << dancerName << "'s LEDPlayer data restore as below\n";
+    cout << new_dancer.myLEDPlayer << endl;
+    cout << dancerName << "'s OFPlayer data restore as below\n";
+    cout << new_dancer.myOFPlayer << endl;
 
     return 0;
 }
