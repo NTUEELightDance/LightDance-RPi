@@ -1,10 +1,6 @@
 #include "baseMethod.cpp"
 
-
-
-class StmInit:public BaseMethod{
-
-};
+class StmInit : public BaseMethod {};
 /*
 # StmInit
 class StmInit(BaseMethod):
