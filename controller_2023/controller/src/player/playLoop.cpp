@@ -18,7 +18,7 @@
 bool playing;
 timeval baseTime;
 enum CMD { SET, PLAY, PAUSE, RESUME, STOP };
-Player player;
+LEDPlayer player;
 const char* fileName;
 
 int parse_command(char cmd[]) {
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
         switch (parse_command(cmd)) {
             case SET:
                 playing = false;
-                if (!restorePlayer(player, fileName.c_str())) {
+                if (!restoreLEDPlayer(player, fileName.c_str())) {
                     exit(1);
                 };
                 break;

@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <time.h>
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 
@@ -17,8 +18,7 @@ using json = nlohmann::json;
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
-        cerr << "Error: missing parameters! (input type, json file are needed)"
-             << endl;
+        cerr << "Error: missing parameters! (input type, json file are needed)" << endl;
         exit(1);
     }
 
@@ -45,8 +45,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     size_t fileNameStart = path.find_last_of("/\\") + 1;
-    string dancerName =
-        path.substr(fileNameStart, path.find_last_of(".") - fileNameStart);
+    string dancerName = path.substr(fileNameStart, path.find_last_of(".") - fileNameStart);
     json jsonFile;
     infile >> jsonFile;
     infile.close();
@@ -68,8 +67,7 @@ int main(int argc, char *argv[]) {
     string fileName("dancer.dat");
     Player dancerData;
     if (!restorePlayer(dancerData, fileName.c_str())) {
-        cerr << "Please Load dancer's ( " << dancerName << " ) data first !"
-             << endl;
+        cerr << "Please Load dancer's ( " << dancerName << " ) data first !" << endl;
         exit(1);
     };
 
