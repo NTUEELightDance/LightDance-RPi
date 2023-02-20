@@ -177,28 +177,43 @@ int OFPlayer::findFrameId(const long &time) {
 // store infromation of every part
 int OFPlayer::findChannelId(const string &partName) { return channelIds[partName]; }
 
-// void OFPlayer::loop(const bool *playing, const timeval *baseTime) {
-//     timeval currentTime;
-//     vector<OFStatus> statusList;
-//     while (true) {
-//         if (*playing) {
-//             gettimeofday(&currentTime, NULL);
-//             const long elapsedTime = getElapsedTime(*baseTime, currentTime);
-//             statusList.clear();
-//             printf("Time: %f\n", elapsedTime / 1000000.0f);
+void OFPlayer::init() {
+    controller.init();
+}
 
-//             // find status
-//             statusList = findFrameStatus(elapsedTime / 1000l);
-//             cout << "Helmet_1's status:"
-//                  << ": " << status[8].r << " " << status[8].g << " " << status[8].b << " "
-//                  << status[8].a << endl;
-//             cout << "=================frame end===============" << endl;
-//             cout << "=================frame end===============" << endl;
-//             usleep((long)(1000000 / fps));
-//         }
-//     }
-// }
+vector<int> OFPlayer::castStatusList(vector<OFStatus> statusList) {
+    vector<int> castedList(statusList.size());
+    for (int i = 0; i < statusList.size(); i++) {
+        const OFStatus &status = statusList[i];
+        castedList[i] = ((status.r << 24) + (status.g << 16) + (status.b << 8) + (status.a << 0)); 
+    }
 
-/*
+    return castedList;
+}
 
-*/
+void OFPlayer::loop(const bool *playing, const timeval *baseTime, const bool *toTerminate) {
+     timeval currentTime;
+     vector<OFStatus> statusList;
+     while (true) {
+        if (*toTerminate) {
+            //TODO: finish darkall
+            statusList.resize(channelIds.size());
+            fill(statusList.begin(), statusList.end(), 0);
+            controller.sendAll(castStatusList(statusList));
+
+            break;
+        }
+        if (*playing) {
+            gettimeofday(&currentTime, NULL);
+            const long elapsedTime = getElapsedTime(*baseTime, currentTime);
+            statusList.clear();
+            printf("Time: %f\n", elapsedTime / 1000000.0f);
+
+            // find status
+            statusList = findFrameStatus(elapsedTime / 1000l);
+
+            controller.sendAll(castStatusList(statusList));
+            usleep((long)(1000000 / fps));
+         }
+     }
+}
