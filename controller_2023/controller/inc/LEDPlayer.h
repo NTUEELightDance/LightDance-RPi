@@ -25,7 +25,8 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/version.hpp>
 
-#include "LEDController.h"
+// TODO: enable hardware
+// #include "LEDController.h"
 
 using namespace std;
 
@@ -70,7 +71,8 @@ class LEDPlayer {
     vector<int> frameIds;
     vector<int> stripShapes;
 
-    LEDController controller;
+    // TODO: enable hardware
+    // LEDController controller;
 
     // time calculation
     long getElapsedTime(const struct timeval &base, const struct timeval &current);
