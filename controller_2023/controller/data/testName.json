@@ -25,15 +25,15 @@
   "LEDPARTS": {
     "led1": {
       "id": 0,
-      "len": 56
+      "len": 1
     },
     "led2": {
       "id": 1,
-      "len": 20
+      "len": 37
     },
     "led3": {
       "id": 2,
-      "len": 18
+      "len": 37
     }
   }
 }
