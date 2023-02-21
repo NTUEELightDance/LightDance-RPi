@@ -23,6 +23,10 @@ int OFController::init() {
 }
 
 int OFController::sendAll(const vector<int> &statusLists) {
-    printf("%d strips sent\n", (int)statusLists.size());
+    printf("%d strips sent: ", (int)statusLists.size());
+    for (int i = 0; i < statusLists.size(); i++) {
+        printf("%d ", statusLists[i]);
+    }
+    printf("\n");
     return 1;
 }

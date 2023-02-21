@@ -117,7 +117,9 @@ long OFPlayer::getElapsedTime(const struct timeval &base, const struct timeval &
 
 vector<OFStatus> OFPlayer::findFrameStatus(const long &time) {
     frameId = findFrameId(time);
-    return frameList[frameId].fade ? findFadeFrameStatus(time) : statusList[frameId];
+    bool fade = frameList[frameId].fade;
+    printf("frameId: %d, fade: %d\n", frameId, fade);
+    return fade ? findFadeFrameStatus(time) : statusList[frameId];
 }
 
 vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
@@ -198,7 +200,9 @@ void OFPlayer::loop(const bool *playing, const timeval *baseTime, const bool *to
         if (*toTerminate) {
             //TODO: finish darkall
             statusList.resize(channelIds.size());
-            fill(statusList.begin(), statusList.end(), 0);
+            for (auto &status : statusList) {
+                status = OFStatus(0, 0, 0, 0);
+            }
             controller.sendAll(castStatusList(statusList));
 
             break;
@@ -207,7 +211,7 @@ void OFPlayer::loop(const bool *playing, const timeval *baseTime, const bool *to
             gettimeofday(&currentTime, NULL);
             const long elapsedTime = getElapsedTime(*baseTime, currentTime);
             statusList.clear();
-            printf("Time: %f\n", elapsedTime / 1000000.0f);
+            // printf("Time: %f\n", elapsedTime / 1000000.0f);
 
             // find status
             statusList = findFrameStatus(elapsedTime / 1000l);

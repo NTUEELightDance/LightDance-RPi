@@ -112,21 +112,34 @@ class Play : public Command {
         int n;
         char buf[1024];
 
-        mkfifo("fifo", 0666);
-        if ((fd = open("fifo", O_WRONLY)) < 0)  // 以写打开一个FIFO
-        {
+        mkfifo("/tmp/cmd_to_player", 0666);
+        if ((fd = open("/tmp/cmd_to_player", O_WRONLY)) < 0) {
             perror("Open FIFO Failed");
             return 1;
         }
 
         n = sprintf(buf, "%s", msg.c_str());
-        printf("Send message: %s\n", buf);
+        // printf("Send message: %s\n", buf);
         if (write(fd, buf, n + 1) < 0) {
             perror("Write FIFO Failed");
             close(fd);
             return 1;
         }
-        // close(fd);  // should be comment in formal version
+        int res_fd;
+        char res_buf[1024];
+
+        string resFIFOpath = "/tmp/player_to_cmd";
+        if ((res_fd = open(resFIFOpath.c_str(), O_RDONLY)) < 0) {
+            perror("Open response FIFO Failed");
+            return 1;
+        }
+
+        read(res_fd, res_buf, 1024);
+        if (res_buf[0] == '0')
+            printf("Success!\n");
+        else
+            printf("Failed!\n");
+        close(fd);  // should be comment in formal version
         return 0;
     }
 };
