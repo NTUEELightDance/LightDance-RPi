@@ -26,6 +26,8 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/version.hpp>
 
+#include "OFController.h"
+
 using namespace std;
 
 struct OFStatus {
@@ -54,8 +56,10 @@ class OFPlayer {
     OFPlayer();
     OFPlayer(const int &_fps, const vector<OFFrame> &_frameList,
              const vector<vector<OFStatus>> &_statusList);
+
     // threading function
-    void loop(const bool *playing, const timeval *baseTime);
+    void loop(const bool *playing, const timeval *baseTime, const bool *toTerminate);
+    void init();
 
     template <class Archive>
     void serialize(Archive &archive, const unsigned int version);
@@ -68,12 +72,16 @@ class OFPlayer {
     vector<vector<OFStatus>> statusList;
     unordered_map<string, int> channelIds;
 
+    OFController controller;
+
     // functions for finding frame at specific time
     long getElapsedTime(const struct timeval &base, const struct timeval &current);
     vector<OFStatus> findFrameStatus(const long &time);
     vector<OFStatus> findFadeFrameStatus(const long &time);
     int findFrameId(const long &time);
     int findChannelId(const string &partName);
+
+    vector<int> castStatusList(const vector<OFStatus> statusList);
 
     // serialization
     friend class boost::serialization::access;
