@@ -180,30 +180,32 @@ int OFPlayer::findFrameId(const long &time) {
 int OFPlayer::findChannelId(const string &partName) { return channelIds[partName]; }
 
 void OFPlayer::init() {
-    controller.init();
+    // TODO: enable hardware
+    // controller.init();
 }
 
 vector<int> OFPlayer::castStatusList(vector<OFStatus> statusList) {
     vector<int> castedList(statusList.size());
     for (int i = 0; i < statusList.size(); i++) {
         const OFStatus &status = statusList[i];
-        castedList[i] = ((status.r << 24) + (status.g << 16) + (status.b << 8) + (status.a << 0)); 
+        castedList[i] = ((status.r << 24) + (status.g << 16) + (status.b << 8) + (status.a << 0));
     }
 
     return castedList;
 }
 
 void OFPlayer::loop(const bool *playing, const timeval *baseTime, const bool *toTerminate) {
-     timeval currentTime;
-     vector<OFStatus> statusList;
-     while (true) {
+    timeval currentTime;
+    vector<OFStatus> statusList;
+    while (true) {
         if (*toTerminate) {
-            //TODO: finish darkall
+            // TODO: finish darkall
             statusList.resize(channelIds.size());
             for (auto &status : statusList) {
                 status = OFStatus(0, 0, 0, 0);
             }
-            controller.sendAll(castStatusList(statusList));
+            // TODO: enable hardware
+            // controller.sendAll(castStatusList(statusList));
 
             break;
         }
@@ -216,8 +218,15 @@ void OFPlayer::loop(const bool *playing, const timeval *baseTime, const bool *to
             // find status
             statusList = findFrameStatus(elapsedTime / 1000l);
 
-            controller.sendAll(castStatusList(statusList));
+            printf("%d strips sent: ", (int)statusList.size());
+            for (int i = 0; i < statusList.size(); i++) {
+                printf("%d ", statusList[i]);
+            }
+            printf("\n");
+
+            // TODO: enable hardware
+            // controller.sendAll(castStatusList(statusList));
             usleep((long)(1000000 / fps));
-         }
-     }
+        }
+    }
 }

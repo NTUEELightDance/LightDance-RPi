@@ -26,7 +26,8 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/version.hpp>
 
-#include "OFController.h"
+// TODO: enable hardware
+// #include "OFController.h"
 
 using namespace std;
 
@@ -72,7 +73,8 @@ class OFPlayer {
     vector<vector<OFStatus>> statusList;
     unordered_map<string, int> channelIds;
 
-    OFController controller;
+    // TODO: enable hardware
+    // OFController controller;
 
     // functions for finding frame at specific time
     long getElapsedTime(const struct timeval &base, const struct timeval &current);

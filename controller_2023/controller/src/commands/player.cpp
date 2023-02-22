@@ -98,6 +98,7 @@ bool restorePlayer(Player &savePlayer, const char *filename) {
     // restore the schedule from the archive
     ia >> savePlayer;
     savePlayer.myLEDPlayer.init();
+    savePlayer.myOFPlayer.init();
 
     return true;
 }
