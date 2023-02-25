@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
 project(controller)
 
-set(SOURCE src)
-set(INSTALL ${CMAKE_BINARY_DIR}/../install)
-
-set(INCLUDES inc)
 find_package(Boost 1.65.1 REQUIRED COMPONENTS serialization)
+find_package(Threads REQUIRED)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+
+set(SOURCE src)
+set(INCLUDES inc)
+set(INSTALL ${CMAKE_BINARY_DIR}/../install)
 
 set(HARDWARE_INCLUDES ../hardware/inc)
 set(HARDWARE_LIBRARIES hardware)
@@ -62,12 +64,11 @@ add_executable(
   ${SOURCE}/player/OFPlayer.cpp ${SOURCE}/commands/player.cpp)
 target_include_directories(player PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(player ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
+target_link_libraries(player Threads::Threads)
 
 # socket
 add_executable(socket ${SOURCE}/socket/client.cpp)
 target_include_directories(socket PUBLIC ${INCLUDES})
-
-# target_link_libraries(socket ${Boost_LIBRARIES})
 
 # install TODO: change installation path to /usr/local
 file(MAKE_DIRECTORY ${INSTALL})
