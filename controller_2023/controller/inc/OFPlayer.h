@@ -56,7 +56,7 @@ class OFPlayer {
    public:
     OFPlayer();
     OFPlayer(const int &_fps, const vector<OFFrame> &_frameList,
-             const vector<vector<OFStatus>> &_statusList);
+             const vector<vector<OFStatus>> &_statusList, unordered_map<string, int> &_channelIds);
 
     // threading function
     void loop(const bool *playing, const timeval *baseTime, const bool *toTerminate);

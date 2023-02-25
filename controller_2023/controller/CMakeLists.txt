@@ -6,6 +6,7 @@ set(INSTALL ${CMAKE_BINARY_DIR}/../install)
 
 set(INCLUDES inc)
 find_package(Boost 1.65.1 REQUIRED COMPONENTS serialization)
+find_package(Threads)
 
 set(HARDWARE_INCLUDES ../hardware/inc)
 set(HARDWARE_LIBRARIES hardware)
@@ -61,14 +62,14 @@ add_executable(
   player ${SOURCE}/player/playLoop.cpp ${SOURCE}/player/LEDPlayer.cpp
   ${SOURCE}/player/OFPlayer.cpp ${SOURCE}/commands/player.cpp)
 target_include_directories(player PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
-target_link_libraries(player ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
+target_link_libraries(player PUBLIC ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 # socket
 add_executable(socket ${SOURCE}/socket/client.cpp)
 target_include_directories(socket PUBLIC ${INCLUDES})
 
 # target_link_libraries(socket ${Boost_LIBRARIES})
-
+    
 # install TODO: change installation path to /usr/local
 file(MAKE_DIRECTORY ${INSTALL})
 install(TARGETS ${EXECUTABLES} RUNTIME DESTINATION ${INSTALL})

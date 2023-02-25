@@ -42,6 +42,7 @@ void OFPlayer::serialize(Archive &archive, const unsigned int version) {
     archive &fps;
     archive &frameList;
     archive &statusList;
+    archive &channelIds;
 }
 
 string OFPlayer::list() const {
@@ -99,10 +100,13 @@ bool restoreOFPlayer(OFPlayer &player, const char *filename) {
 OFPlayer::OFPlayer() : fps(0){};
 
 OFPlayer::OFPlayer(const int &_fps, const vector<OFFrame> &_frameList,
-                   const vector<vector<OFStatus>> &_statusList) {
+                   const vector<vector<OFStatus>> &_statusList, unordered_map<string, int> &_channeldIds) {
     fps = _fps;
     frameList.assign(_frameList.begin(), _frameList.end());
     statusList.assign(_statusList.begin(), _statusList.end());
+    for (unordered_map<string, int>::iterator part_it = _channeldIds.begin(); part_it!=_channeldIds.end();part_it++){
+        channelIds[part_it->first] = part_it->second;
+    }
 
     // TODO: assign channel number to part name
     // TODO: assign status to every part
@@ -123,9 +127,10 @@ vector<OFStatus> OFPlayer::findFrameStatus(const long &time) {
 }
 
 vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
+    if (frameId >= 26) printf("Fade in last frame should be false!");
     const long startTime = (long)frameList[frameId].start;
     const long endTime = (long)frameList[frameId + 1].start;
-    const long rate = (long)(time - startTime) / (long)(endTime - startTime);
+    const float rate = (float)(time - startTime) / (float)(endTime - startTime);
 
     vector<OFStatus> fadeFrameStatus;
     fadeFrameStatus.resize(26);
