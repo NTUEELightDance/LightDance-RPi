@@ -127,7 +127,6 @@ vector<OFStatus> OFPlayer::findFrameStatus(const long &time) {
 }
 
 vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
-    if (frameId >= 26) printf("Fade in last frame should be false!");
     const long startTime = (long)frameList[frameId].start;
     const long endTime = (long)frameList[frameId + 1].start;
     const float rate = (float)(time - startTime) / (float)(endTime - startTime);
@@ -136,11 +135,15 @@ vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
     fadeFrameStatus.resize(26);
 
     // Do interpolate
-    for (auto &status_pair : frameList[frameId].statusList) {
-        const string &partName = status_pair.first;
-        const OFStatus &status = status_pair.second;
+    for (int i = 0;i < frameList[frameId].statusList.size(); i++) {
+        if (frameId+1 >= frameList.size()) {
+            printf("Fade for the last frame should be false.");
+            break;
+        }   
+        const string &partName = frameList[frameId].statusList[i].first;
+        const OFStatus &status = frameList[frameId].statusList[i].second;
         int channelId = findChannelId(partName);
-        const OFStatus &statusNext = frameList[frameId + 1].statusList[channelId].second;
+        const OFStatus &statusNext = frameList[frameId + 1].statusList[i].second;
         const int &r = (int)round((1 - rate) * (float)status.r + rate * (float)statusNext.r);
         const int &g = (int)round((1 - rate) * (float)status.g + rate * (float)statusNext.g);
         const int &b = (int)round((1 - rate) * (float)status.b + rate * (float)statusNext.b);
@@ -186,7 +189,7 @@ int OFPlayer::findChannelId(const string &partName) { return channelIds[partName
 
 void OFPlayer::init() {
     // TODO: enable hardware
-    // controller.init();
+    //controller.init();
 }
 
 vector<int> OFPlayer::castStatusList(vector<OFStatus> statusList) {
