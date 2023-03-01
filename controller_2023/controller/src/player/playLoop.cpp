@@ -85,8 +85,7 @@ void write_fifo(bool success) {
 //     return -1;
 // }
 
-const std::vector<std::string> split(const std::string &str,
-                                     const std::string &pattern) {
+const std::vector<std::string> split(const std::string &str, const std::string &pattern) {
     std::vector<std::string> result;
     std::string::size_type begin, end;
 
@@ -156,13 +155,14 @@ void restart() {
 
     restorePlayer(player, "dancer.dat");
     led_player = player.myLEDPlayer;
+    led_player.init();
     of_player = player.myOFPlayer;
+    of_player.init();
     fprintf(stderr, "Player loaded\n");
 
-    // led_loop = std::thread(&LEDPlayer::loop, &led_player, &playing, &baseTime,
-    //                        &to_terminate);
-    of_loop = std::thread(&OFPlayer::loop, &of_player, &playing, &baseTime,
-                          &to_terminate);
+    led_loop = std::thread(&LEDPlayer::loop, &led_player, &playing, &baseTime, &to_terminate);
+    // of_loop = std::thread(&OFPlayer::loop, &of_player, &playing, &baseTime,
+    // &to_terminate);
 }
 
 void stop() {

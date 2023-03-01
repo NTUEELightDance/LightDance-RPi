@@ -59,7 +59,7 @@ class LEDPlayer {
 
     void init();
     // threading function
-    void loop(const bool *playing, const timeval *baseTime, const bool *toTerminate);
+    void loop(const bool *playing, const timeval *baseTime, bool *toTerminate);
 
     template <class Archive>
     void serialize(Archive &archive, const unsigned int version);

@@ -11,8 +11,8 @@ bool Player::setDancer(const string &_dancerName, json &dancerData) {
 
     // LED
     LEDPARTS.clear();
-    for (json::iterator it = dancerData["LEDPARTS"].begin();
-         it != dancerData["LEDPARTS"].end(); ++it) {
+    for (json::iterator it = dancerData["LEDPARTS"].begin(); it != dancerData["LEDPARTS"].end();
+         ++it) {
         LEDStripeSetting newSetting;
         newSetting.len = it.value()["len"];
         newSetting.id = it.value()["id"];
@@ -22,8 +22,7 @@ bool Player::setDancer(const string &_dancerName, json &dancerData) {
     // OF
 
     OFPARTS.clear();
-    for (json::iterator it = dancerData["OFPARTS"].begin();
-         it != dancerData["OFPARTS"].end(); ++it)
+    for (json::iterator it = dancerData["OFPARTS"].begin(); it != dancerData["OFPARTS"].end(); ++it)
         OFPARTS[it.key()] = it.value();
 
     // hardware
@@ -33,12 +32,11 @@ bool Player::setDancer(const string &_dancerName, json &dancerData) {
 
 string Player::list() const {
     stringstream ostr;
-    ostr << "******************************\ndancerName:  " << dancerName
-         << "\n";
+    ostr << "******************************\ndancerName:  " << dancerName << "\n";
     ostr << "fps:  " << fps << "\n";
     ostr << "OFPARTS:\n\n";
-    for (unordered_map<string, int>::const_iterator it = OFPARTS.begin();
-         it != OFPARTS.end(); ++it) {
+    for (unordered_map<string, int>::const_iterator it = OFPARTS.begin(); it != OFPARTS.end();
+         ++it) {
         string part = "    ";
         part += it->first;
         for (int i = 0; i < max(short(20 - it->first.size()), (short)0); ++i) {
@@ -49,8 +47,7 @@ string Player::list() const {
     }
 
     ostr << "\nLEDPARTS:\n\n";
-    for (unordered_map<string, LEDStripeSetting>::const_iterator it =
-             LEDPARTS.begin();
+    for (unordered_map<string, LEDStripeSetting>::const_iterator it = LEDPARTS.begin();
          it != LEDPARTS.end(); ++it) {
         ostr << it->first + ":{\n    id: " + to_string(it->second.id) +
                     ",\n    len: " + to_string(it->second.len) + "\n}\n";
@@ -97,8 +94,8 @@ bool restorePlayer(Player &savePlayer, const char *filename) {
 
     // restore the schedule from the archive
     ia >> savePlayer;
-    savePlayer.myLEDPlayer.init();
-    savePlayer.myOFPlayer.init();
+    // savePlayer.myLEDPlayer.init();
+    // savePlayer.myOFPlayer.init();
 
     return true;
 }
@@ -108,7 +105,7 @@ void LEDload(Player &Player, json &data_json) {
     vector<int> stripShapes;
 
     // TODO: load from .h file, instead of hard coded
-    const int partNum = 16;
+    const int partNum = 8;
 
     stripShapes.resize(partNum);
     fill(stripShapes.begin(), stripShapes.end(), 0);
@@ -116,8 +113,7 @@ void LEDload(Player &Player, json &data_json) {
     frameLists.clear();
     frameLists.resize(partNum);
 
-    for (unordered_map<string, LEDStripeSetting>::iterator part_it =
-             Player.LEDPARTS.begin();
+    for (unordered_map<string, LEDStripeSetting>::iterator part_it = Player.LEDPARTS.begin();
          part_it != Player.LEDPARTS.end(); ++part_it) {
         const string partName = part_it->first;
         const unsigned int id = part_it->second.id;
@@ -148,12 +144,11 @@ void LEDload(Player &Player, json &data_json) {
             }
             statusList.clear();
             for (auto &status_json : frame_json["status"]) {
-                statusList.push_back(LEDStatus(status_json[0], status_json[1],
-                                               status_json[2], status_json[3]));
+                statusList.push_back(
+                    LEDStatus(status_json[0], status_json[1], status_json[2], status_json[3]));
             }
 
-            frameLists[id].push_back(
-                LEDFrame(frame_json["start"], frame_json["fade"], statusList));
+            frameLists[id].push_back(LEDFrame(frame_json["start"], frame_json["fade"], statusList));
         }
     }
 
@@ -188,20 +183,17 @@ void OFload(Player &Player, json &data_json) {
             continue;
         }
         const json &status_json = frame_json["status"];
-        for (unordered_map<string, int>::iterator part_it =
-                 Player.OFPARTS.begin();
+        for (unordered_map<string, int>::iterator part_it = Player.OFPARTS.begin();
              part_it != Player.OFPARTS.end(); ++part_it) {
             const string partName = part_it->first;
             const int id = part_it->second;
 
-            const OFStatus currentStatus(
-                status_json[partName][0], status_json[partName][1],
-                status_json[partName][2], status_json[partName][3]);
+            const OFStatus currentStatus(status_json[partName][0], status_json[partName][1],
+                                         status_json[partName][2], status_json[partName][3]);
             status[id] = currentStatus;
             frameStatus.push_back(make_pair(partName, currentStatus));
         }
-        OFFrame currentFrame(frame_json["start"], frame_json["fade"],
-                             frameStatus);
+        OFFrame currentFrame(frame_json["start"], frame_json["fade"], frameStatus);
         frameLists.push_back(currentFrame);
         statusList.push_back(status);
     }
