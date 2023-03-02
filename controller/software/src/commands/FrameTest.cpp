@@ -81,9 +81,7 @@ class FrameTest: public Command{
                 }
             }
 
-            // No controller...
-
-            // LEDP.controller.sendAll(LEDP.castStatusLists(statusLists));
+            LEDP.controller.sendAll(LEDP.castStatusLists(statusLists));
         
         } else{
             cout<<"LED not loaded yet!\n";
