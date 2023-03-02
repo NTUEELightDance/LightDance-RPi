@@ -1,4 +1,6 @@
 #include "command.h"
+#include "player.h"
+#include "OFController.h"
 
 class OFtest : public Command {
    public:
@@ -11,10 +13,12 @@ class OFtest : public Command {
     int execute(int argc, char* argv[]) {
         // cout<<argc<<"\n";
         if (argc <= 1 || cmdOptionExists(argv, argv + argc, "-h")) {
+            cout<<"./oftest <PartName>\n";
             help();
             return 0;
         }
-        int channel = atoi(argv[1]), R = 0, G = 0, B = 0, alpha = 1;
+        string PartName = argv[1];
+        int R = 255, G = 255, B = 255, alpha = 255;
         if (cmdOptionExists(argv, argv + argc, "--rgb")) {
             vector<int> rgb = getCmdOptionInt(argv, argv + argc, "--rgb");
             if (rgb.size() >= 3) {
@@ -23,20 +27,30 @@ class OFtest : public Command {
                 B = rgb[2];
 
             } else {
-                cout << "Wrong RGB length\n";
+                cout << "Wrong RGB length! Using default\n";
                 return 0;
             }
         } else if (cmdOptionExists(argv, argv + argc, "--hex")) {
-            string hex = getCmdOptionStr(argv, argv + argc, "--hex")[0];
-            colorCode2RGB(hex, R, G, B);
+            vector<string> hex = getCmdOptionStr(argv, argv + argc, "--hex");
+            if (hex.size()){
+                colorCode2RGB(hex[0], R, G, B);
+            } else{
+                cout << "Hex value not specified! Using default\n";
+            }
         }
         if (cmdOptionExists(argv, argv + argc, "-a")) {
-            alpha = getCmdOptionInt(argv, argv + argc, "-a")[0];
-        }
-        return Test(channel, R, G, B, alpha);
+            vector<int> _alpha = getCmdOptionInt(argv, argv + argc, "-a");
+            if (_alpha.size()){
+                alpha = _alpha[0];
+            } else{
+                cout<<"Alpha value not specified! Using default\n";
+            }        }
+        return Test(PartName, R, G, B, alpha);
     }
 
    private:
+
+    const int partNum = 26;
     map<char, int> hexCode = {
         {'0', 0},  {'1', 1},  {'2', 2},  {'3', 3},  {'4', 4},  {'5', 5},
         {'6', 6},  {'7', 7},  {'8', 8},  {'9', 9},  {'A', 10}, {'B', 11},
@@ -52,16 +66,28 @@ class OFtest : public Command {
             cout << "Colorcode length error!\n";
         }
     }
-    int Test(const int& channel, int R, int G, int B, int alpha) {
-        // Todo : Convert colorCode and alpha to status object
+    int Test(const string &part, int R, int G, int B, int alpha) {
+        
+        Player player;
+        string path = "./dancer.dat";
+        if (!restorePlayer(player, path.c_str())) {
+            cout<<"Need to load first!\n";
+            return 0;
+        }
+        vector<int> OFbuf (partNum);
+        if (player.OFPARTS.find(part) == player.OFPARTS.end()){
+            cout<<"Can't find part "<<part<<"!\n";
 
-        // Todo : Use sendAll to send information to hardware
+        } else{
+            int id = player.OFPARTS[part];
+            int color = (R<<24) + (G<<16) + (B<<8) + alpha;
 
-        cout << "Doing OF test:\n";
-        cout << "Channel: " << channel << "\n";
-        cout << "RGB: " << R << " " << G << " " << B << "\n";
-        cout << "Alpha: " << alpha << "\n";
+            OFbuf[id] = color;
 
+            OFController OF_CTRL;
+            OF_CTRL.init();
+            OF_CTRL.sendAll(OFbuf);
+        }
         return 0;
     }
 };
@@ -71,25 +97,3 @@ int main(int argc, char* argv[]) {
     return test.execute(argc, argv);
 }
 
-// void Command::OFtest(const int& channel, Status status) {
-
-//     vector<Status> OF_buf(OF_SIZE, Status(0, 0, 0, 0));
-
-//     OF_buf[channel] = status;
-
-//     OPT_CTRL.sendAll(OF_buf);
-//     return;
-// }
-
-// void RPiMgr::OFtest(const int& channel, int colorCode, int alpha) {
-//     // Will not change of buf
-//     vector<char> buf(6);
-//     char R, G, B;
-//     colorCode2RGB(colorCode, R, G, B);
-//     // ofDark();
-//     OFrgba2rgbiref(buf, R, G, B, alpha);
-//     // OFrgba2rgbiref(OFBuf[channel], R, G, B, alpha);
-//     // of->WriteAll(OFBuf);
-//     of->WriteChannel(buf, channel);
-//     return;
-// }
