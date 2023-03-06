@@ -42,6 +42,7 @@ void OFPlayer::serialize(Archive &archive, const unsigned int version) {
     archive &fps;
     archive &frameList;
     archive &statusList;
+    archive &channelIds;
 }
 
 string OFPlayer::list() const {
@@ -99,10 +100,13 @@ bool restoreOFPlayer(OFPlayer &player, const char *filename) {
 OFPlayer::OFPlayer() : fps(0){};
 
 OFPlayer::OFPlayer(const int &_fps, const vector<OFFrame> &_frameList,
-                   const vector<vector<OFStatus>> &_statusList) {
+                   const vector<vector<OFStatus>> &_statusList, unordered_map<string, int> &_channeldIds) {
     fps = _fps;
     frameList.assign(_frameList.begin(), _frameList.end());
     statusList.assign(_statusList.begin(), _statusList.end());
+    for (unordered_map<string, int>::iterator part_it = _channeldIds.begin(); part_it!=_channeldIds.end();part_it++){
+        channelIds[part_it->first] = part_it->second;
+    }
 
     // TODO: assign channel number to part name
     // TODO: assign status to every part
@@ -125,17 +129,21 @@ vector<OFStatus> OFPlayer::findFrameStatus(const long &time) {
 vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
     const long startTime = (long)frameList[frameId].start;
     const long endTime = (long)frameList[frameId + 1].start;
-    const long rate = (long)(time - startTime) / (long)(endTime - startTime);
+    const float rate = (float)(time - startTime) / (float)(endTime - startTime);
 
     vector<OFStatus> fadeFrameStatus;
     fadeFrameStatus.resize(26);
 
     // Do interpolate
-    for (auto &status_pair : frameList[frameId].statusList) {
-        const string &partName = status_pair.first;
-        const OFStatus &status = status_pair.second;
+    for (int i = 0;i < frameList[frameId].statusList.size(); i++) {
+        if (frameId+1 >= frameList.size()) {
+            printf("Fade for the last frame should be false.");
+            break;
+        }   
+        const string &partName = frameList[frameId].statusList[i].first;
+        const OFStatus &status = frameList[frameId].statusList[i].second;
         int channelId = findChannelId(partName);
-        const OFStatus &statusNext = frameList[frameId + 1].statusList[channelId].second;
+        const OFStatus &statusNext = frameList[frameId + 1].statusList[i].second;
         const int &r = (int)round((1 - rate) * (float)status.r + rate * (float)statusNext.r);
         const int &g = (int)round((1 - rate) * (float)status.g + rate * (float)statusNext.g);
         const int &b = (int)round((1 - rate) * (float)status.b + rate * (float)statusNext.b);
@@ -181,7 +189,7 @@ int OFPlayer::findChannelId(const string &partName) { return channelIds[partName
 
 void OFPlayer::init() {
     // TODO: enable hardware
-    // controller.init();
+    //controller.init();
 }
 
 vector<int> OFPlayer::castStatusList(vector<OFStatus> statusList) {

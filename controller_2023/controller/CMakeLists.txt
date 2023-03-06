@@ -63,7 +63,7 @@ add_executable(
   player ${SOURCE}/player/playLoop.cpp ${SOURCE}/player/LEDPlayer.cpp
   ${SOURCE}/player/OFPlayer.cpp ${SOURCE}/commands/player.cpp)
 target_include_directories(player PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
-target_link_libraries(player ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
+target_link_libraries(player PUBLIC ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(player Threads::Threads)
 
 # socket

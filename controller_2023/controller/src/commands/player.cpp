@@ -159,7 +159,7 @@ void LEDload(Player &Player, json &data_json) {
 void OFload(Player &Player, json &data_json) {
     vector<OFFrame> frameLists;
     vector<vector<OFStatus>> statusList;
-
+    
     // TODO: load from .h file, instead of hard coded
     const int partNum = 26;
 
@@ -198,6 +198,6 @@ void OFload(Player &Player, json &data_json) {
         statusList.push_back(status);
     }
 
-    Player.myOFPlayer = OFPlayer(Player.fps, frameLists, statusList);
+    Player.myOFPlayer = OFPlayer(Player.fps, frameLists, statusList, Player.OFPARTS);
     Player.OFloaded = true;
 }
