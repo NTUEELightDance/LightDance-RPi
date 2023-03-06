@@ -218,7 +218,7 @@ void LEDPlayer::init() {
     printf("LEDPlayer init, Num: %d\n", (int)stripShapes.size());
 }
 
-void LEDPlayer::loop(const bool *playing, const timeval *baseTime, bool *toTerminate) {
+void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *toTerminate) {
     timeval currentTime;
     vector<vector<LEDStatus>> statusLists;
 
