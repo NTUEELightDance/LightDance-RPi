@@ -196,9 +196,10 @@ vector<LEDStatus> LEDPlayer::interpolateFadeFrame(const LEDFrame &origin, const 
 
 vector<vector<int>> LEDPlayer::castStatusLists(const vector<vector<LEDStatus>> statusLists) {
     vector<vector<int>> castedLists(statusLists.size());
-    for (const vector<LEDStatus> &statusList : statusLists) {
-        for (int i = 0; i < statusList.size(); i++) {
-            const LEDStatus &status = statusList[i];
+    for (int i = 0; i < statusLists.size(); i++) {
+        const vector<LEDStatus> &statusList = statusLists[i];
+        for (int j = 0; j < statusList.size(); j++) {
+            const LEDStatus &status = statusList[j];
             castedLists[i].push_back((status.r << 24) + (status.g << 16) + (status.b << 8) +
                                      (status.a << 0));
         }
@@ -211,11 +212,13 @@ vector<vector<int>> LEDPlayer::castStatusLists(const vector<vector<LEDStatus>> s
 void LEDPlayer::init() {
     frameIds.resize(stripShapes.size());
     fill(frameIds.begin(), frameIds.end(), -1);
+
     // TODO: enable hardware
     // controller.init(stripShapes);
+    printf("LEDPlayer init, Num: %d\n", (int)stripShapes.size());
 }
 
-void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *toTerminate) {
+void LEDPlayer::loop(const bool *playing, const timeval *baseTime, bool *toTerminate) {
     timeval currentTime;
     vector<vector<LEDStatus>> statusLists;
 
@@ -227,6 +230,8 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *t
             }
             // TODO: enable hardware
             // controller.sendAll(castStatusLists(statusLists));
+
+            *toTerminate = false;
             break;
         }
         if (*playing) {
