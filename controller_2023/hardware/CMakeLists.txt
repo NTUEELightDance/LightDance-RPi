@@ -4,7 +4,7 @@ project(hardware)
 set(SOURCE src)
 
 set(INCLUDES inc)
-# set(LIBRARIES ws2811)
+set(LIBRARIES ws2811)
 
 # hardware
 add_library(

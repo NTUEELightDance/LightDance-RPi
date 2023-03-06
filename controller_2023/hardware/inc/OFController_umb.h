@@ -17,8 +17,8 @@
 using namespace std;
 
 // define
-#define NUMPCA 7
-const int PCAAddr[] = {0x1f, 0x20, 0x22, 0x23, 0x5b, 0x5c, 0x5e};
+#define NUMPCA 2
+const int PCAAddr[] = {0x22, 0x23};
 
 class OFColor {
    public:
