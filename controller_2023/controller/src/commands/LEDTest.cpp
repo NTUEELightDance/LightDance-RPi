@@ -1,4 +1,6 @@
 #include "command.h"
+#include "player.h"
+#include "LEDController.h"
 
 class LEDtest : public Command {
    public:
@@ -11,10 +13,12 @@ class LEDtest : public Command {
     int execute(int argc, char* argv[]) {
         // cout<<argc<<"\n";
         if (argc <= 1 || cmdOptionExists(argv, argv + argc, "-h")) {
+            cout<<"./ledtest <PartName>\n";
             help();
             return 0;
         }
-        int channel = atoi(argv[1]), R = 0, G = 0, B = 0, alpha = 1;
+        string PartName = argv[1];
+        int R = 255, G = 255, B = 255, alpha = 255;
         if (cmdOptionExists(argv, argv + argc, "--rgb")) {
             vector<int> rgb = getCmdOptionInt(argv, argv + argc, "--rgb");
             if (rgb.size() >= 3) {
@@ -23,27 +27,40 @@ class LEDtest : public Command {
                 B = rgb[2];
 
             } else {
-                cout << "Wrong RGB length\n";
+                cout << "Wrong RGB length! Using default\n";
                 return 0;
             }
         } else if (cmdOptionExists(argv, argv + argc, "--hex")) {
-            string hex = getCmdOptionStr(argv, argv + argc, "--hex")[0];
-            colorCode2RGB(hex, R, G, B);
+            vector<string> hex = getCmdOptionStr(argv, argv + argc, "--hex");
+            if (hex.size()){
+                colorCode2RGB(hex[0], R, G, B);
+            } else{
+                cout << "Hex value not specified! Using default\n";
+            }
         }
         if (cmdOptionExists(argv, argv + argc, "-a")) {
-            alpha = getCmdOptionInt(argv, argv + argc, "-a")[0];
+            // Maybe get alpha as float here? But how to store it in colorCode...
+            vector<int> _alpha = getCmdOptionInt(argv, argv + argc, "-a");
+            if (_alpha.size()){
+                alpha = _alpha[0];
+            } else{
+                cout<<"Alpha value not specified! Using default\n";
+            }
         }
-        return Test(channel, R, G, B, alpha);
+        return Test(PartName, R, G, B, alpha);
     }
 
    private:
+    // load from .h file instead of hard coded??
+    const int partNum = 16;
     map<char, int> hexCode = {
         {'0', 0},  {'1', 1},  {'2', 2},  {'3', 3},  {'4', 4},  {'5', 5},
         {'6', 6},  {'7', 7},  {'8', 8},  {'9', 9},  {'A', 10}, {'B', 11},
         {'C', 12}, {'D', 13}, {'E', 14}, {'F', 15}, {'a', 10}, {'b', 11},
         {'c', 12}, {'d', 13}, {'e', 14}, {'f', 15}};
 
-    void colorCode2RGB(string hex, int& R, int& G, int& B) {
+    void colorCode2RGB(const string &hex, int& R, int& G, int& B) {
+        // Todo: Check if code is valid(???)
         if (hex.size() == 6) {
             R = hexCode[hex[0]] * 16 + hexCode[hex[1]];
             G = hexCode[hex[2]] * 16 + hexCode[hex[3]];
@@ -52,19 +69,34 @@ class LEDtest : public Command {
             cout << "Colorcode length error!\n";
         }
     }
-    int Test(const int& channel, int R, int G, int B, int alpha) {
-        // Todo : Convert colorCode and alpha to status object
+    int Test(const string &part, int R, int G, int B, int alpha) {
+        Player player;
+        string path = "./dancer.dat";
+        if (!restorePlayer(player, path.c_str())) {
+            cout<<"Need to load first!\n";
+            return 0;
+        }
+        vector<vector<int> > LEDbuf (partNum);
+        vector<int> Shape (partNum, 0);
+        // If I need to use player.myLEDPlayer here, the strip shapes need to be set before
+        // This can be done either after loading frame datas or modify setDancer command
+        if (player.LEDPARTS.find(part) == player.LEDPARTS.end()){
+            cout<<"Can't find part "<<part<<"!\n";
 
-        // Todo : Use sendAll to send information to hardware
+        } else{
+            int id = player.LEDPARTS[part].id;
+            int len = player.LEDPARTS[part].len;
+            int color = (R<<24) + (G<<16) + (B<<8) + alpha;
 
-        // Do we use LED_buf? Don't think it's necessary...
-        // They should use setDancer before this command. Should we check that?
+            for(int i=0;i<len;i++){
+                LEDbuf[id].push_back(color);
+            }
+            Shape[id] = len;
 
-        cout << "Doing LED test:\n";
-        cout << "Channel: " << channel << "\n";
-        cout << "RGB: " << R << " " << G << " " << B << "\n";
-        cout << "Alpha: " << alpha << "\n";
-
+            LEDController LED_CTRL;
+            LED_CTRL.init(Shape);
+            LED_CTRL.sendAll(LEDbuf);
+        }
         return 0;
     }
 };
@@ -74,34 +106,3 @@ int main(int argc, char* argv[]) {
     return test.execute(argc, argv);
 }
 
-// void Command::LEDtest(const int& channel, Status status) {
-//     //應該有更方便取得shape的方法...
-//     vector<vector<Status> > LED_buf(LED_SIZE, vector<Status> ());
-//     for (auto i:LEDPARTS){
-//         LED_buf[i.second.first].resize(i.second.second);
-//     }
-//     int len = LED_buf[channel].size();
-//     for (int i=0;i<len;i++){
-//         LED_buf[channel][i] = status;
-//     }
-//     if (LED_CTRL.checkReady() == 1){
-//         LED_CTRL.sendAll(LED_buf);
-//     } else{
-//         printf("LED not ready...\n");
-//     }
-//     return;
-// }
-
-// void RPiMgr::LEDtest(const int& channel, int colorCode, int alpha) {
-//     // Will change led buf;
-//     const float _alpha = float(alpha) / ALPHA_RANGE;
-//     char R, G, B;
-//     colorCode2RGB(colorCode, R, G, B);
-//     // ledDark();
-//     for (int i = 0; i < LEDBuf[channel].size() / 3; ++i)
-//         LEDrgba_to_rgb(LEDBuf[channel], i, R, G, B, _alpha);
-//     led_strip->sendToStrip(LEDBuf);
-//     return;
-// }
-
-// sudo apt-get install libboost-all-dev

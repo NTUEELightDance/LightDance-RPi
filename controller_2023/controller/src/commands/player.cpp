@@ -65,6 +65,8 @@ void Player::serialize(Archive &archive, const unsigned int version) {
     archive &LEDPARTS;
     archive &myLEDPlayer;
     archive &myOFPlayer;
+    archive &LEDloaded;
+    archive &OFloaded;
 };
 
 ostream &operator<<(ostream &ostream, const Player &player) {
