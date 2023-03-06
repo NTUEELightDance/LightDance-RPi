@@ -25,8 +25,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/version.hpp>
 
-// TODO: enable hardware
-// #include "LEDController.h"
+#include "LEDController.h"
 
 using namespace std;
 
@@ -65,14 +64,13 @@ class LEDPlayer {
     void serialize(Archive &archive, const unsigned int version);
     string list() const;
 
-//    private:
+   private:
     int fps;
     vector<vector<LEDFrame>> frameLists;
     vector<int> frameIds;
     vector<int> stripShapes;
 
-    // TODO: enable hardware
-    // LEDController controller;
+    LEDController controller;
 
     // time calculation
     long getElapsedTime(const struct timeval &base, const struct timeval &current);
@@ -82,7 +80,7 @@ class LEDPlayer {
     vector<LEDStatus> interpolateFadeFrame(const LEDFrame &origin, const LEDFrame &target,
                                            const float &rate);
     vector<vector<int>> castStatusLists(const vector<vector<LEDStatus>> statusLists);
-private:
+
     // serialization
     friend class boost::serialization::access;
     friend ostream &operator<<(ostream &os, const LEDPlayer &player);

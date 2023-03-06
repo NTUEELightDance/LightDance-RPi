@@ -65,8 +65,6 @@ void Player::serialize(Archive &archive, const unsigned int version) {
     archive &LEDPARTS;
     archive &myLEDPlayer;
     archive &myOFPlayer;
-    archive &LEDloaded;
-    archive &OFloaded;
 };
 
 ostream &operator<<(ostream &ostream, const Player &player) {
@@ -161,7 +159,7 @@ void LEDload(Player &Player, json &data_json) {
 void OFload(Player &Player, json &data_json) {
     vector<OFFrame> frameLists;
     vector<vector<OFStatus>> statusList;
-    
+
     // TODO: load from .h file, instead of hard coded
     const int partNum = 26;
 
@@ -200,6 +198,6 @@ void OFload(Player &Player, json &data_json) {
         statusList.push_back(status);
     }
 
-    Player.myOFPlayer = OFPlayer(Player.fps, frameLists, statusList, Player.OFPARTS);
+    Player.myOFPlayer = OFPlayer(Player.fps, frameLists, statusList);
     Player.OFloaded = true;
 }

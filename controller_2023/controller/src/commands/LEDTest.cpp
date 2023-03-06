@@ -52,7 +52,7 @@ class LEDtest : public Command {
 
    private:
     // load from .h file instead of hard coded??
-    const int partNum = 16;
+    const int partNum = 8;
     map<char, int> hexCode = {
         {'0', 0},  {'1', 1},  {'2', 2},  {'3', 3},  {'4', 4},  {'5', 5},
         {'6', 6},  {'7', 7},  {'8', 8},  {'9', 9},  {'A', 10}, {'B', 11},
@@ -96,6 +96,7 @@ class LEDtest : public Command {
             LEDController LED_CTRL;
             LED_CTRL.init(Shape);
             LED_CTRL.sendAll(LEDbuf);
+            LED_CTRL.fini();
         }
         return 0;
     }

@@ -50,7 +50,7 @@ class OFtest : public Command {
 
    private:
 
-    const int partNum = 26;
+    const int partNum = 35;
     map<char, int> hexCode = {
         {'0', 0},  {'1', 1},  {'2', 2},  {'3', 3},  {'4', 4},  {'5', 5},
         {'6', 6},  {'7', 7},  {'8', 8},  {'9', 9},  {'A', 10}, {'B', 11},

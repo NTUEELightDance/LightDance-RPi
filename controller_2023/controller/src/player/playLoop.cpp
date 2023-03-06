@@ -125,7 +125,7 @@ void restart() {
 
     to_terminate = false;
     led_loop = std::thread(&LEDPlayer::loop, &led_player, &playing, &baseTime, &to_terminate);
-    of_loop = std::thread(&OFPlayer::loop, &of_player, &playing, &baseTime, &to_terminate);
+    // of_loop = std::thread(&OFPlayer::loop, &of_player, &playing, &baseTime, &to_terminate);
 }
 
 void stop() {
