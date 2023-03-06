@@ -208,7 +208,7 @@ vector<vector<int>> LEDPlayer::castStatusLists(const vector<vector<LEDStatus>> s
     return castedLists;
 }
 
-// NOTE: call init in restorePlayer
+// NOTE: call init in restart
 void LEDPlayer::init() {
     frameIds.resize(stripShapes.size());
     fill(frameIds.begin(), frameIds.end(), -1);
@@ -231,7 +231,6 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime, bool *toTermi
             // TODO: enable hardware
             // controller.sendAll(castStatusLists(statusLists));
 
-            *toTerminate = false;
             break;
         }
         if (*playing) {
@@ -285,7 +284,6 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime, bool *toTermi
 
             // TODO: enable hardware
             // controller.sendAll(castStatusLists(statusLists));
-            usleep(500);
         }
     }
 }

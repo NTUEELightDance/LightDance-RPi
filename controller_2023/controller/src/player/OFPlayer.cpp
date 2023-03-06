@@ -197,6 +197,7 @@ vector<int> OFPlayer::castStatusList(vector<OFStatus> statusList) {
 void OFPlayer::loop(const bool *playing, const timeval *baseTime, const bool *toTerminate) {
     timeval currentTime;
     vector<OFStatus> statusList;
+
     while (true) {
         if (*toTerminate) {
             // TODO: finish darkall
@@ -226,7 +227,6 @@ void OFPlayer::loop(const bool *playing, const timeval *baseTime, const bool *to
 
             // TODO: enable hardware
             // controller.sendAll(castStatusList(statusList));
-            usleep((long)(1000000 / fps));
         }
     }
 }

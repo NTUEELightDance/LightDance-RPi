@@ -24,7 +24,6 @@ bool stopTimeAssigned = false, success = false;
 bool playing = false, paused = false, stopped = true;
 bool to_terminate = false;
 enum CMD { PLAY, PAUSE, STOP };
-// const char *cmds[10] = {"play", "pause", "stop"};
 std::string cmds[10] = {"play", "pause", "stop"};
 
 std::thread led_loop, of_loop;
@@ -48,42 +47,6 @@ void write_fifo(bool success) {
     write(wr_fd, msg.c_str(), msg.length() + 1);
     close(wr_fd);
 }
-
-// int parse_command(char str[]) {
-//     if (strlen(str) == 1) return -1;
-//     str[strlen(str) - 1] = '\0';
-//     char *cmd[MAXLEN];
-//     const char *sep = " ";
-//     int len = 0, i;
-//     cmd[len] = strtok(str, sep);
-//     while (cmd[len] != NULL) {
-//         len++;
-//         cmd[len] = strtok(NULL, sep);
-//     }
-//     for (i = 0; i < 3; i++) {
-//         if (!strcmp(cmd[0], cmds[i])) {
-//             if (i == PLAY && !(len == 1 && paused)) {
-//                 long start_usec = 0;
-//                 stopTimeAssigned = false;
-//                 if (len > 1) {
-//                     start_usec = atoi(cmd[1]);
-//                 }
-//                 if (len > 2) {
-//                     stopTimeAssigned = true;
-//                     stopTime = atoi(cmd[2]);
-//                 }
-//                 startTime.tv_sec = start_usec / 1000000;
-//                 startTime.tv_usec = start_usec % 1000000;
-//             }
-//             success = true;
-//             write_fifo(true);
-//             fprintf(stderr, "cmd: %d\n", i);
-//             return i;
-//         }
-//     }
-//     // write_fifo(false);
-//     return -1;
-// }
 
 const std::vector<std::string> split(const std::string &str, const std::string &pattern) {
     std::vector<std::string> result;
@@ -160,17 +123,21 @@ void restart() {
     of_player.init();
     fprintf(stderr, "Player loaded\n");
 
+    to_terminate = false;
     led_loop = std::thread(&LEDPlayer::loop, &led_player, &playing, &baseTime, &to_terminate);
-    // of_loop = std::thread(&OFPlayer::loop, &of_player, &playing, &baseTime,
-    // &to_terminate);
+    of_loop = std::thread(&OFPlayer::loop, &of_player, &playing, &baseTime, &to_terminate);
 }
 
 void stop() {
     printf("stop\n");
     playing = paused = false;
     stopped = to_terminate = true;
-    led_loop.join();
-    of_loop.join();
+    if (led_loop.joinable()) {
+        led_loop.join();
+    }
+    if (of_loop.joinable()) {
+        of_loop.join();
+    }
 }
 
 int main(int argc, char *argv[]) {
@@ -190,7 +157,7 @@ int main(int argc, char *argv[]) {
     timeval playedTime;
 
     while (1) {
-        if (stopTimeAssigned && !paused) {
+        if (stopTimeAssigned && !paused && !stopped) {
             timeval tv;
             tv = getCalculatedTime(baseTime);
             long played_us = tv.tv_sec * 1000000 + tv.tv_usec;
@@ -212,7 +179,6 @@ int main(int argc, char *argv[]) {
                     playing = false;
                     if (stopped) {
                         restart();
-                        printf("Restart\n");
                     }
                     if (paused) {
                         printf("resume\n");
@@ -234,8 +200,7 @@ int main(int argc, char *argv[]) {
                     break;
                 case STOP:
                     fprintf(stderr, "ACTION: stop\n");
-                    if (stopped) break;
-                    stop();
+                    if (!stopped) stop();
                     break;
                 default:
                     break;
