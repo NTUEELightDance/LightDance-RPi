@@ -81,9 +81,7 @@ class FrameTest: public Command{
                 }
             }
 
-            // No controller...
-
-            // LEDP.controller.sendAll(LEDP.castStatusLists(statusLists));
+            LEDP.controller.sendAll(LEDP.castStatusLists(statusLists));
         
         } else{
             cout<<"LED not loaded yet!\n";
@@ -110,9 +108,7 @@ class FrameTest: public Command{
 
             statusList = OFP.findFrameStatus(elapsedTime / 1000l);
 
-            // No controller...
-
-            // OFP.controller.sendAll(OFP.castStatusList(statusList));
+            OFP.controller.sendAll(OFP.castStatusList(statusList));
 
         } else{
             cout<<"OF not loaded yet!\n";
