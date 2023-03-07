@@ -135,3 +135,8 @@ test_receiver
 CMakeCache.txt
 CMakeFiles
 cmake_install.cmake
+
+bin/
+build/
+install/
+fifo

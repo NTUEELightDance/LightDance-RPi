@@ -1,5 +1,5 @@
-export DANCER_NAME=11_wish
-export SERVER_IP=192.168.0.200
+export PATH=$PATH:$(pwd)/controller/bin
+export DANCER_NAME=0_testName
+export SERVER_IP=0.0.0.0
 export SERVER_PORT=8082
 export NTP_PORT=7122
-

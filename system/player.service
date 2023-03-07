@@ -1,10 +1,10 @@
 [Unit]
-Description=client
+Description=player
 
 [Service]
-User=OnlyHope
+User=root
 WorkingDirectory=/home/OnlyHope/LightDance-RPi
-ExecStart=/home/OnlyHope/LightDance-RPi/ws_client/client.py
+ExecStart=player
 Restart=always
 
 [Install]
