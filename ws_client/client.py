@@ -1,4 +1,4 @@
-#!/Users/ray/opt/miniconda3/bin/python3
+#!/usr/bin/env python3
 
 # from asyncio.windows_events import NULL
 import json
