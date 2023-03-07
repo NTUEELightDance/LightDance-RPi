@@ -19,6 +19,7 @@ class LEDController {
     LEDController();
     int init(const vector<int> &shape);
     int sendAll(const vector<vector<int>> &statusLists);
+    void fini();
 
    private:
     // TODO: add other utils

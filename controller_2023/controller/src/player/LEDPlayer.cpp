@@ -213,8 +213,7 @@ void LEDPlayer::init() {
     frameIds.resize(stripShapes.size());
     fill(frameIds.begin(), frameIds.end(), -1);
 
-    // TODO: enable hardware
-    // controller.init(stripShapes);
+    controller.init(stripShapes);
     printf("LEDPlayer init, Num: %d\n", (int)stripShapes.size());
 }
 
@@ -228,14 +227,13 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *t
                 // dark all
                 statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
             }
-            // TODO: enable hardware
-            // controller.sendAll(castStatusLists(statusLists));
-
+            controller.sendAll(castStatusLists(statusLists));
+            controller.fini();
             break;
         }
         if (*playing) {
             gettimeofday(&currentTime, NULL);
-            const long elapsedTime = 10 * getElapsedTime(*baseTime, currentTime);
+            const long elapsedTime = getElapsedTime(*baseTime, currentTime);
             // printf("Time: %f\n", elapsedTime / 1000000.0f);
 
             const int currentTimeId = getTimeId(elapsedTime);
@@ -282,8 +280,7 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *t
                 // }
             }
 
-            // TODO: enable hardware
-            // controller.sendAll(castStatusLists(statusLists));
+            controller.sendAll(castStatusLists(statusLists));
         }
     }
 }

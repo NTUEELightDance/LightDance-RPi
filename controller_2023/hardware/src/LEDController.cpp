@@ -35,3 +35,5 @@ int LEDController::sendAll(const vector<vector<int>> &statusLists) {
     }
     return 1;
 }
+
+void LEDController::fini() {}
