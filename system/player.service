@@ -2,10 +2,9 @@
 Description=player
 
 [Service]
-User=pi
-ExecStartPre=/bin/sleep 20
+User=root
 WorkingDirectory=/home/OnlyHope/LightDance-RPi
-ExecStart=/home/OnlyHope/LightDance-RPi/startPlayer.sh
+ExecStart=player
 Restart=always
 
 [Install]

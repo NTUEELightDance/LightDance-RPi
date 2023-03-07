@@ -2,9 +2,9 @@
 Description=client
 
 [Service]
-User=pi
+User=OnlyHope
 WorkingDirectory=/home/OnlyHope/LightDance-RPi
-ExecStart=/home/OnlyHope/LightDance-RPi/startClient.sh
+ExecStart=/home/OnlyHope/LightDance-RPi/ws_client/client.py
 Restart=always
 
 [Install]

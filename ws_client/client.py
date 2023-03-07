@@ -9,6 +9,7 @@ import subprocess
 
 import websocket
 
+from config import *
 from ntpclient import *
 
 # from boardInfo import *
@@ -43,8 +44,8 @@ OF_SAVE_DIR = "./data/OF.json"
 
 DATA_SAVE_DIR = "./save"
 
-SERVER_IP = os.environ["SERVER_IP"]
-SERVER_PORT = int(os.environ["SERVER_PORT"])
+# SERVER_IP = os.environ["SERVER_IP"]
+# SERVER_PORT = int(os.environ["SERVER_PORT"])
 
 
 class Client:

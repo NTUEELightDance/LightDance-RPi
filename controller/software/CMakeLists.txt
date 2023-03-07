@@ -7,39 +7,39 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 set(SOURCE src)
 set(INCLUDES inc)
-set(INSTALL ${CMAKE_BINARY_DIR}/../bin)
+set(INSTALL ${CMAKE_SOURCE_DIR}/bin)
 
 set(HARDWARE_INCLUDES ../hardware/inc)
 set(HARDWARE_LIBRARIES hardware)
 
 set(EXECUTABLES
-    list
-    load
-    boardinfo
-    playerctl
-    ledtest
-    oftest
-    player
-    socket)
+  list
+  load
+  boardinfo
+  playerctl
+  ledtest
+  oftest
+  player
+  socket)
 
 # list
 add_executable(
   list ${SOURCE}/commands/list.cpp ${SOURCE}/commands/player.cpp
-       ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
+  ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
 target_include_directories(list PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(list ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
 # load
 add_executable(
   load ${SOURCE}/commands/load.cpp ${SOURCE}/commands/player.cpp
-       ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
+  ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
 target_include_directories(load PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(load ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
 # boardinfo
 add_executable(
   boardinfo ${SOURCE}/commands/boardinfo.cpp ${SOURCE}/commands/player.cpp
-            ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
+  ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
 target_include_directories(boardinfo PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(boardinfo ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
@@ -51,24 +51,24 @@ target_link_libraries(playerctl ${Boost_LIBRARIES})
 # ledtest
 add_executable(
   ledtest ${SOURCE}/commands/LEDTest.cpp ${SOURCE}/commands/player.cpp
-          ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
+  ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
 target_include_directories(ledtest PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(ledtest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
 # oftest
 add_executable(
   oftest ${SOURCE}/commands/OFTest.cpp ${SOURCE}/commands/player.cpp
-         ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
+  ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
 target_include_directories(oftest PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(oftest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
 # player
 add_executable(
   player ${SOURCE}/player/playLoop.cpp ${SOURCE}/player/LEDPlayer.cpp
-         ${SOURCE}/player/OFPlayer.cpp ${SOURCE}/commands/player.cpp)
+  ${SOURCE}/player/OFPlayer.cpp ${SOURCE}/commands/player.cpp)
 target_include_directories(player PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(player ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES}
-                      ${CMAKE_THREAD_LIBS_INIT})
+  ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(player Threads::Threads)
 
 # socket

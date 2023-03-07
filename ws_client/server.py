@@ -6,11 +6,12 @@ import os
 from string import Template
 
 import websockets
+from config import *
 
 command_json = dict()
 
-SERVER_IP = os.environ["SERVER_IP"]
-SERVER_PORT = int(os.environ["SERVER_PORT"])
+# SERVER_IP = os.environ["SERVER_IP"]
+# SERVER_PORT = int(os.environ["SERVER_PORT"])
 
 
 async def handler(websocket):
