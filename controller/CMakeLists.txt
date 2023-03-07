@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(controller_2023)
+project(controller)
 
 set(
     CMAKE_CXX_FLAGS

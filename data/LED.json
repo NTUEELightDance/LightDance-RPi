@@ -1,628 +1,88 @@
 {
-    "Visor_LED": [],
-    "Shoulder_L_LED": [],
-    "Shoulder_R_LED": [],
-    "Hand_L_LED": [],
-    "Hand_R_LED": [],
-    "Shoe_R_LED": [
-        {
-            "start": 0,
-            "fade": false,
-            "status": [
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                }
-            ]
-        },
-        {
-            "start": 1792,
-            "fade": false,
-            "status": [
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                }
-            ]
-        }
-    ],
-    "Shoe_L_LED": [
-        {
-            "start": 0,
-            "fade": false,
-            "status": [
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 255,
-                    "alpha": 10
-                }
-            ]
-        },
-        {
-            "start": 1792,
-            "fade": false,
-            "status": [
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                },
-                {
-                    "colorCode": 0,
-                    "alpha": 10
-                }
-            ]
-        }
-    ],
-    "CollarBone_LED": []
+  "led1": [
+    {
+      "start": 150,
+      "fade": true,
+      "status": [
+          [40, 0, 0, 10],
+          [40, 0, 0, 10],
+          [40, 0, 0, 10],
+          [40, 0, 0, 10]
+      ]
+    },
+    {
+      "start": 300,
+      "fade": false,
+      "status": [
+          [0, 40, 0, 10],
+          [0, 40, 0, 10],
+          [0, 40, 0, 10],
+          [0, 40, 0, 10]
+      ]
+    }
+  ],
+  "led2": [
+    {
+      "start": 0,
+      "fade": true,
+      "status": [
+        [0, 0, 40, 10],
+        [0, 0, 40, 10],
+        [0, 0, 40, 10],
+        [0, 0, 40, 10]
+      ]
+    },
+    {
+      "start": 300,
+      "fade": false,
+      "status": [
+        [0, 0, 0, 10],
+        [0, 0, 0, 10],
+        [0, 0, 0, 10],
+        [0, 0, 0, 10]
+      ]
+    }
+  ],
+  "led3": [
+    {
+      "start": 0,
+      "fade": true,
+      "status": [
+        [40, 40, 40, 10],
+        [40, 40, 40, 10],
+        [40, 40, 40, 10],
+        [40, 40, 40, 10]
+      ]
+    },
+    {
+      "start": 60,
+      "fade": false,
+      "status": [
+        [0, 0, 0, 10],
+        [0, 0, 0, 10],
+        [0, 0, 0, 10],
+        [0, 0, 0, 10]
+      ]
+    },
+    {
+      "start": 120,
+      "fade": false,
+      "status": [
+        [40, 40, 40, 10],
+        [40, 40, 40, 10],
+        [40, 40, 40, 10],
+        [40, 40, 40, 10]
+      ]
+    },
+    {
+      "start": 180,
+      "fade": false,
+      "status": [
+        [0, 0, 0, 10],
+        [0, 0, 0, 10],
+        [0, 0, 0, 10],
+        [0, 0, 0, 10]
+      ]
+    }
+  ]
 }

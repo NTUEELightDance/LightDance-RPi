@@ -1,3 +1,5 @@
+#!/Users/ray/opt/miniconda3/bin/python3
+
 # from asyncio.windows_events import NULL
 import json
 import os
@@ -8,6 +10,7 @@ import subprocess
 import websocket
 
 from ntpclient import *
+
 # from boardInfo import *
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
@@ -40,8 +43,8 @@ OF_SAVE_DIR = "./data/OF.json"
 
 DATA_SAVE_DIR = "./save"
 
-SERVER_IP = "0.0.0.0"
-SERVER_PORT = "8082"
+SERVER_IP = os.environ["SERVER_IP"]
+SERVER_PORT = int(os.environ["SERVER_PORT"])
 
 
 class Client:
@@ -55,7 +58,8 @@ class Client:
         #     print("Usage: python3 client/client.py <dancerName>")
         #     exit()
         # self.dancerName = sys.argv[1]
-        self.dancerName = "Arthur"
+        # self.dancerName = "Arthur"
+        self.dancerName = os.environ["DANCER_NAME"]
 
     def startclient(self):
         while True:
@@ -73,7 +77,7 @@ class Client:
 
     def on_message(self, ws, message):
         action, payload = self.ParseServerData(message)
-        
+
         if action == "command":
             if self.Check(ws, action, payload):
                 print("execute payload:")
@@ -87,20 +91,20 @@ class Client:
                     print("Subprocess Failed")
             else:
                 print("Failed")
-        
+
         elif action == "upload":
             print("upload")
             print(os.path.join(DATA_SAVE_DIR, "control.json"))
             with open(os.path.join(DATA_SAVE_DIR, "control.json"), "w") as f:
                 print("Writing control.json")
-                json.dump(payload[0], f, indent = 4)
+                json.dump(payload[0], f, indent=4)
             with open(os.path.join(DATA_SAVE_DIR, "OF.json"), "w") as f:
                 print("Writing OF.json")
-                json.dump(payload[1], f, indent = 4)
+                json.dump(payload[1], f, indent=4)
             with open(os.path.join(DATA_SAVE_DIR, "LED.json"), "w") as f:
                 print("Writing LED.json")
-                json.dump(payload[2], f, indent = 4)
-                
+                json.dump(payload[2], f, indent=4)
+
         elif action == "sync":
             print("sync")
 
@@ -109,7 +113,6 @@ class Client:
 
         # self.parse_response(ws, response)
         print("Send message to rpi complete")
-        
 
     def ParseServerData(self, message):
         print("Message from server:")

@@ -7,7 +7,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 set(SOURCE src)
 set(INCLUDES inc)
-set(INSTALL ${CMAKE_BINARY_DIR}/../install)
+set(INSTALL ${CMAKE_BINARY_DIR}/../bin)
 
 set(HARDWARE_INCLUDES ../hardware/inc)
 set(HARDWARE_LIBRARIES hardware)
