@@ -8,6 +8,7 @@ import time
 import subprocess
 
 import websocket
+from uuid import getnode as get_mac
 
 from config import *
 from ntpclient import *
@@ -42,7 +43,7 @@ cmdlist = [
 LED_SAVE_DIR = "./data/LED.json"
 OF_SAVE_DIR = "./data/OF.json"
 
-DATA_SAVE_DIR = "./save"
+DATA_SAVE_DIR = "/tmp/lightdance"
 
 # SERVER_IP = os.environ["SERVER_IP"]
 # SERVER_PORT = int(os.environ["SERVER_PORT"])
@@ -60,7 +61,7 @@ class Client:
         #     exit()
         # self.dancerName = sys.argv[1]
         # self.dancerName = "Arthur"
-        self.dancerName = os.environ["DANCER_NAME"]
+        # self.dancerName = os.environ["DANCER_NAME"]
 
     def startclient(self):
         while True:
@@ -83,18 +84,30 @@ class Client:
             if self.Check(ws, action, payload):
                 print("execute payload:")
                 print(payload)
-                subp = subprocess.Popen(payload)
-                print(subp)
-                subp.wait(2)
+                subp = subprocess.Popen(payload, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                outs, errs = subp.communicate()
+                outs = outs.decode()
+                errs = errs.decode()
+                print(outs)
                 if subp.poll() == 0:
                     print("Subprocess Success")
+                    
                 else:
                     print("Subprocess Failed")
+                    print("Error message:")
+                    print(errs)
+                self.parse_response(ws, subp.poll(), outs, errs)
+
             else:
-                print("Failed")
+                print("ERROR: Command not in command list")
 
         elif action == "upload":
             print("upload")
+            try:
+                os.mkdir(DATA_SAVE_DIR)
+            except:
+                print("dirctory /lightdance exist")
+
             print(os.path.join(DATA_SAVE_DIR, "control.json"))
             with open(os.path.join(DATA_SAVE_DIR, "control.json"), "w") as f:
                 print("Writing control.json")
@@ -106,14 +119,20 @@ class Client:
                 print("Writing LED.json")
                 json.dump(payload[2], f, indent=4)
 
+            subp = subprocess.Popen(["load"])
+            # subp = subprocess.Popen(["load", "dancer", os.path.join(DATA_SAVE_DIR, "control.json")])
+            # subp = subprocess.Popen(["load", "OF", os.path.join(DATA_SAVE_DIR, "OF.json")])
+            # subp = subprocess.Popen(["load", "LED", os.path.join(DATA_SAVE_DIR, "LED.json")])
+            print("load complete")
+
+            self.parse_response(ws, 0, "success", "success")
+
         elif action == "sync":
             print("sync")
 
         else:
             print("Invalid action")
-
-        # self.parse_response(ws, response)
-        print("Send message to rpi complete")
+            self.parse_response(ws, -1, "success", "command not found")
 
     def ParseServerData(self, message):
         print("Message from server:")
@@ -134,57 +153,39 @@ class Client:
         print(f"{action} not found in cmdlist: {cmdlist}")
         return False
 
-    def parse_response(self, ws, response: str):
-        print(response)  # print the response
-        response = response.split(" ")
-        command = response[1]
-        status = response[3]
-
-        info = " ".join(response[5:]) if len(response) > 5 else "good!!!"
-        if command == "boardInfo":
-            info = {
-                "type": "RPi",
-                "dancerName": response[5],
-                "ip": response[6],
-                "hostName": response[7],
-            }
-        elif command == "sync":
-            delay, offset = response[5], response[6]
-            info = {"delay": int(delay), "offset": int(offset)}
+    def parse_response(self, ws, status, outs: str, errs: str):
+        print(outs)  # print the response
+        response = outs
+        if status != 0:
+            response = errs
 
         ws.send(
             json.dumps(
                 {
-                    "command": command,
-                    "payload": {"success": status == "Success", "info": info},
+                    "status": status,
+                    "payload": response
                 }
             )
         )
+        print("Send response complete")
 
     def on_open(self, ws):
         print("Successfully on_open")  # Print Whether successfully on_open
-        # response = self.METHODS["boardInfo"]()
-        # print(response)
-        # response = response.split(" ")
+        macaddr = ':'.join(("%012X" % get_mac())[i:i+2] for i in range(0, 12, 2))
+        print(macaddr)
         ws.send(
             json.dumps(
                 {
-                    "command": "boardInfo",
-                    "payload": {
-                        "success": True,
-                        "info": {
-                            "type": "RPi",
-                            "dancerName": self.dancerName,
-                            "ip": "127.0.0.1",
-                            "hostName": "hostname",
-                        },
-                    },
+                    "status": 0,
+                    "payload": macaddr
                 }
             )
         )
+        # ws.send("hello")
+        print("Mac address sent")
 
     def on_close(self, ws):
-        print(f"{self.dancerName} closed")
+        print("websocket closed")
 
     ####### on_error ########
     # def on_error(self,ws,error):
