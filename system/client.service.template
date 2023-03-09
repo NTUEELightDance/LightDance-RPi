@@ -1,0 +1,11 @@
+[Unit]
+Description=client
+
+[Service]
+User=<USERNAME>
+WorkingDirectory=<WORKSPACE>
+ExecStart=<WORKSPACE>/ws_client/client.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
