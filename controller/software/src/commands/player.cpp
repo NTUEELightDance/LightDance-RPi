@@ -178,10 +178,13 @@ void OFload(Player &Player, json &data_json) {
         vector<pair<string, OFStatus>> frameStatus;
         frameStatus.clear();
         if (frame_json.empty()) {
+            // 其實這段code很危險
+            // 如果你在中間不小心插入一個dark frame的話，因為它的start time是0，有可能會讓二分搜爛掉
+            // 不如什麼都不加直接跳過，或是好好維護它的time
             // If no frames are given, push only dark frame
-            frameLists.push_back(darkFrame);
-            fill(status.begin(), status.end(), darkStatus);
-            statusList.push_back(status);
+            // frameLists.push_back(darkFrame);
+            // fill(status.begin(), status.end(), darkStatus);
+            // statusList.push_back(status);
             continue;
         }
         const json &status_json = frame_json["status"];
