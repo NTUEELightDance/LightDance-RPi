@@ -1,6 +1,6 @@
+#include "LEDController.h"
 #include "command.h"
 #include "player.h"
-#include "LEDController.h"
 
 class LEDtest : public Command {
    public:
@@ -13,7 +13,7 @@ class LEDtest : public Command {
     int execute(int argc, char* argv[]) {
         // cout<<argc<<"\n";
         if (argc <= 1 || cmdOptionExists(argv, argv + argc, "-h")) {
-            cout<<"./ledtest <PartName>\n";
+            cout << "./ledtest <PartName>\n";
             help();
             return 0;
         }
@@ -32,19 +32,20 @@ class LEDtest : public Command {
             }
         } else if (cmdOptionExists(argv, argv + argc, "--hex")) {
             vector<string> hex = getCmdOptionStr(argv, argv + argc, "--hex");
-            if (hex.size()){
+            if (hex.size()) {
                 colorCode2RGB(hex[0], R, G, B);
-            } else{
+            } else {
                 cout << "Hex value not specified! Using default\n";
             }
         }
         if (cmdOptionExists(argv, argv + argc, "-a")) {
-            // Maybe get alpha as float here? But how to store it in colorCode...
+            // Maybe get alpha as float here? But how to store it in
+            // colorCode...
             vector<int> _alpha = getCmdOptionInt(argv, argv + argc, "-a");
-            if (_alpha.size()){
+            if (_alpha.size()) {
                 alpha = _alpha[0];
-            } else{
-                cout<<"Alpha value not specified! Using default\n";
+            } else {
+                cout << "Alpha value not specified! Using default\n";
             }
         }
         return Test(PartName, R, G, B, alpha);
@@ -53,13 +54,12 @@ class LEDtest : public Command {
    private:
     // load from .h file instead of hard coded??
     const int partNum = 8;
-    map<char, int> hexCode = {
-        {'0', 0},  {'1', 1},  {'2', 2},  {'3', 3},  {'4', 4},  {'5', 5},
-        {'6', 6},  {'7', 7},  {'8', 8},  {'9', 9},  {'A', 10}, {'B', 11},
-        {'C', 12}, {'D', 13}, {'E', 14}, {'F', 15}, {'a', 10}, {'b', 11},
-        {'c', 12}, {'d', 13}, {'e', 14}, {'f', 15}};
+    map<char, int> hexCode = {{'0', 0},  {'1', 1},  {'2', 2},  {'3', 3},  {'4', 4},  {'5', 5},
+                              {'6', 6},  {'7', 7},  {'8', 8},  {'9', 9},  {'A', 10}, {'B', 11},
+                              {'C', 12}, {'D', 13}, {'E', 14}, {'F', 15}, {'a', 10}, {'b', 11},
+                              {'c', 12}, {'d', 13}, {'e', 14}, {'f', 15}};
 
-    void colorCode2RGB(const string &hex, int& R, int& G, int& B) {
+    void colorCode2RGB(const string& hex, int& R, int& G, int& B) {
         // Todo: Check if code is valid(???)
         if (hex.size() == 6) {
             R = hexCode[hex[0]] * 16 + hexCode[hex[1]];
@@ -69,26 +69,27 @@ class LEDtest : public Command {
             cout << "Colorcode length error!\n";
         }
     }
-    int Test(const string &part, int R, int G, int B, int alpha) {
+    int Test(const string& part, int R, int G, int B, int alpha) {
         Player player;
         string path = "./dancer.dat";
         if (!restorePlayer(player, path.c_str())) {
-            cout<<"Need to load first!\n";
+            cout << "Need to load first!\n";
             return 0;
         }
-        vector<vector<int> > LEDbuf (partNum);
-        vector<int> Shape (partNum, 0);
-        // If I need to use player.myLEDPlayer here, the strip shapes need to be set before
-        // This can be done either after loading frame datas or modify setDancer command
-        if (player.LEDPARTS.find(part) == player.LEDPARTS.end()){
-            cout<<"Can't find part "<<part<<"!\n";
+        vector<vector<int> > LEDbuf(partNum);
+        vector<int> Shape(partNum, 0);
+        // If I need to use player.myLEDPlayer here, the strip shapes need to be
+        // set before This can be done either after loading frame datas or
+        // modify setDancer command
+        if (player.LEDPARTS.find(part) == player.LEDPARTS.end()) {
+            cout << "Can't find part " << part << "!\n";
 
-        } else{
+        } else {
             int id = player.LEDPARTS[part].id;
             int len = player.LEDPARTS[part].len;
-            int color = (R<<24) + (G<<16) + (B<<8) + alpha;
+            int color = (R << 24) + (G << 16) + (B << 8) + alpha;
 
-            for(int i=0;i<len;i++){
+            for (int i = 0; i < len; i++) {
                 LEDbuf[id].push_back(color);
             }
             Shape[id] = len;
@@ -96,7 +97,7 @@ class LEDtest : public Command {
             LEDController LED_CTRL;
             LED_CTRL.init(Shape);
             LED_CTRL.sendAll(LEDbuf);
-            LED_CTRL.fini();
+            LED_CTRL.finish();
         }
         return 0;
     }
@@ -106,4 +107,3 @@ int main(int argc, char* argv[]) {
     LEDtest test;
     return test.execute(argc, argv);
 }
-

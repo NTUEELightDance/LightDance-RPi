@@ -223,12 +223,13 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *t
 
     while (true) {
         if (*toTerminate) {
+            statusLists.clear();
             for (int i = 0; i < frameIds.size(); i++) {
                 // dark all
                 statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
             }
             controller.sendAll(castStatusLists(statusLists));
-            controller.fini();
+            controller.finish();
             break;
         }
         if (*playing) {
