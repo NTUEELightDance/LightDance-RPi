@@ -28,7 +28,7 @@ class FrameTest: public Command{
 
     int Test(int ms){
         Player player;
-        string path = "./dancer.dat";
+        string path = "./data/dancer.dat";
         if (!restorePlayer(player, path.c_str())) {
             cout<<"Need to load first!\n";
             return 0;
@@ -71,7 +71,6 @@ class FrameTest: public Command{
 
                 const LEDFrame &frame = frameList[frameId];
                 if (frame.fade) {
-                    // What happens if it's the last frame? Does it cause segmentation fault?
                     const long startTime = (long)frameList[frameId].start * 1000000l / (long)fps;
                     const long endTime = (long)frameList[frameId + 1].start * 1000000l / (long)fps;
                     const float rate = (float)(elapsedTime - startTime) / (float)(endTime - startTime);

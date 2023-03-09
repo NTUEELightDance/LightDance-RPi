@@ -71,7 +71,7 @@ class OFtest : public Command {
     int Test(const string &part, int R, int G, int B, int alpha) {
         
         Player player;
-        string path = "./dancer.dat";
+        string path = "./data/dancer.dat";
         if (!restorePlayer(player, path.c_str())) {
             cout<<"Need to load first!\n";
             return 0;
