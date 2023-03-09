@@ -1,6 +1,5 @@
 #include "command.h"
 #include "player.h"
-#include "OFController.h"
 
 class OFtest : public Command {
    public:
@@ -31,7 +30,6 @@ class OFtest : public Command {
 
             } else {
                 cout << "Wrong RGB length! Using default\n";
-                return 0;
             }
         } else if (cmdOptionExists(argv, argv + argc, "--hex")) {
             vector<string> hex = getCmdOptionStr(argv, argv + argc, "--hex");
@@ -47,7 +45,8 @@ class OFtest : public Command {
                 alpha = _alpha[0];
             } else{
                 cout<<"Alpha value not specified! Using default\n";
-            }        }
+            }        
+        }
         return Test(PartName, R, G, B, alpha);
     }
 
