@@ -2,8 +2,8 @@
 Description=player
 
 [Service]
-User=pi
-WorkingDirectory=/home/pi/LightDance-RPi
+User=<USERNAME>
+WorkingDirectory=<WORKSPACE>
 ExecStart=player
 Restart=always
 

@@ -1,8 +1,3 @@
-# Create root content folder
-sudo mkdir -p /lightdance
-sudo mkdir -p /lightdance/config
-sudo mkdir -p /lightdance/data
-
 # Build controller
 cd controller
 mkdir -p build && cd build
