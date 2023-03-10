@@ -18,7 +18,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 LED_SAVE_DIR = "./data/LED.json"
 OF_SAVE_DIR = "./data/OF.json"
 
-DATA_SAVE_DIR = "/tmp/lightdance"
+DATA_SAVE_DIR = "/home/pi/LightDance-RPi/data"
 
 class Client:
     def __init__(self):
