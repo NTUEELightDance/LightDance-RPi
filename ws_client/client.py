@@ -13,8 +13,6 @@ from uuid import getnode as get_mac
 from config import *
 from ntpclient import *
 
-# from boardInfo import *
-
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
 cmdlist = [
@@ -48,7 +46,6 @@ DATA_SAVE_DIR = "/tmp/lightdance"
 # SERVER_IP = os.environ["SERVER_IP"]
 # SERVER_PORT = int(os.environ["SERVER_PORT"])
 
-
 class Client:
     def __init__(self):
         super(Client, self).__init__()
@@ -56,12 +53,6 @@ class Client:
         self.action = ""
         self.paylaod = {}
         self.ntpclient = NTPClient()
-        # if len(sys.argv) != 2:
-        #     print("Usage: python3 client/client.py <dancerName>")
-        #     exit()
-        # self.dancerName = sys.argv[1]
-        # self.dancerName = "Arthur"
-        # self.dancerName = os.environ["DANCER_NAME"]
 
     def startclient(self):
         while True:
@@ -81,25 +72,31 @@ class Client:
         action, payload = self.ParseServerData(message)
 
         if action == "command":
-            if self.Check(ws, action, payload):
-                print("execute payload:")
-                print(payload)
+            print("execute payload:")
+            print(payload)
+            status = -1
+            message_to_server = ""
+            
+            try:
                 subp = subprocess.Popen(payload, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 outs, errs = subp.communicate()
                 outs = outs.decode()
                 errs = errs.decode()
-                print(outs)
-                if subp.poll() == 0:
+                status = subp.poll()
+                if status == 0:
+                    message_to_server = outs
                     print("Subprocess Success")
                     
                 else:
-                    print("Subprocess Failed")
+                    message_to_server = errs
+                    print("Subprocess Error")
                     print("Error message:")
                     print(errs)
-                self.parse_response(ws, subp.poll(), outs, errs)
-
-            else:
-                print("ERROR: Command not in command list")
+            except:
+                print("Unable to run Subprocess")
+                message_to_server = "Unable to run Subprocess"
+            
+            self.parse_response(ws, payload[0], status, message_to_server)
 
         elif action == "upload":
             print("upload")
@@ -119,20 +116,31 @@ class Client:
                 print("Writing LED.json")
                 json.dump(payload[2], f, indent=4)
 
-            subp = subprocess.Popen(["load"])
-            # subp = subprocess.Popen(["load", "dancer", os.path.join(DATA_SAVE_DIR, "control.json")])
-            # subp = subprocess.Popen(["load", "OF", os.path.join(DATA_SAVE_DIR, "OF.json")])
-            # subp = subprocess.Popen(["load", "LED", os.path.join(DATA_SAVE_DIR, "LED.json")])
-            print("load complete")
+            message_to_server = ""
+            status = -1
 
-            self.parse_response(ws, 0, "success", "success")
+            try:
+                subp = subprocess.Popen(["load"])
+                message_to_server = "success"
+                status = subp.poll()
+                print("load complete")
+                # subp = subprocess.Popen(["load", "dancer", os.path.join(DATA_SAVE_DIR, "control.json")])
+                # subp = subprocess.Popen(["load", "OF", os.path.join(DATA_SAVE_DIR, "OF.json")])
+                # subp = subprocess.Popen(["load", "LED", os.path.join(DATA_SAVE_DIR, "LED.json")])
+            
+            except:
+                print("can not run subprocess load")
+                message_to_server = "can not run subprocess load"
+                status = -1
+        
+            self.parse_response(ws, action, status, message_to_server)
 
         elif action == "sync":
             print("sync")
 
         else:
             print("Invalid action")
-            self.parse_response(ws, -1, "success", "command not found")
+            self.parse_response(ws, action, -1, "command not found")
 
     def ParseServerData(self, message):
         print("Message from server:")
@@ -147,27 +155,32 @@ class Client:
             print("Invalid json format:")
             print(message)
 
-    def Check(self, ws, action, payload):
-        if action in cmdlist:
-            return True
-        print(f"{action} not found in cmdlist: {cmdlist}")
-        return False
+    # def Check(self, ws, action, payload):
+    #     if action in cmdlist:
+    #         return True
+    #     errs = f"{action} not found in cmdlist: {cmdlist}"
+    #     print(errs)
+    #     self.parse_response(ws, -1, errs)
+    #     return False
 
-    def parse_response(self, ws, status, outs: str, errs: str):
-        print(outs)  # print the response
-        response = outs
-        if status != 0:
-            response = errs
-
+    def parse_response(self, ws, command, status, message: str):
+        
         ws.send(
             json.dumps(
                 {
+                    "command":command,
                     "status": status,
-                    "payload": response
+                    "payload": {
+                        "type": "RPi",
+                        "info":{
+                            "message": message
+                        }
+                    }
                 }
             )
         )
-        print("Send response complete")
+        print("Send message to server completed")
+        print("message:{}".format(message))
 
     def on_open(self, ws):
         print("Successfully on_open")  # Print Whether successfully on_open
@@ -176,8 +189,15 @@ class Client:
         ws.send(
             json.dumps(
                 {
+                    "command":"boardInfo",
                     "status": 0,
-                    "payload": macaddr
+                    "payload": 
+                    {
+                        "type":"RPi",
+                        "info":{
+                            "macaddr": macaddr
+                        }
+                    }
                 }
             )
         )
