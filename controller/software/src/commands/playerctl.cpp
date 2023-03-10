@@ -14,7 +14,8 @@
 #include "command.h"
 
 using namespace std;
-
+#define secAdjust 1000000
+#define msecAdjust 1000
 class Play : public Command {
    public:
     Play() : Command() {
@@ -37,61 +38,76 @@ class Play : public Command {
             string cmd = argv[1];
             transform(cmd.begin(), cmd.end(), cmd.begin(),
                       [](unsigned char c) { return tolower(c); });
-            if (set<string>{"pause", "quit", "restart", "stop"}.count(cmd) >
-                0) {
+            if (set<string>{"pause", "quit", "restart", "stop"}.count(cmd) > 0) {
                 sendToPlayLoop(cmd);
             }
             if (cmd.compare("play") == 0) {
-                if (cmdOptionExists(argv, argv + argc, "-s")) {
-                    vector<float> ftime =
-                        getCmdOptionFloat(argv, argv + argc, "-s");
+                vector<float> ftime;
+                vector<int> delayTime;  // ms
+                bool sExist = cmdOptionExists(argv, argv + argc, "-s");
+                bool secExist = cmdOptionExists(argv, argv + argc, "--sec");
+                bool dExist = cmdOptionExists(argv, argv + argc, "-d");
+                bool delayExist = cmdOptionExists(argv, argv + argc, "--delay");
+                bool needDelay = dExist || delayExist;
+                if (needDelay) {
+                    delayTime = getCmdOptionInt(argv, argv + argc,
+                                                dExist ? "-d" : "--delay");  // default sec
+                    string flagUse = dExist ? "-d" : "--delay";
+                    if (delayTime.size() == 0) {
+                        cerr << "Error in " << flagUse << " option.";
+                        cerr << "It should have <time> after " << flagUse << " flag." << endl;
+                        return 1;
+                    }
+                }
+                if (sExist || secExist) {
+                    ftime = getCmdOptionFloat(argv, argv + argc, sExist ? "-s" : "--sec");
+                    string flagUse = sExist ? "-s" : "--sec";
                     for (auto i : ftime) {
-                        cout << "hi" << i << endl;
-                        if (int(i * 1000) < -1.0) {
-                            cout << "It might be overflowed.\nPlease check "
+                        // cerr << "hi" << i << endl;
+                        if (long(i * secAdjust) < -1.0) {
+                            cerr << "It might be overflowed.\nPlease check "
                                     "your input!."
                                  << endl;
                             return 1;
                         }
                     }
                     if (ftime.size() == 1) {
-                        return play(int(ftime[0] * 1000), -1);
+                        return play(long(ftime[0] * secAdjust), -1, needDelay, delayTime);
                     } else if (ftime.size() == 2) {
-                        return play(int(ftime[0] * 1000), int(ftime[1] * 1000));
+                        return play(long(ftime[0] * secAdjust), long(ftime[1] * secAdjust),
+                                    needDelay, delayTime);
                     } else {
                         if (argc == 2) {
-                            cout << "Error in -s option.";
-                            cout << "Please it should have time after -s flag."
-                                 << endl;
+                            cerr << "Error in " << flagUse << " option.";
+                            cerr << "It should have <time> after " << flagUse << " flag." << endl;
                             return 1;
                         }
-                        cout << "Error in -s option.\nPlease use \"-h\" for "
+                        cerr << "Error in " << flagUse
+                             << " option.\nPlease use \"-h\" for "
                                 "help."
                              << endl;
                         return 1;
                     }
                 }
-                vector<int> time = getCmdOptionInt(argv, argv + argc, "play");
+                vector<long> time = getCmdOptionLong(argv, argv + argc, "play");
                 for (auto i : time) {
                     if (i < -1) {
-                        cout << "It might be overflowed.\nPlease check your "
+                        cerr << "It might be overflowed.\nPlease check your "
                                 "input!."
                              << endl;
                         return 1;
                     }
                 }
                 if (time.size() == 1) {
-                    return play(time[0], -1);
+                    return play(time[0] * msecAdjust, -1, needDelay, delayTime);
                 } else if (time.size() == 2) {
-                    return play(time[0], time[1]);
+                    return play(time[0] * msecAdjust, time[1] * msecAdjust, needDelay, delayTime);
                 } else {
-                    if (argc == 2) return sendToPlayLoop("play");
-                    cout << "Error in command play.\n";
-                    cout
-                        << "It should be \"play <start time(int)(option)> <end "
-                           "time(int)(option)>\".\n";
-                    cout << "Please use \"-h\" for help." << endl;
-                    return 1;
+                    return play(0, -1, needDelay, delayTime);
+                    // cerr << "Error in command play.\n";
+                    // cerr << "It should be \"play <start time(long)(option)> <end "
+                    //         "time(long)(option)>\".\n";
+                    // cerr << "Please use \"-h\" for help." << endl;
                 }
             }
         }
@@ -99,12 +115,14 @@ class Play : public Command {
     }
 
    private:
-    int play(int start, int end) {
+    int play(long start, long end, bool needDelay, vector<int> delayTime) {
         stringstream cmd;
-        cmd << "play " << start << " " << end;
+        // cout << delayTime[0] << endl;
+        cmd << "play " << start << " " << end << " -d "
+            << (needDelay ? ((long)delayTime[0] * secAdjust) : 0);
         string mycmd = cmd.str();
         sendToPlayLoop(mycmd);
-        cout << "start: " << start << " end: " << end << endl;
+        cout << mycmd << endl;
         return 0;
     }
     int sendToPlayLoop(string msg) {

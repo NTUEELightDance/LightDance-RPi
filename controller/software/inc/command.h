@@ -15,6 +15,7 @@ class Command {
     vector<string> getCmdOptionStr(char** begin, char** end, const string& option);
     vector<int> getCmdOptionInt(char** begin, char** end, const string& option);
     vector<float> getCmdOptionFloat(char** begin, char** end, const string& option);
+    vector<long> getCmdOptionLong(char** begin, char** end, const string& option);
 
    private:
     map<string, string> flags;
@@ -54,6 +55,19 @@ vector<int> Command::getCmdOptionInt(char** begin, char** end, const string& opt
         for (auto c = it->begin(); c != it->end(); ++c) {
             if (!isdigit(*c)) {
                 return vector<int>();
+            }
+        }
+        result.push_back(atoi(it->c_str()));
+    }
+    return result;
+}
+vector<long> Command::getCmdOptionLong(char** begin, char** end, const string& option) {
+    vector<string> str = getCmdOptionStr(begin, end, option);
+    vector<long> result;
+    for (auto it = str.begin(); it != str.end(); ++it) {
+        for (auto c = it->begin(); c != it->end(); ++c) {
+            if (!isdigit(*c)) {
+                return vector<long>();
             }
         }
         result.push_back(atoi(it->c_str()));

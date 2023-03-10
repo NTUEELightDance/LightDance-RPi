@@ -136,15 +136,14 @@ int parse_command(std::string str) {
 
                 long start_usec = 0;
                 stopTimeAssigned = false;
-                if (cmd.size() >= 3 && cmd[cmd.size()-2] == "-d") {
-                    delayTime = std::stoi(cmd[cmd.size()-1]);
+                if (cmd.size() >= 3 && cmd[cmd.size() - 2] == "-d") {
+                    delayTime = std::stoi(cmd[cmd.size() - 1]);
                     if (cmd.size() > 3) start_usec = std::stoi(cmd[1]);
                     if (cmd.size() > 4) {
                         stopTimeAssigned = true;
                         stopTime = std::stoi(cmd[2]);
                     }
-                }
-                else {
+                } else {
                     if (cmd.size() > 1) start_usec = std::stoi(cmd[1]);
                     if (cmd.size() > 2) {
                         stopTimeAssigned = true;
@@ -167,22 +166,20 @@ int main(int argc, char *argv[]) {
     if (mkfifo(wr_fifo, 0666) == -1) {
         if (errno != EEXIST) {
             fprintf(stderr, "Cannot create %s\n", wr_fifo);
-        }
-        else {
+        } else {
             fprintf(stderr, "%s already exists\n", wr_fifo);
         }
-    }
-    else fprintf(stderr, "%s created\n", wr_fifo);
+    } else
+        fprintf(stderr, "%s created\n", wr_fifo);
     int rd_fd, n;
     if (mkfifo(rd_fifo, 0666) == -1) {
         if (errno != EEXIST) {
             fprintf(stderr, "Cannot create %s\n", rd_fifo);
-        }
-        else {
+        } else {
             fprintf(stderr, "%s already exists\n", rd_fifo);
         }
-    }
-    else fprintf(stderr, "%s created\n", rd_fifo);
+    } else
+        fprintf(stderr, "%s created\n", rd_fifo);
     rd_fd = open(rd_fifo, O_RDONLY | O_NONBLOCK);
     if (rd_fd == -1) perror("open");
 
@@ -204,7 +201,7 @@ int main(int argc, char *argv[]) {
             //     printf("cnt %ld\n",tv.tv_sec);
             //     s = tv.tv_sec;
             // }
-            if (played_us > stopTime) {
+            if (played_us > stopTime && stopTime != -1) {
                 stopTimeAssigned = false;
                 stop();
                 s = -1;
