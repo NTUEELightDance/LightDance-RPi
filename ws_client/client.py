@@ -15,36 +15,10 @@ from ntpclient import *
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
-cmdlist = [
-    "command",
-    "sync",
-    "uploadLed",
-    "uploadOf",
-    "load",
-    "play",
-    "pause",
-    "stop",
-    "lightCurrentStatus",
-    "kick",
-    "shutDown",
-    "reboot",
-    "boardInfo",
-    "init",
-    "test",
-    "red",
-    "green",
-    "blue",
-    "darkall",
-    "stmInit",
-    "restartController",
-]
 LED_SAVE_DIR = "./data/LED.json"
 OF_SAVE_DIR = "./data/OF.json"
 
 DATA_SAVE_DIR = "/tmp/lightdance"
-
-# SERVER_IP = os.environ["SERVER_IP"]
-# SERVER_PORT = int(os.environ["SERVER_PORT"])
 
 class Client:
     def __init__(self):
@@ -124,10 +98,7 @@ class Client:
                 message_to_server = "success"
                 status = subp.poll()
                 print("load complete")
-                # subp = subprocess.Popen(["load", "dancer", os.path.join(DATA_SAVE_DIR, "control.json")])
-                # subp = subprocess.Popen(["load", "OF", os.path.join(DATA_SAVE_DIR, "OF.json")])
-                # subp = subprocess.Popen(["load", "LED", os.path.join(DATA_SAVE_DIR, "LED.json")])
-            
+                
             except:
                 print("can not run subprocess load")
                 message_to_server = "can not run subprocess load"
@@ -154,14 +125,6 @@ class Client:
         except:
             print("Invalid json format:")
             print(message)
-
-    # def Check(self, ws, action, payload):
-    #     if action in cmdlist:
-    #         return True
-    #     errs = f"{action} not found in cmdlist: {cmdlist}"
-    #     print(errs)
-    #     self.parse_response(ws, -1, errs)
-    #     return False
 
     def parse_response(self, ws, command, status, message: str):
         
@@ -201,7 +164,6 @@ class Client:
                 }
             )
         )
-        # ws.send("hello")
         print("Mac address sent")
 
     def on_close(self, ws):
