@@ -1,0 +1,6 @@
+SERVER_IP=$1
+WORKSPACE="/home/pi/LightDance-RPi"
+
+cd $WORKSPACE/ws_client
+sed -i "s!\(SERVER_IP = \)\".*\"!\1\"${SERVER_IP}\"!g" config.py
+sudo systemctl restart client.service
