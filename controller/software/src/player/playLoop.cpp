@@ -83,7 +83,7 @@ bool restart() {
     printf("restart\n");
     playing = false;
 
-    if (!restorePlayer(player, "dancer.dat")) {
+    if (!restorePlayer(player, "/home/pi/LightDance-RPi/dancer.dat")) {
         fprintf(stderr, "restorePlayer ERROR\n");
         return false;
     }
@@ -95,7 +95,7 @@ bool restart() {
 
     to_terminate = false;
     led_loop = std::thread(&LEDPlayer::loop, &led_player, &playing, &baseTime, &to_terminate);
-    // of_loop = std::thread(&OFPlayer::loop, &of_player, &playing, &baseTime, &to_terminate);
+    of_loop = std::thread(&OFPlayer::loop, &of_player, &playing, &baseTime, &to_terminate);
     return true;
 }
 

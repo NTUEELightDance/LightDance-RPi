@@ -1,5 +1,7 @@
 WORKSPACE="/home/pi/LightDance-RPi"
 
+sudo systemctl stop player.service
+
 # build controller
 cd $WORKSPACE/controller
 mkdir -p build && cd build
@@ -11,3 +13,5 @@ sudo rm -rf /usr/local/bin/*
 sudo cp -r bin/* /usr/local/bin/
 sudo chown root /usr/local/bin/*
 sudo chmod u+s /usr/local/bin/*
+
+sudo systemctl start player.service
