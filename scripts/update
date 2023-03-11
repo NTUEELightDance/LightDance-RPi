@@ -6,6 +6,7 @@ sudo systemctl stop client.service
 
 cd $WORKSPACE
 git pull
+git submodule update --remote --rebase
 
 cd $WORKSPACE/scripts
 ./build-controller
