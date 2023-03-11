@@ -1,5 +1,6 @@
 from websocket_server import WebsocketServer
 import json
+from config import *
 
 # Called for every client connecting (after handshake)
 def new_client(client, server):
@@ -59,9 +60,7 @@ def message_received(client, server, message):
 		message = message[:200]+'..'
 	print("Client(%d) said: %s" % (client['id'], message))
 
-
-PORT=8082
-server = WebsocketServer(port = PORT)
+server = WebsocketServer(host = SERVER_IP, port = SERVER_PORT)
 server.set_fn_new_client(new_client)
 server.set_fn_client_left(client_left)
 server.set_fn_message_received(message_received)
