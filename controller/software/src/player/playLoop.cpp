@@ -83,7 +83,7 @@ bool restart() {
     printf("restart\n");
     playing = false;
 
-    if (!restorePlayer(player, "/home/pi/LightDance-RPi/dancer.dat")) {
+    if (!restorePlayer(player, "/home/pi/LightDance-RPi/data/dancer.dat")) {
         fprintf(stderr, "restorePlayer ERROR\n");
         return false;
     }
