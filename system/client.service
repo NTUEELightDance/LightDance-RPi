@@ -4,7 +4,7 @@ Description=client
 [Service]
 User=pi
 WorkingDirectory=/home/pi/LightDance-RPi
-ExecStart=/home/pi/LightDance-RPi/ws_client/client.py
+ExecStart=python3 /home/pi/LightDance-RPi/ws_client/client.py
 Restart=always
 
 [Install]
