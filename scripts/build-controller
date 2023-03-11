@@ -2,6 +2,9 @@ WORKSPACE="/home/pi/LightDance-RPi"
 
 sudo systemctl stop player.service
 
+cd $WORKSPACE/controller/hardware
+git submodule update --init --recursive
+
 # build controller
 cd $WORKSPACE/controller
 mkdir -p build && cd build
