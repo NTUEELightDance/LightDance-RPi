@@ -1,0 +1,2 @@
+sudo sh -c "echo '' > /var/log/daemon.log"
+sudo sh -c "echo '' > /var/log/syslog"

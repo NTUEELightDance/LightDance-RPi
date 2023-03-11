@@ -6,7 +6,8 @@ sudo systemctl stop client.service
 
 cd $WORKSPACE
 git pull
-git submodule update --remote --rebase
+rm -rf controller/hardware
+git submodule update --init
 
 cd $WORKSPACE/scripts
 ./build-controller
