@@ -1,6 +1,5 @@
 #include "command.h"
 #include "player.h"
-#include "OFController.h"
 
 class OFtest : public Command {
    public:
@@ -12,12 +11,15 @@ class OFtest : public Command {
     }
     int execute(int argc, char* argv[]) {
         // cout<<argc<<"\n";
-        if (argc <= 1 || cmdOptionExists(argv, argv + argc, "-h")) {
+        if (cmdOptionExists(argv, argv + argc, "-h")) {
             cout<<"./oftest <PartName>\n";
             help();
             return 0;
         }
-        string PartName = argv[1];
+        string PartName = "All";
+        if (argc >= 2 && argv[1][0] != '-'){ // not a flag
+            PartName = argv[1];
+        }
         int R = 255, G = 255, B = 255, alpha = 255;
         if (cmdOptionExists(argv, argv + argc, "--rgb")) {
             vector<int> rgb = getCmdOptionInt(argv, argv + argc, "--rgb");
@@ -28,7 +30,6 @@ class OFtest : public Command {
 
             } else {
                 cout << "Wrong RGB length! Using default\n";
-                return 0;
             }
         } else if (cmdOptionExists(argv, argv + argc, "--hex")) {
             vector<string> hex = getCmdOptionStr(argv, argv + argc, "--hex");
@@ -44,7 +45,8 @@ class OFtest : public Command {
                 alpha = _alpha[0];
             } else{
                 cout<<"Alpha value not specified! Using default\n";
-            }        }
+            }        
+        }
         return Test(PartName, R, G, B, alpha);
     }
 
@@ -69,25 +71,32 @@ class OFtest : public Command {
     int Test(const string &part, int R, int G, int B, int alpha) {
         
         Player player;
-        string path = "./dancer.dat";
+        string path = "./data/dancer.dat";
         if (!restorePlayer(player, path.c_str())) {
             cout<<"Need to load first!\n";
             return 0;
         }
         vector<int> OFbuf (partNum);
-        if (player.OFPARTS.find(part) == player.OFPARTS.end()){
-            cout<<"Can't find part "<<part<<"!\n";
+        int color = (R<<24) + (G<<16) + (B<<8) + alpha;
 
-        } else{
+        if (part == "All" || part == "ALL" || part == "all"){
+            for (auto part:player.OFPARTS){
+                OFbuf[part.second] = color;
+            }
+
+        } else if (player.OFPARTS.find(part) != player.OFPARTS.end()){
             int id = player.OFPARTS[part];
-            int color = (R<<24) + (G<<16) + (B<<8) + alpha;
-
             OFbuf[id] = color;
 
-            OFController OF_CTRL;
-            OF_CTRL.init();
-            OF_CTRL.sendAll(OFbuf);
+        } else{
+            cout<<"Error: Can't find part "<<part<<"!\n";
+            return 0;
         }
+        // OFController OF_CTRL;
+        OFController &OF_CTRL = player.myOFPlayer.controller;
+
+        OF_CTRL.init();
+        OF_CTRL.sendAll(OFbuf);
         return 0;
     }
 };

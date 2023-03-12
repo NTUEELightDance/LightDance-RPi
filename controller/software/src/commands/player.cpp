@@ -65,6 +65,8 @@ void Player::serialize(Archive &archive, const unsigned int version) {
     archive &LEDPARTS;
     archive &myLEDPlayer;
     archive &myOFPlayer;
+    archive &LEDloaded;
+    archive &OFloaded;
 };
 
 ostream &operator<<(ostream &ostream, const Player &player) {
@@ -177,9 +179,9 @@ void OFload(Player &Player, json &data_json) {
         frameStatus.clear();
         if (frame_json.empty()) {
             // If no frames are given, push only dark frame
-            frameLists.push_back(darkFrame);
-            fill(status.begin(), status.end(), darkStatus);
-            statusList.push_back(status);
+            // frameLists.push_back(darkFrame);
+            // fill(status.begin(), status.end(), darkStatus);
+            // statusList.push_back(status);
             continue;
         }
         const json &status_json = frame_json["status"];

@@ -65,7 +65,7 @@ class OFPlayer {
     void serialize(Archive &archive, const unsigned int version);
     string list() const;
 
-   private:
+//    private:
     int fps;
     int frameId;
     vector<OFFrame> frameList;
@@ -83,6 +83,7 @@ class OFPlayer {
 
     vector<int> castStatusList(const vector<OFStatus> statusList);
 
+private:
     // serialization
     friend class boost::serialization::access;
     friend ostream &operator<<(ostream &os, const OFPlayer &player);

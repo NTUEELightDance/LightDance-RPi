@@ -64,7 +64,7 @@ class LEDPlayer {
     void serialize(Archive &archive, const unsigned int version);
     string list() const;
 
-   private:
+//    private:
     int fps;
     vector<vector<LEDFrame>> frameLists;
     vector<int> frameIds;
@@ -80,7 +80,7 @@ class LEDPlayer {
     vector<LEDStatus> interpolateFadeFrame(const LEDFrame &origin, const LEDFrame &target,
                                            const float &rate);
     vector<vector<int>> castStatusLists(const vector<vector<LEDStatus>> statusLists);
-
+private:
     // serialization
     friend class boost::serialization::access;
     friend ostream &operator<<(ostream &os, const LEDPlayer &player);

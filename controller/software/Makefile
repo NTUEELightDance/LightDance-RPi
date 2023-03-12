@@ -8,7 +8,7 @@ INC_DIR = inc/
 BIN_DIR = bin/
 LIB_DIR = lib/
 OBJ_DIR = build/
-HARDWARE_DIR = hardware/
+HARDWARE_DIR = ../hardware/
 
 INC = -I$(INC_DIR) -I$(HARDWARE_DIR)inc/
 SRC = $(wildcard $(SRC_DIR)*/*.cpp)
@@ -18,7 +18,7 @@ HARDWARE_OBJ = $(wildcard $(HARDWARE_DIR)build/*.o)
 all: commands player socket
 
 # Commands
-commands: list load boardinfo ledtest oftest playerctl
+commands: list load boardinfo ledtest oftest frametest playerctl
 
 list: directories $(OBJ_DIR)commands/list.o $(OBJ_DIR)commands/player.o $(OBJ_DIR)player/LEDPlayer.o $(OBJ_DIR)player/OFPlayer.o
 	$(CXX) -o $(BIN_DIR)list \
@@ -49,14 +49,28 @@ playerctl: directories $(OBJ_DIR)commands/playerctl.o
 		$(OBJ_DIR)commands/playerctl.o \
 		$(CFLAGS) $(LIBS)
 
-ledtest: directories hardware $(OBJ_DIR)commands/LEDTest.o
+ledtest: directories hardware $(OBJ_DIR)commands/LEDTest.o $(OBJ_DIR)commands/player.o $(OBJ_DIR)player/LEDPlayer.o $(OBJ_DIR)player/OFPlayer.o
 	$(CXX) -o $(BIN_DIR)ledtest \
 		$(OBJ_DIR)commands/LEDTest.o \
+		$(OBJ_DIR)commands/player.o \
+		$(OBJ_DIR)player/LEDPlayer.o \
+		$(OBJ_DIR)player/OFPlayer.o \
 		$(HARDWARE_OBJ) $(CFLAGS) $(LIBS)
 
-oftest: directories hardware $(OBJ_DIR)commands/OFTest.o
+oftest: directories hardware $(OBJ_DIR)commands/OFTest.o $(OBJ_DIR)commands/player.o $(OBJ_DIR)player/LEDPlayer.o $(OBJ_DIR)player/OFPlayer.o
 	$(CXX) -o $(BIN_DIR)oftest \
 		$(OBJ_DIR)commands/OFTest.o \
+		$(OBJ_DIR)commands/player.o \
+		$(OBJ_DIR)player/LEDPlayer.o \
+		$(OBJ_DIR)player/OFPlayer.o \
+		$(HARDWARE_OBJ) $(CFLAGS) $(LIBS)
+
+frametest: directories hardware $(OBJ_DIR)commands/FrameTest.o $(OBJ_DIR)commands/player.o $(OBJ_DIR)player/LEDPlayer.o $(OBJ_DIR)player/OFPlayer.o
+	$(CXX) -o $(BIN_DIR)frametest \
+		$(OBJ_DIR)commands/FrameTest.o \
+		$(OBJ_DIR)commands/player.o \
+		$(OBJ_DIR)player/LEDPlayer.o \
+		$(OBJ_DIR)player/OFPlayer.o \
 		$(HARDWARE_OBJ) $(CFLAGS) $(LIBS)
 
 # Players
