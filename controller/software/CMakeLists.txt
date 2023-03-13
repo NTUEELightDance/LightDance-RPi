@@ -12,13 +12,20 @@ set(INSTALL ${CMAKE_SOURCE_DIR}/bin)
 set(HARDWARE_INCLUDES ../hardware/inc)
 set(HARDWARE_LIBRARIES hardware)
 
+# umbrella
+option(UMBRELLA "compile for umbrella" OFF)
+if (UMBRELLA)
+    message("-- Compiling for umbrella...")
+    add_definitions(-DUMBRELLA)
+endif()
+
 set(EXECUTABLES
   list
   load
   boardinfo
   playerctl
-  ledtest
-  oftest
+  # ledtest
+  # oftest
   parttest
   player
   socket)
@@ -50,22 +57,22 @@ target_include_directories(playerctl PUBLIC ${INCLUDES})
 target_link_libraries(playerctl ${Boost_LIBRARIES})
 
 # ledtest
-add_executable(
-  ledtest ${SOURCE}/commands/LEDTest.cpp ${SOURCE}/commands/player.cpp
-  ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
-target_include_directories(ledtest PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
-target_link_libraries(ledtest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
+# add_executable(
+#   ledtest ${SOURCE}/commands/LEDTest.cpp ${SOURCE}/commands/player.cpp
+#   ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
+# target_include_directories(ledtest PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
+# target_link_libraries(ledtest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
 # oftest
-add_executable(
-  oftest ${SOURCE}/commands/OFTest.cpp ${SOURCE}/commands/player.cpp
-  ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
-target_include_directories(oftest PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
-target_link_libraries(oftest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
+# add_executable(
+#   oftest ${SOURCE}/commands/OFTest.cpp ${SOURCE}/commands/player.cpp
+#   ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
+# target_include_directories(oftest PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
+# target_link_libraries(oftest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
 # parttest
 add_executable(
-  parttest ${SOURCE}/commands/PartTest.cpp ${SOURCE}/commands/player.cpp
+  parttest ${SOURCE}/commands/partTest.cpp ${SOURCE}/commands/player.cpp
   ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
 target_include_directories(parttest PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(parttest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
