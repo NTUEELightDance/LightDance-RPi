@@ -19,6 +19,7 @@ set(EXECUTABLES
   playerctl
   ledtest
   oftest
+  parttest
   player
   socket)
 
@@ -61,6 +62,13 @@ add_executable(
   ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
 target_include_directories(oftest PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(oftest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
+
+# parttest
+add_executable(
+  parttest ${SOURCE}/commands/PartTest.cpp ${SOURCE}/commands/player.cpp
+  ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
+target_include_directories(parttest PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
+target_link_libraries(parttest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
 # player
 add_executable(
