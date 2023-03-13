@@ -53,6 +53,8 @@ struct OFFrame {
 
 class OFPlayer {
    public:
+    OFController controller;
+
     OFPlayer();
     OFPlayer(const int &_fps, const vector<OFFrame> &_frameList,
              const vector<vector<OFStatus>> &_statusList, unordered_map<string, int> &_channelIds,
@@ -73,8 +75,6 @@ class OFPlayer {
     vector<OFFrame> frameList;
     vector<vector<OFStatus>> statusList;
     unordered_map<string, int> channelIds;
-
-    OFController controller;
 
     // functions for finding frame at specific time
     long getElapsedTime(const struct timeval &base, const struct timeval &current);
