@@ -1,0 +1,6 @@
+alias r="parttest --rgb 20 0 0"
+alias g="parttest --rgb 0 20 0"
+alias b="parttest --rgb 0 0 20"
+alias rg="parttest --rgb 20 20 0"
+alias rb="parttest --rgb 20 0 20"
+alias bg="parttest --rgb 0 20 20"

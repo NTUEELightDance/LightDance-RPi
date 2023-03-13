@@ -11,6 +11,7 @@
 #include "LEDPlayer.h"
 #include "nlohmann/json.hpp"
 #include "player.h"
+#include "const.h"
 
 /*
 "load" help file
@@ -63,12 +64,13 @@ using namespace std;
 using json = nlohmann::json;
 
 int main(int argc, char *argv[]) {
+    setuid(1000);
     bool loadControl = false, loadLED = false, loadOF = false;
 
-    string basePath = "./data/";
-    string controlpath = basePath + "control.json";
-    string LEDpath = basePath + "LED.json";
-    string OFpath = basePath + "OF.json";
+    string basePath = BASE_PATH;
+    string controlpath = basePath + "data/control.json";
+    string LEDpath = basePath + "data/LED.json";
+    string OFpath = basePath + "data/OF.json";
 
     string dataType;
     if (argc >= 2) {
@@ -144,7 +146,7 @@ int main(int argc, char *argv[]) {
         infile.close();
     }
 
-    string ofileName = basePath + "/dancer.dat";
+    string ofileName = basePath + "data/dancer.dat";
     if (loadControl) {
         Player dancer;
         dancer.setDancer(dancerName, ControlJsonFile);
