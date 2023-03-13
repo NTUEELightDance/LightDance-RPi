@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 # USERNAME=$1
 # WORKSPACE="${2/#\~/$HOME}"
 # 

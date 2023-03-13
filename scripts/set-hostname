@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 HOSTNAME=$1
 OLD_HOSTNAME=$(head -n 1 /etc/hostname)
 
