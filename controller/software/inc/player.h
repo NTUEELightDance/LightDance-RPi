@@ -22,10 +22,10 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/version.hpp>
 
-// LED
 #include "LEDPlayer.h"
-// OF
 #include "OFPlayer.h"
+#include "const.h"
+
 using namespace std;
 using json = nlohmann::json;
 

@@ -43,6 +43,7 @@ void OFPlayer::serialize(Archive &archive, const unsigned int version) {
     archive &frameList;
     archive &statusList;
     archive &channelIds;
+    archive &OFnum;
 }
 
 string OFPlayer::list() const {
@@ -100,11 +101,14 @@ bool restoreOFPlayer(OFPlayer &player, const char *filename) {
 OFPlayer::OFPlayer() : fps(0){};
 
 OFPlayer::OFPlayer(const int &_fps, const vector<OFFrame> &_frameList,
-                   const vector<vector<OFStatus>> &_statusList, unordered_map<string, int> &_channeldIds) {
+                   const vector<vector<OFStatus>> &_statusList,
+                   unordered_map<string, int> &_channeldIds, const int &_OFnum) {
     fps = _fps;
+    OFnum = _OFnum;
     frameList.assign(_frameList.begin(), _frameList.end());
     statusList.assign(_statusList.begin(), _statusList.end());
-    for (unordered_map<string, int>::iterator part_it = _channeldIds.begin(); part_it!=_channeldIds.end();part_it++){
+    for (unordered_map<string, int>::iterator part_it = _channeldIds.begin();
+         part_it != _channeldIds.end(); part_it++) {
         channelIds[part_it->first] = part_it->second;
     }
 
@@ -132,14 +136,14 @@ vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
     const float rate = (float)(time - startTime) / (float)(endTime - startTime);
 
     vector<OFStatus> fadeFrameStatus;
-    fadeFrameStatus.resize(26);
+    fadeFrameStatus.resize(OFnum);
 
     // Do interpolate
-    for (int i = 0;i < frameList[frameId].statusList.size(); i++) {
-        if (frameId+1 >= frameList.size()) {
+    for (int i = 0; i < frameList[frameId].statusList.size(); i++) {
+        if (frameId + 1 >= frameList.size()) {
             printf("Fade for the last frame should be false.");
             break;
-        }   
+        }
         const string &partName = frameList[frameId].statusList[i].first;
         const OFStatus &status = frameList[frameId].statusList[i].second;
         int channelId = findChannelId(partName);
@@ -187,9 +191,7 @@ int OFPlayer::findFrameId(const long &time) {
 // store infromation of every part
 int OFPlayer::findChannelId(const string &partName) { return channelIds[partName]; }
 
-void OFPlayer::init() {
-    controller.init();
-}
+void OFPlayer::init() { controller.init(); }
 
 vector<int> OFPlayer::castStatusList(vector<OFStatus> statusList) {
     vector<int> castedList(statusList.size());

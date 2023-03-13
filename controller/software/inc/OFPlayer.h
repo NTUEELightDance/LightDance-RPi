@@ -55,7 +55,8 @@ class OFPlayer {
    public:
     OFPlayer();
     OFPlayer(const int &_fps, const vector<OFFrame> &_frameList,
-             const vector<vector<OFStatus>> &_statusList, unordered_map<string, int> &_channelIds);
+             const vector<vector<OFStatus>> &_statusList, unordered_map<string, int> &_channelIds,
+             const int &_OFnum);
 
     // threading function
     void loop(const bool *playing, const timeval *baseTime, const bool *toTerminate);
@@ -65,9 +66,10 @@ class OFPlayer {
     void serialize(Archive &archive, const unsigned int version);
     string list() const;
 
-//    private:
+   private:
     int fps;
     int frameId;
+    int OFnum;
     vector<OFFrame> frameList;
     vector<vector<OFStatus>> statusList;
     unordered_map<string, int> channelIds;
@@ -83,7 +85,6 @@ class OFPlayer {
 
     vector<int> castStatusList(const vector<OFStatus> statusList);
 
-private:
     // serialization
     friend class boost::serialization::access;
     friend ostream &operator<<(ostream &os, const OFPlayer &player);

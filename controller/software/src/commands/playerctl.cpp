@@ -14,8 +14,8 @@
 #include "command.h"
 
 using namespace std;
-#define secAdjust 1000000
-#define msecAdjust 1000
+#define secAdjust 1000
+#define msecAdjust 1
 class Play : public Command {
    public:
     Play() : Command() {
