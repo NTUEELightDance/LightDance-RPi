@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 SERVER_IP=$1
 WORKSPACE="/home/pi/LightDance-RPi"
 

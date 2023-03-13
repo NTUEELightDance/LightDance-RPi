@@ -1,16 +1,11 @@
+#!/usr/bin/env sh
+
 USERNAME="pi"
 WORKSPACE="/home/pi/LightDance-RPi"
 
-sudo systemctl stop player.service
-sudo systemctl stop client.service
-
 cd $WORKSPACE
-git pull
+git stash && git pull
 rm -rf controller/hardware
 git submodule update --init
-
-cd $WORKSPACE/scripts
-./build-controller
-
-sudo systemctl restart player.service
-sudo systemctl restart client.service
+cd $WORKSPACE/controller/hardware
+git checkout main

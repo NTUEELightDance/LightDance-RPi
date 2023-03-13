@@ -1,4 +1,5 @@
 #include "command.h"
+#include "const.h"
 #include "player.h"
 
 class LEDtest : public Command {
@@ -72,7 +73,7 @@ class LEDtest : public Command {
     }
     int Test(const string& part, int R, int G, int B, int alpha) {
         Player player;
-        string path = "./data/dancer.dat";
+        string path = string(BASE_PATH) + "data/dancer.dat");
         if (!restorePlayer(player, path.c_str())) {
             cout << "Need to load first!\n";
             return 0;

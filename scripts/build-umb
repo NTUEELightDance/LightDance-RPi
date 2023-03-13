@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+
+WORKSPACE="/home/pi/LightDance-RPi"
+
+sudo systemctl stop player.service
+sudo systemctl stop client.service
+
+cd $WORKSPACE/controller/hardware
+git submodule update --init --recursive
+
+# build controller
+cd $WORKSPACE/controller
+mkdir -p build && cd build
+cmake -DUMBRELLA=ON .. && make -j4 install
+
+# install controller binaries to /usr/local/bin
+cd $WORKSPACE/controller
+sudo rm -rf /usr/local/bin/*
+sudo cp -r bin/* /usr/local/bin/
+sudo chown root /usr/local/bin/*
+sudo chmod u+s /usr/local/bin/*
+
+sudo systemctl start player.service
+sudo systemctl start client.service

@@ -1,5 +1,6 @@
 #include "player.h"
 
+#include "const.h"
 string Player::getDancerName() { return dancerName; };
 
 bool Player::setDancer(const string &_dancerName, json &dancerData) {
@@ -107,7 +108,7 @@ void LEDload(Player &Player, json &data_json) {
     vector<int> stripShapes;
 
     // TODO: load from .h file, instead of hard coded
-    const int partNum = 8;
+    const int partNum = LED_NUM;
 
     stripShapes.resize(partNum);
     fill(stripShapes.begin(), stripShapes.end(), 0);
@@ -161,9 +162,9 @@ void LEDload(Player &Player, json &data_json) {
 void OFload(Player &Player, json &data_json) {
     vector<OFFrame> frameLists;
     vector<vector<OFStatus>> statusList;
-    
+
     // TODO: load from .h file, instead of hard coded
-    const int partNum = 26;
+    const int partNum = OF_NUM;
 
     frameLists.clear();
     statusList.clear();
@@ -175,12 +176,12 @@ void OFload(Player &Player, json &data_json) {
         vector<OFStatus> status;
         status.clear();
         status.resize(partNum);
+        fill(status.begin(), status.end(), darkStatus);  // fill 0 to every body part
         vector<pair<string, OFStatus>> frameStatus;
         frameStatus.clear();
         if (frame_json.empty()) {
             // If no frames are given, push only dark frame
             // frameLists.push_back(darkFrame);
-            // fill(status.begin(), status.end(), darkStatus);
             // statusList.push_back(status);
             continue;
         }
@@ -200,6 +201,6 @@ void OFload(Player &Player, json &data_json) {
         statusList.push_back(status);
     }
 
-    Player.myOFPlayer = OFPlayer(Player.fps, frameLists, statusList, Player.OFPARTS);
+    Player.myOFPlayer = OFPlayer(Player.fps, frameLists, statusList, Player.OFPARTS, partNum);
     Player.OFloaded = true;
 }

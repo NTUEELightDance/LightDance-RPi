@@ -1,4 +1,5 @@
 #include "command.h"
+#include "const.h"
 #include "player.h"
 
 class FrameTest: public Command{
@@ -28,7 +29,7 @@ class FrameTest: public Command{
 
     int Test(int ms){
         Player player;
-        string path = "./data/dancer.dat";
+        string path = string(BASE_PATH) + "data/dancer.dat";
         if (!restorePlayer(player, path.c_str())) {
             cout<<"Need to load first!\n";
             return 0;
