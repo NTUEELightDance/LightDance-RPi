@@ -107,7 +107,6 @@ void LEDload(Player &Player, json &data_json) {
     vector<vector<LEDFrame>> frameLists;
     vector<int> stripShapes;
 
-    // TODO: load from .h file, instead of hard coded
     const int partNum = LED_NUM;
 
     stripShapes.resize(partNum);
@@ -157,6 +156,13 @@ void LEDload(Player &Player, json &data_json) {
 
     Player.myLEDPlayer = LEDPlayer(Player.fps, frameLists, stripShapes);
     Player.LEDloaded = true;
+
+    vector<vector<int>> &currentStatus = Player.myLEDPlayer.currentStatus;
+    currentStatus.resize(partNum);
+    for (int i = 0; i < partNum; i++) {
+        currentStatus[i].resize(stripShapes[i]);
+        fill(currentStatus[i].begin(), currentStatus[i].end(), 0);
+    }
 }
 
 void OFload(Player &Player, json &data_json) {
@@ -176,7 +182,8 @@ void OFload(Player &Player, json &data_json) {
         vector<OFStatus> status;
         status.clear();
         status.resize(partNum);
-        fill(status.begin(), status.end(), darkStatus);  // fill 0 to every body part
+        fill(status.begin(), status.end(),
+             darkStatus);  // fill 0 to every body part
         vector<pair<string, OFStatus>> frameStatus;
         frameStatus.clear();
         if (frame_json.empty()) {
@@ -203,4 +210,8 @@ void OFload(Player &Player, json &data_json) {
 
     Player.myOFPlayer = OFPlayer(Player.fps, frameLists, statusList, Player.OFPARTS, partNum);
     Player.OFloaded = true;
+
+    vector<int> &currentStatus = Player.myOFPlayer.currentStatus;
+    currentStatus.resize(partNum);
+    fill(currentStatus.begin(), currentStatus.end(), 0);
 }

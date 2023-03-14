@@ -54,11 +54,10 @@ class PartTest : public Command {
     }
 
    private:
-    map<char, int> hexCode = {
-        {'0', 0},  {'1', 1},  {'2', 2},  {'3', 3},  {'4', 4},  {'5', 5},
-        {'6', 6},  {'7', 7},  {'8', 8},  {'9', 9},  {'A', 10}, {'B', 11},
-        {'C', 12}, {'D', 13}, {'E', 14}, {'F', 15}, {'a', 10}, {'b', 11},
-        {'c', 12}, {'d', 13}, {'e', 14}, {'f', 15}};
+    map<char, int> hexCode = {{'0', 0},  {'1', 1},  {'2', 2},  {'3', 3},  {'4', 4},  {'5', 5},
+                              {'6', 6},  {'7', 7},  {'8', 8},  {'9', 9},  {'A', 10}, {'B', 11},
+                              {'C', 12}, {'D', 13}, {'E', 14}, {'F', 15}, {'a', 10}, {'b', 11},
+                              {'c', 12}, {'d', 13}, {'e', 14}, {'f', 15}};
 
     void colorCode2RGB(string hex, int& R, int& G, int& B) {
         if (hex.size() == 6) {
@@ -79,13 +78,12 @@ class PartTest : public Command {
             return 0;
         }
 
-        vector<int> OFbuf(OF_NUM);
-        vector<vector<int> > LEDbuf(LED_NUM);
+        vector<int>& OFbuf = player.myOFPlayer.currentStatus;
+        vector<vector<int> >& LEDbuf = player.myLEDPlayer.currentStatus;
         vector<int> Shape(LED_NUM, 0);
         for (auto parts : player.LEDPARTS) {
             int id = parts.second.id;
             int len = parts.second.len;
-            LEDbuf[id].resize(len);
             Shape[id] = len;
         }
         int color = (R << 24) + (G << 16) + (B << 8) + alpha;
@@ -116,7 +114,7 @@ class PartTest : public Command {
         LEDController& LED_CTRL = player.myLEDPlayer.controller;
         OF_CTRL.init();
         LED_CTRL.init(Shape);
-        
+
         cout << "sending OF" << endl;
         OF_CTRL.sendAll(OFbuf);
 
@@ -124,7 +122,9 @@ class PartTest : public Command {
         LED_CTRL.sendAll(LEDbuf);
         LED_CTRL.finish();
 
+        savePlayer(player, path.c_str());
         cout << "done" << endl;
+
         return 0;
     }
 };

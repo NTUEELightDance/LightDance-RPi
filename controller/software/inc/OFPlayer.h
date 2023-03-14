@@ -55,6 +55,8 @@ class OFPlayer {
    public:
     OFController controller;
 
+    vector<int> currentStatus;
+
     OFPlayer();
     OFPlayer(const int &_fps, const vector<OFFrame> &_frameList,
              const vector<vector<OFStatus>> &_statusList, unordered_map<string, int> &_channelIds,
