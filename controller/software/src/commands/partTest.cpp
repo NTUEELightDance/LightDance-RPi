@@ -5,10 +5,11 @@
 class PartTest : public Command {
    public:
     PartTest() : Command() {
-        addFlag("-h", "help");
+        addFlag("-h", "Help");
         addFlag("--rgb", "RGB values");
-        addFlag("--hex", "color hex");
-        addFlag("-a", "alpha");
+        addFlag("--hex", "Color hex");
+        addFlag("-a", "Alpha");
+        addFlag("-n", "Index of the LED");
     }
     int execute(int argc, char* argv[]) {
         // cout<<argc<<"\n";
@@ -24,7 +25,8 @@ class PartTest : public Command {
             PartName = argv[1];
         }
 
-        int R = 255, G = 255, B = 255, alpha = 255;
+        int R = 255, G = 255, B = 255, alpha = 10;
+        int n = -1;
         if (cmdOptionExists(argv, argv + argc, "--rgb")) {
             vector<int> rgb = getCmdOptionInt(argv, argv + argc, "--rgb");
             if (rgb.size() >= 3) {
@@ -50,14 +52,23 @@ class PartTest : public Command {
                 cout << "Alpha value not specified! Using default\n";
             }
         }
-        return Test(PartName, R, G, B, alpha);
+        if (cmdOptionExists(argv, argv + argc, "-n")) {
+            vector<int> _n = getCmdOptionInt(argv, argv + argc, "-n");
+            if (_n.size()) {
+                n = _n[0];
+            } else {
+                cout << "LED index not specified! Using default\n";
+            }
+        }
+        return Test(PartName, R, G, B, alpha, n);
     }
 
    private:
-    map<char, int> hexCode = {{'0', 0},  {'1', 1},  {'2', 2},  {'3', 3},  {'4', 4},  {'5', 5},
-                              {'6', 6},  {'7', 7},  {'8', 8},  {'9', 9},  {'A', 10}, {'B', 11},
-                              {'C', 12}, {'D', 13}, {'E', 14}, {'F', 15}, {'a', 10}, {'b', 11},
-                              {'c', 12}, {'d', 13}, {'e', 14}, {'f', 15}};
+    map<char, int> hexCode = {
+        {'0', 0},  {'1', 1},  {'2', 2},  {'3', 3},  {'4', 4},  {'5', 5},
+        {'6', 6},  {'7', 7},  {'8', 8},  {'9', 9},  {'A', 10}, {'B', 11},
+        {'C', 12}, {'D', 13}, {'E', 14}, {'F', 15}, {'a', 10}, {'b', 11},
+        {'c', 12}, {'d', 13}, {'e', 14}, {'f', 15}};
 
     void colorCode2RGB(string hex, int& R, int& G, int& B) {
         if (hex.size() == 6) {
@@ -68,7 +79,7 @@ class PartTest : public Command {
             cout << "Color hex length error!\n";
         }
     }
-    int Test(const string& part, int R, int G, int B, int alpha) {
+    int Test(const string& part, int R, int G, int B, int alpha, int n) {
         Player player;
         string base_path = BASE_PATH;
         string path = base_path + "data/dancer.dat";
@@ -87,6 +98,9 @@ class PartTest : public Command {
             Shape[id] = len;
         }
         int color = (R << 24) + (G << 16) + (B << 8) + alpha;
+        // cout << "R = " << R << ", G = " << G << ", B = " << B << ", alpha = "
+        //      << alpha << "\n";
+        // cout << "color = " << color << "\n";
 
         if (part == "All" || part == "ALL" || part == "all") {
             for (auto part : player.OFPARTS) {
@@ -102,28 +116,38 @@ class PartTest : public Command {
             OFbuf[id] = color;
         } else if (player.LEDPARTS.find(part) != player.LEDPARTS.end()) {
             int i = player.LEDPARTS[part].id;
-            for (int j = 0; j < Shape[i]; j++) {
-                LEDbuf[i][j] = color;
+            cout << "LED part " << part << " found at index " << i << endl;
+            cout << "n = " << n << "\n";
+            if (n >= 0 && n < Shape[i]) {
+                LEDbuf[i][n] = color;
+            } else if (n == -1) {
+                for (int j = 0; j < Shape[i]; j++) {
+                    LEDbuf[i][j] = color;
+                }
+            } else {
+                cout << "Error: LED index out of range!\n";
             }
         } else {
             cout << "Error: Can't find part " << part << "!\n";
             return 0;
         }
+        int fd = open("/dev/null", O_WRONLY);
+        dup2(fd, 1);
 
         OFController& OF_CTRL = player.myOFPlayer.controller;
         LEDController& LED_CTRL = player.myLEDPlayer.controller;
         OF_CTRL.init();
         LED_CTRL.init(Shape);
 
-        cout << "sending OF" << endl;
+        cout << "Sending OF" << endl;
         OF_CTRL.sendAll(OFbuf);
 
-        cout << "sending LED" << endl;
+        cout << "Sending LED" << endl;
         LED_CTRL.sendAll(LEDbuf);
         LED_CTRL.finish();
 
         savePlayer(player, path.c_str());
-        cout << "done" << endl;
+        cout << "Done" << endl;
 
         return 0;
     }

@@ -1,0 +1,58 @@
+{
+  "fps": 30,
+  "OFPARTS": {
+    "lapel_right": 4,
+    "lapel_left": 14,
+    "arm_outer_right": 9,
+    "arm_outer_left": 16,
+    "waist_right": 5,
+    "arm_inner_right": 8,
+    "waist_left": 1,
+    "arm_inner_left": 19,
+    "pocket": 0,
+    "hem": 3,
+    "collar_right": 2,
+    "collar_left": 15,
+    "collar_back": 13,
+    "brim": 12,
+    "beret": 17,
+    "leg_inner_right": 33,
+    "leg_inner_left": 30,
+    "leg_outer_right": 21,
+    "leg_outer_left": 27,
+    "leg_front_right": 32,
+    "leg_front_left": 31,
+    "leg_back_right": 34,
+    "leg_back_left": 29
+  },
+  "LEDPARTS": {
+    "glove_right_LED": {
+      "id": 0,
+      "len": 54
+    },
+    "glove_left_LED": {
+      "id": 1,
+      "len": 54
+    },
+    "glasses_LED": {
+      "id": 2,
+      "len": 25
+    },
+    "buttons_LED": {
+      "id": 3,
+      "len": 8
+    },
+    "tie_LED": {
+      "id": 4,
+      "len": 73
+    },
+    "oxford_right_LED": {
+      "id": 5,
+      "len": 77
+    },
+    "oxford_left_LED": {
+      "id": 6,
+      "len": 77
+    }
+  }
+}
