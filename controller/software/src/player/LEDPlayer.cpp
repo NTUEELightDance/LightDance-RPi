@@ -218,6 +218,31 @@ void LEDPlayer::init() {
     printf("LEDPlayer init, Num: %d\n", (int)stripShapes.size());
 }
 
+void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
+    vector<vector<LEDStatus>> statusLists;
+
+    //Let OF lightall for 1/5 times of delayTime
+    if(*delayingDisplay){
+        statusLists.clear();
+        for (int i = 0; i < frameIds.size(); i++) {
+            vector<LEDStatus> statusList;
+            for (int j = 0; j < stripShapes[i]; j++) {
+                statusList.push_back(LEDStatus(30, 30, 30, 10));
+            }
+            statusLists.push_back(statusList);
+        }
+        controller.sendAll(castStatusLists(statusLists));
+        controller.finish();
+    }else {
+        statusLists.clear();
+        for (int i = 0; i < frameIds.size(); i++) {
+            statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
+        }
+        controller.sendAll(castStatusLists(statusLists));
+        controller.finish();
+    }
+}
+
 void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *toTerminate) {
     timeval currentTime;
     vector<vector<LEDStatus>> statusLists;
@@ -236,17 +261,9 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *t
         if (*playing) {
             gettimeofday(&currentTime, NULL);
             const long elapsedTime = getElapsedTime(*baseTime, currentTime);
-            // printf("Time: %f\n", elapsedTime / 1000000.0f);
 
             const int currentTimeId = getTimeId(elapsedTime);
-            // printf("Time Id: %d\n", currentTimeId);
             calculateFrameIds(currentTimeId);
-
-            // printf("LEDFrame Ids: ");
-            // for (const int &id : frameIds) {
-            //     printf(" %d", id);
-            // }
-            // printf("\n");
 
             statusLists.clear();
             for (int i = 0; i < frameIds.size(); i++) {
@@ -270,16 +287,6 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *t
                 } else {
                     statusLists.push_back(frameList[frameId].statusList);
                 }
-
-                // printf("  LEDFrame: %d\n", i);
-                // const vector<LEDStatus> &statusList = statusLists[i];
-                // for (int j = 0; j < 1; j++) {
-                //     printf("    status: %d\n", j);
-                //     printf("      r: %d\n", statusList[j].r);
-                //     printf("      g: %d\n", statusList[j].g);
-                //     printf("      b: %d\n", statusList[j].b);
-                //     printf("      a: %d\n", statusList[j].a);
-                // }
             }
 
             controller.sendAll(castStatusLists(statusLists));

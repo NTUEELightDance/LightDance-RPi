@@ -21,7 +21,7 @@
 timeval baseTime, startTime;
 long stopTime, delayTime;
 bool stopTimeAssigned = false;
-bool playing = false, paused = false, stopped = true, delaying = false;
+bool playing = false, paused = false, stopped = true, delaying = false, delayingDisplay = true;
 bool to_terminate = false;
 enum CMD { PLAY, PAUSE, STOP };
 std::string cmds[10] = {"play", "pause", "stop"};
@@ -84,7 +84,7 @@ bool restart() {
     playing = false;
 
     string path = string(BASE_PATH) + "data/dancer.dat";
-    if (!restorePlayer(player, "/home/pi/LightDance-RPi/data/dancer.dat")) {
+    if (!restorePlayer(player, path.c_str())) {
         fprintf(stderr, "restorePlayer ERROR\n");
         return false;
     }
@@ -214,6 +214,10 @@ int main(int argc, char *argv[]) {
             //     printf("delay_cnt %ld\n",tv.tv_sec);
             //     s = tv.tv_sec;
             // }
+            // OF lightall for 1/5 times of delay time
+            // of_player.delayDisplay(&delayingDisplay);
+            led_player.delayDisplay(&delayingDisplay);
+            if (delayed_us > delayTime/5l) delayingDisplay = false;
             if (delayed_us > delayTime) {
                 delaying = false;
                 if (paused) {

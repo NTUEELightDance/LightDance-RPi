@@ -64,6 +64,7 @@ class OFPlayer {
 
     // threading function
     void loop(const bool *playing, const timeval *baseTime, const bool *toTerminate);
+    void delayDisplay(const bool *delayingDisplay);
     void init();
 
     template <class Archive>
@@ -84,6 +85,7 @@ class OFPlayer {
     vector<OFStatus> findFadeFrameStatus(const long &time);
     int findFrameId(const long &time);
     int findChannelId(const string &partName);
+    void setLightStatus(vector<OFStatus> &statusList, int r, int g, int b, int a);
 
     vector<int> castStatusList(const vector<OFStatus> statusList);
 

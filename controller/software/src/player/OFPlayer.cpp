@@ -204,6 +204,28 @@ vector<int> OFPlayer::castStatusList(vector<OFStatus> statusList) {
     return castedList;
 }
 
+void OFPlayer::setLightStatus(vector<OFStatus> &statusList, int r, int g, int b, int a) {
+    statusList.resize(channelIds.size());
+    for (auto &status : statusList) {
+        status = OFStatus(r, g, b, a);
+    }
+}
+
+
+void OFPlayer::delayDisplay(const bool *delayingDisplay) {
+    vector<OFStatus> statusList;
+
+    //Let OF lightall for 1/5 times of delayTime
+    if(*delayingDisplay){
+        setLightStatus(statusList, 30, 30, 30, 10);
+        controller.sendAll(castStatusList(statusList));
+    }else {
+        setLightStatus(statusList, 0, 0, 0, 0);
+        controller.sendAll(castStatusList(statusList));
+    }
+
+}
+
 void OFPlayer::loop(const bool *playing, const timeval *baseTime, const bool *toTerminate) {
     timeval currentTime;
     vector<OFStatus> statusList;
@@ -211,12 +233,8 @@ void OFPlayer::loop(const bool *playing, const timeval *baseTime, const bool *to
     while (true) {
         if (*toTerminate) {
             // TODO: finish darkall
-            statusList.resize(channelIds.size());
-            for (auto &status : statusList) {
-                status = OFStatus(0, 0, 0, 0);
-            }
+            setLightStatus(statusList, 0, 0, 0, 0);
             controller.sendAll(castStatusList(statusList));
-
             break;
         }
         if (*playing) {
