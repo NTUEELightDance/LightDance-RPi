@@ -1,8 +1,9 @@
 import os
 import socket
 from datetime import datetime
+from config import *
 
-HOST = ("192.168.0.200", 7122)
+HOST = (SERVER_IP, SERVER_PORT)
 
 
 class NTPClient:

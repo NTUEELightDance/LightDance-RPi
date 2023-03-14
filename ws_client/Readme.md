@@ -4,16 +4,15 @@
 
 ### on_connect
 
-* send MAC address to control server when connected
+- send MAC address to control server when connected
 
 MAC address example : F8:5E:A0:2F:B7:13
-
 
 ```json
 {
     "command":"boardInfo",
     "status": 0,
-    "payload": 
+    "payload":
     {
         "type":"RPi",
         "info":{
@@ -25,9 +24,9 @@ MAC address example : F8:5E:A0:2F:B7:13
 
 ### after executing command
 
-* command : the command RPi just executed/got from control server
-* status : return value of the execution (0 for success)
-* message : return message or error message from execution
+- command : the command RPi just executed/got from control server
+- status : return value of the execution (0 for success)
+- message : return message or error message from execution
 
 ```json
 {
@@ -70,41 +69,44 @@ MAC address example : F8:5E:A0:2F:B7:13
 }
 
 ```
-* **control.json** is the pin table of LEDs and OFs
+
+- **control.json** is the pin table of LEDs and OFs
 
 ## Command type for control server to send
 
-| command       | action        | payload       | flags            |
-| ------------- |:-------------:|:-------------:|:--------------:|
-| upload        | "upload"      | [control.json, OF.json, LED.json]         |
-| play          | "command"     | ["playerctl", "play", start time : str]   | -s -d |
-| pause         | "command"     | ["playerctl", "pause"]    |
-| stop          | "command"     | ["playerctl", "stop"]     |
-| restart       | "command"     | ["playerctl", "restart"]  |
-| quit          | "command"     | ["playerctl", "quit"]     |
-| list          | "command"     | ["list"]                  |
-| LEDtest       | "command"     | ["ledtest", flags...]               | --rgb --hex -a| 
-| OFtest        | "command"     | ["oftest", flags...]                | --rgb --hex -a|
+| command |  action   |                 payload                 |     flags      |
+| ------- | :-------: | :-------------------------------------: | :------------: |
+| upload  | "upload"  |    [control.json, OF.json, LED.json]    |
+| play    | "command" | ["playerctl", "play", start time : str] |     -s -d      |
+| pause   | "command" |         ["playerctl", "pause"]          |
+| stop    | "command" |          ["playerctl", "stop"]          |
+| restart | "command" |        ["playerctl", "restart"]         |
+| quit    | "command" |          ["playerctl", "quit"]          |
+| list    | "command" |                ["list"]                 |
+| LEDtest | "command" |          ["ledtest", flags...]          | --rgb --hex -a |
+| OFtest  | "command" |          ["oftest", flags...]           | --rgb --hex -a |
 
 ### meaning of flags
+
 #### play
-|flag       |meaning                |
-| -----     |:---------------------:|
-|-s --sec   | set start time unit to **second**  |
-|-d --delay | set delay before play |
+
+| flag       |              meaning              |
+| ---------- | :-------------------------------: |
+| -s --sec   | set start time unit to **second** |
+| -d --delay |       set delay before play       |
 
 **if not specified by flag**
-* start from 0
-* time unit is millisecond
 
+- start from 0
+- time unit is millisecond
 
 #### LEDtest OFtest
-|flag   |meaning            |
-| ----- |:-----------------:|
-|--rgb  | set r,g,b value   |
-|--hex  | set hex color code|
-|-a     | set alpha value   |
 
+| flag  |      meaning       |
+| ----- | :----------------: |
+| --rgb |  set r,g,b value   |
+| --hex | set hex color code |
+| -a    |  set alpha value   |
 
 ## Example of json files
 
@@ -153,6 +155,7 @@ MAC address example : F8:5E:A0:2F:B7:13
 ```
 
 ### LED.json
+
 ```json
 {
   "led1": [
@@ -160,30 +163,30 @@ MAC address example : F8:5E:A0:2F:B7:13
       "start": 0,
       "fade": true,
       "status": [
-          [40, 0, 0, 10],
-          [40, 0, 0, 10],
-          [40, 0, 0, 10],
-          [40, 0, 0, 10]
+        [40, 0, 0, 10],
+        [40, 0, 0, 10],
+        [40, 0, 0, 10],
+        [40, 0, 0, 10]
       ]
     },
     {
       "start": 150,
       "fade": true,
       "status": [
-          [0, 40, 0, 10],
-          [0, 40, 0, 10],
-          [0, 40, 0, 10],
-          [0, 40, 0, 10]
+        [0, 40, 0, 10],
+        [0, 40, 0, 10],
+        [0, 40, 0, 10],
+        [0, 40, 0, 10]
       ]
     },
     {
       "start": 300,
       "fade": false,
       "status": [
-          [0, 0, 40, 10],
-          [0, 0, 40, 10],
-          [0, 0, 40, 10],
-          [0, 0, 40, 10]
+        [0, 0, 40, 10],
+        [0, 0, 40, 10],
+        [0, 0, 40, 10],
+        [0, 0, 40, 10]
       ]
     }
   ],
@@ -312,5 +315,4 @@ MAC address example : F8:5E:A0:2F:B7:13
     }
   }
 ]
-
 ```
