@@ -9,16 +9,16 @@
 #include <iostream>
 
 #include "LEDPlayer.h"
+#include "const.h"
 #include "nlohmann/json.hpp"
 #include "player.h"
-#include "const.h"
 
 /*
 "load" help file
 
 ---- load <Data Type> <Data Path> ----
 
-load given JSON file to a BIN file ( /lightdancer/dancer.dat )
+load given JSON file to a BIN file ( dancer.dat )
 
 Data Type ( optional ) :
     If not assigned, it will load all three data by their default path
@@ -29,9 +29,9 @@ Data Type ( optional ) :
 Data Path ( optional ) :
     Must be assigned to a specific Data Type to load from a specific path
     If not assigned, it will load from the below default path.
-    - control: /lightdance/control.json
-    - LED: /lightdance/LED.json
-    - OF: /lightdance/control.json
+    - control: data/control.json
+    - LED: data/LED.json
+    - OF: data/control.json
 
 i.e. All support commands are listed below:
     $ load
@@ -51,13 +51,14 @@ some ERROR messages might occur:
     Please enter .json file only.
 
 3. Cannot open file     :
-    The folder "/lightdancer/"(or the folder you provide) might not be made.
+    The folder "data"(or the folder you provide) might not be made.
 
 4. Please Load the dancer's control data first :
     When loading LED or OF, you Load control data first.
 
-5."terminate called after throwing an instance of 'nlohmann::detail::type_error'..." :
-    The data type and file you provided might have a mismatch. (e.g. load LED OF.json).
+5."terminate called after throwing an instance of
+'nlohmann::detail::type_error'..." : The data type and file you provided might
+have a mismatch. (e.g. load LED OF.json).
 
 */
 using namespace std;
@@ -68,7 +69,7 @@ int main(int argc, char *argv[]) {
     bool loadControl = false, loadLED = false, loadOF = false;
 
     string basePath = BASE_PATH;
-    string controlpath = basePath + "data/control.json";
+    string controlPath = basePath + "data/control.json";
     string LEDpath = basePath + "data/LED.json";
     string OFpath = basePath + "data/OF.json";
 
@@ -107,22 +108,23 @@ int main(int argc, char *argv[]) {
         }
     }
     if (path.compare("NONE") != 0) {
-        if (loadControl) controlpath = path;
+        if (loadControl) controlPath = path;
         if (loadLED) LEDpath = path;
         if (loadOF) OFpath = path;
     }
 
     // size_t fileNameStart = path.find_last_of("/\\") + 1;
-    // string dancerName = path.substr(fileNameStart, path.find_last_of(".") - fileNameStart);
+    // string dancerName = path.substr(fileNameStart, path.find_last_of(".") -
+    // fileNameStart);
     string dancerName = "DANCER";
-    json ControlJsonFile;
+    json controlJsonFile;
     if (loadControl) {
-        ifstream infile(controlpath.c_str());
+        ifstream infile(controlPath.c_str());
         if (!infile) {
-            cerr << "Cannot open file: " << controlpath << endl;
+            cerr << "Cannot open file: " << controlPath << endl;
             exit(1);
         }
-        infile >> ControlJsonFile;
+        infile >> controlJsonFile;
         infile.close();
     }
     json LEDJsonFile;
@@ -146,13 +148,13 @@ int main(int argc, char *argv[]) {
         infile.close();
     }
 
-    string ofileName = basePath + "data/dancer.dat";
+    string outputFileName = basePath + "data/dancer.dat";
     if (loadControl) {
         Player dancer;
-        dancer.setDancer(dancerName, ControlJsonFile);
-        cout << "dancer Control data loaded successfully\n";
-        cout << "stored at: " << ofileName << endl;
-        savePlayer(dancer, ofileName.c_str());
+        dancer.setDancer(dancerName, controlJsonFile);
+        cout << "Dancer control data loaded successfully\n";
+        cout << "Stored at: " << outputFileName << endl;
+        savePlayer(dancer, outputFileName.c_str());
 
         // cout << "dancer Control data set as below\n";
         // cout << dancer.list() << endl;
@@ -160,32 +162,31 @@ int main(int argc, char *argv[]) {
     }
 
     Player dancerData;
-    if (!restorePlayer(dancerData, ofileName.c_str())) {
-        cerr << "Please Load dancer's control data first !" << endl;
+    if (!restorePlayer(dancerData, outputFileName.c_str())) {
+        cerr << "Please load dancer's control data first !" << endl;
         exit(1);
     };
     if (loadLED) {
         LEDload(dancerData, LEDJsonFile);
         cout << "LED data loaded successfully\n";
-        cout << "stored at: " << ofileName << endl;
-        savePlayer(dancerData, ofileName.c_str());
+        cout << "Stored at: " << outputFileName << endl;
+        savePlayer(dancerData, outputFileName.c_str());
 
         // Player clarifyPlayer;
-        // restorePlayer(clarifyPlayer, ofileName.c_str());
+        // restorePlayer(clarifyPlayer, outputFileName.c_str());
         // cout << clarifyPlayer.myLEDPlayer;
         // return 0;
     }
     if (loadOF) {
         OFload(dancerData, OFJsonFile);
         cout << "OF data loaded successfully\n";
-        cout << "stored at: " << ofileName << endl;
-        savePlayer(dancerData, ofileName.c_str());
+        cout << "Stored at: " << outputFileName << endl;
+        savePlayer(dancerData, outputFileName.c_str());
 
         // Player clarifyPlayer;
-        // restorePlayer(clarifyPlayer, ofileName.c_str());
+        // restorePlayer(clarifyPlayer, outputFileName.c_str());
         // cout << clarifyPlayer.myOFPlayer;
         // return 0;
     }
-
     return 0;
 }

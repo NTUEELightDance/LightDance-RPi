@@ -28,7 +28,7 @@ set(EXECUTABLES
   # ledtest
   # oftest
   parttest
-  color_palette
+  # color_palette
   player
   # socket
 )
@@ -81,11 +81,11 @@ target_include_directories(parttest PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(parttest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
 # color_palette
-add_executable(
-  color_palette ${SOURCE}/commands/color_palette.cpp ${SOURCE}/commands/player.cpp
-  ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
-target_include_directories(color_palette PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
-target_link_libraries(color_palette ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
+# add_executable(
+#   color_palette ${SOURCE}/commands/color_palette.cpp ${SOURCE}/commands/player.cpp
+#   ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp)
+# target_include_directories(color_palette PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
+# target_link_libraries(color_palette ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
 # player
 add_executable(
@@ -97,8 +97,8 @@ target_link_libraries(player ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES}
 target_link_libraries(player Threads::Threads)
 
 # socket
-add_executable(socket ${SOURCE}/socket/client.cpp)
-target_include_directories(socket PUBLIC ${INCLUDES})
+# add_executable(socket ${SOURCE}/socket/client.cpp)
+# target_include_directories(socket PUBLIC ${INCLUDES})
 
 # install TODO: change installation path to /usr/local
 file(MAKE_DIRECTORY ${INSTALL})
