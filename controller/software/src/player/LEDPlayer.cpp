@@ -232,14 +232,12 @@ void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
             statusLists.push_back(statusList);
         }
         controller.sendAll(castStatusLists(statusLists));
-        controller.finish();
     }else {
         statusLists.clear();
         for (int i = 0; i < frameIds.size(); i++) {
             statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
         }
         controller.sendAll(castStatusLists(statusLists));
-        controller.finish();
     }
 }
 
