@@ -53,6 +53,7 @@ struct LEDFrame {
 class LEDPlayer {
    public:
     LEDController controller;
+    vector<vector<int>> currentStatus;
 
     LEDPlayer();
     LEDPlayer(const int &_fps, const vector<vector<LEDFrame>> &_frameLists,

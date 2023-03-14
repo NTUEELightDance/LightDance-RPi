@@ -49,6 +49,7 @@ void LEDPlayer::serialize(Archive &archive, const unsigned int version) {
     archive &fps;
     archive &frameLists;
     archive &stripShapes;
+    archive &currentStatus;
 }
 
 string LEDPlayer::list() const {

@@ -44,6 +44,7 @@ void OFPlayer::serialize(Archive &archive, const unsigned int version) {
     archive &statusList;
     archive &channelIds;
     archive &OFnum;
+    archive &currentStatus;
 }
 
 string OFPlayer::list() const {

@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     // string dancerName = argv[1];
     // string fileName("./data/");
     // fileName += dancerName + "_DancerData.dat";
-    string fileName = string(BASE_PATH) + "dancer.dat";
+    string fileName = string(BASE_PATH) + "data/dancer.dat";
     Player new_dancer;
     if (!restorePlayer(new_dancer, fileName.c_str())) {
         exit(1);
