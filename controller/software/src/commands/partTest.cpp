@@ -131,8 +131,8 @@ class PartTest : public Command {
             cout << "Error: Can't find part " << part << "!\n";
             return 0;
         }
-        int fd = open("/dev/null", O_WRONLY);
-        dup2(fd, 1);
+        // int fd = open("/dev/null", O_WRONLY);
+        // dup2(fd, 1);
 
         OFController& OF_CTRL = player.myOFPlayer.controller;
         LEDController& LED_CTRL = player.myLEDPlayer.controller;

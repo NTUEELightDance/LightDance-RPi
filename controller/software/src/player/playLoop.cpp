@@ -21,7 +21,8 @@
 timeval baseTime, startTime;
 long stopTime, delayTime;
 bool stopTimeAssigned = false;
-bool playing = false, paused = false, stopped = true, delaying = false, delayingDisplay = true;
+bool playing = false, paused = false, stopped = true, delaying = false,
+     delayingDisplay = true;
 bool to_terminate = false;
 enum CMD { PLAY, PAUSE, STOP };
 std::string cmds[10] = {"play", "pause", "stop"};
@@ -49,7 +50,8 @@ void write_fifo(bool success) {
     close(wr_fd);
 }
 
-const std::vector<std::string> split(const std::string &str, const std::string &pattern) {
+const std::vector<std::string> split(const std::string &str,
+                                     const std::string &pattern) {
     std::vector<std::string> result;
     std::string::size_type begin, end;
 
@@ -95,8 +97,10 @@ bool restart() {
     fprintf(stderr, "Player loaded\n");
 
     to_terminate = false;
-    led_loop = std::thread(&LEDPlayer::loop, &led_player, &playing, &baseTime, &to_terminate);
-    of_loop = std::thread(&OFPlayer::loop, &of_player, &playing, &baseTime, &to_terminate);
+    led_loop = std::thread(&LEDPlayer::loop, &led_player, &playing, &baseTime,
+                           &to_terminate);
+    of_loop = std::thread(&OFPlayer::loop, &of_player, &playing, &baseTime,
+                          &to_terminate);
     return true;
 }
 
@@ -127,7 +131,8 @@ int parse_command(std::string str) {
             if (i == PLAY) {
                 delayTime = 0;
                 delaying = false;
-                if (paused && !(cmd.size() == 1 || (cmd.size() == 3 && cmd[1] == "-d"))) {
+                if (paused &&
+                    !(cmd.size() == 1 || (cmd.size() == 3 && cmd[1] == "-d"))) {
                     paused = false;
                     stop();
                     if (!restart()) {
@@ -217,7 +222,7 @@ int main(int argc, char *argv[]) {
             // OF lightall for 1/5 times of delay time
             // of_player.delayDisplay(&delayingDisplay);
             led_player.delayDisplay(&delayingDisplay);
-            if (delayed_us > delayTime/5l) delayingDisplay = false;
+            if (delayed_us > delayTime / 5l) delayingDisplay = false;
             if (delayed_us > delayTime) {
                 delaying = false;
                 if (paused) {

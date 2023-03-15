@@ -12,7 +12,8 @@ void LEDStatus::serialize(Archive &archive, const unsigned int version) {
 
 LEDStatus::LEDStatus() : r(0), g(0), b(0), a(0) {}
 
-LEDStatus::LEDStatus(const uint &_r, const uint &_g, const uint &_b, const uint &_a)
+LEDStatus::LEDStatus(const uint &_r, const uint &_g, const uint &_b,
+                     const uint &_a)
     : r(_r), g(_g), b(_b), a(_a) {}
 
 // ==================== LEDFrame =============================
@@ -26,7 +27,8 @@ void LEDFrame::serialize(Archive &archive, const unsigned int version) {
 
 LEDFrame::LEDFrame() : start(0), fade(false) {}
 
-LEDFrame::LEDFrame(const int &_start, const bool &_fade, const vector<LEDStatus> &_statusList) {
+LEDFrame::LEDFrame(const int &_start, const bool &_fade,
+                   const vector<LEDStatus> &_statusList) {
     start = _start;
     fade = _fade;
     statusList.clear();
@@ -58,11 +60,11 @@ string LEDPlayer::list() const {
     for (auto part_it : frameLists) {
         ostr << "[";
         for (auto frame_it : part_it) {
-            ostr << "\n\t{\n\tstart: " << frame_it.start << ",\n\tfade: " << frame_it.fade
-                 << ",\n\tstatus: [\n";
+            ostr << "\n\t{\n\tstart: " << frame_it.start
+                 << ",\n\tfade: " << frame_it.fade << ",\n\tstatus: [\n";
             for (auto status_it : frame_it.statusList) {
-                ostr << "\t\t[ " << status_it.r << " , " << status_it.g << " , " << status_it.b
-                     << " , " << status_it.a << " ],\n";
+                ostr << "\t\t[ " << status_it.r << " , " << status_it.g << " , "
+                     << status_it.b << " , " << status_it.a << " ],\n";
             }
             ostr << "\t]\n\t},\n";
         }
@@ -106,7 +108,8 @@ bool restoreLEDPlayer(LEDPlayer &player, const char *filename) {
 
 LEDPlayer::LEDPlayer() : fps(0) {}
 
-LEDPlayer::LEDPlayer(const int &_fps, const vector<vector<LEDFrame>> &_frameLists,
+LEDPlayer::LEDPlayer(const int &_fps,
+                     const vector<vector<LEDFrame>> &_frameLists,
                      const vector<int> &_stripShapes) {
     fps = _fps;
     frameLists.assign(_frameLists.begin(), _frameLists.end());
@@ -116,9 +119,11 @@ LEDPlayer::LEDPlayer(const int &_fps, const vector<vector<LEDFrame>> &_frameList
     fill(frameIds.begin(), frameIds.end(), -1);
 }
 
-long LEDPlayer::getElapsedTime(const struct timeval &base, const struct timeval &current) {
+long LEDPlayer::getElapsedTime(const struct timeval &base,
+                               const struct timeval &current) {
     // Get time elapsed from start time in microsecond
-    return (long)(current.tv_sec - base.tv_sec) * 1000000l + (long)(current.tv_usec - base.tv_usec);
+    return (long)(current.tv_sec - base.tv_sec) * 1000000l +
+           (long)(current.tv_usec - base.tv_usec);
 }
 
 int LEDPlayer::getTimeId(const long &elapsedTime) {
@@ -126,30 +131,32 @@ int LEDPlayer::getTimeId(const long &elapsedTime) {
     return (elapsedTime * (long)fps) / 1000000l;
 }
 
-void LEDPlayer::calculateFrameIds(const int &timeId) {
+void LEDPlayer::calculateFrameIds(const int &millisec) {
     // Find current frame by time id
-    for (int i = 0; i < frameIds.size(); i++) {
+    for (unsigned int i = 0; i < frameIds.size(); i++) {
         const vector<LEDFrame> &frameList = frameLists[i];
 
         // Do not process if no frame is empty or time is invalid
-        if (frameList.size() == 0 || timeId < 0) {
+        if (frameList.size() == 0 || millisec < 0) {
             frameIds[i] = -1;
             continue;
         }
         // Use last frame if time exceeded the limit
-        if (timeId >= frameList.back().start) {
+        if (millisec >= frameList.back().start) {
             frameIds[i] = frameLists[i].size() - 1;
             continue;
         }
 
         // Check if simple move is available
         const int currFrameId = frameIds[i];
-        if (currFrameId >= 0 && timeId >= frameList[currFrameId].start) {
-            if (currFrameId < frameList.size() - 1 && timeId < frameList[currFrameId + 1].start) {
+        if (currFrameId >= 0 && millisec >= frameList[currFrameId].start) {
+            if ((unsigned int)currFrameId < frameList.size() - 1 &&
+                millisec < frameList[currFrameId + 1].start) {
                 continue;
             }
-            if (currFrameId < frameList.size() - 2 && timeId >= frameList[currFrameId + 1].start &&
-                timeId < frameList[currFrameId + 2].start) {
+            if ((unsigned int)currFrameId < frameList.size() - 2 &&
+                millisec >= frameList[currFrameId + 1].start &&
+                millisec < frameList[currFrameId + 2].start) {
                 frameIds[i] = currFrameId + 1;
                 continue;
             }
@@ -160,9 +167,9 @@ void LEDPlayer::calculateFrameIds(const int &timeId) {
         int right = frameList.size() - 1;
         while (left < right) {
             int mid = (left + right) >> 1;
-            if (timeId < frameList[mid].start) {
+            if (millisec < frameList[mid].start) {
                 right = mid - 1;
-            } else if (timeId > frameList[mid].start) {
+            } else if (millisec > frameList[mid].start) {
                 left = mid + 1;
             } else {
                 left = mid;
@@ -174,35 +181,37 @@ void LEDPlayer::calculateFrameIds(const int &timeId) {
     }
 }
 
-vector<LEDStatus> LEDPlayer::interpolateFadeFrame(const LEDFrame &origin, const LEDFrame &target,
+vector<LEDStatus> LEDPlayer::interpolateFadeFrame(const LEDFrame &origin,
+                                                  const LEDFrame &target,
                                                   const float &rate) {
     vector<LEDStatus> statusList(0);
-    for (int i = 0; i < origin.statusList.size(); i++) {
+    for (unsigned int i = 0; i < origin.statusList.size(); i++) {
         const LEDStatus &originLEDStatus = origin.statusList[i];
         const LEDStatus &targetLEDStatus = target.statusList[i];
 
-        const int &r =
-            (int)round((1 - rate) * (float)originLEDStatus.r + rate * (float)targetLEDStatus.r);
-        const int &g =
-            (int)round((1 - rate) * (float)originLEDStatus.g + rate * (float)targetLEDStatus.g);
-        const int &b =
-            (int)round((1 - rate) * (float)originLEDStatus.b + rate * (float)targetLEDStatus.b);
-        const int &a =
-            (int)round((1 - rate) * (float)originLEDStatus.a + rate * (float)targetLEDStatus.a);
+        const int &r = (int)round((1 - rate) * (float)originLEDStatus.r +
+                                  rate * (float)targetLEDStatus.r);
+        const int &g = (int)round((1 - rate) * (float)originLEDStatus.g +
+                                  rate * (float)targetLEDStatus.g);
+        const int &b = (int)round((1 - rate) * (float)originLEDStatus.b +
+                                  rate * (float)targetLEDStatus.b);
+        const int &a = (int)round((1 - rate) * (float)originLEDStatus.a +
+                                  rate * (float)targetLEDStatus.a);
         statusList.push_back(LEDStatus(r, g, b, a));
     }
 
     return statusList;
 }
 
-vector<vector<int>> LEDPlayer::castStatusLists(const vector<vector<LEDStatus>> statusLists) {
+vector<vector<int>> LEDPlayer::castStatusLists(
+    const vector<vector<LEDStatus>> statusLists) {
     vector<vector<int>> castedLists(statusLists.size());
-    for (int i = 0; i < statusLists.size(); i++) {
+    for (unsigned int i = 0; i < statusLists.size(); i++) {
         const vector<LEDStatus> &statusList = statusLists[i];
-        for (int j = 0; j < statusList.size(); j++) {
+        for (unsigned int j = 0; j < statusList.size(); j++) {
             const LEDStatus &status = statusList[j];
-            castedLists[i].push_back((status.r << 24) + (status.g << 16) + (status.b << 8) +
-                                     (status.a << 0));
+            castedLists[i].push_back((status.r << 24) + (status.g << 16) +
+                                     (status.b << 8) + (status.a << 0));
         }
     }
 
@@ -221,10 +230,10 @@ void LEDPlayer::init() {
 void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
     vector<vector<LEDStatus>> statusLists;
 
-    //Let OF lightall for 1/5 times of delayTime
-    if(*delayingDisplay){
+    // Let OF lightall for 1/5 times of delayTime
+    if (*delayingDisplay) {
         statusLists.clear();
-        for (int i = 0; i < frameIds.size(); i++) {
+        for (unsigned int i = 0; i < frameIds.size(); i++) {
             vector<LEDStatus> statusList;
             for (int j = 0; j < stripShapes[i]; j++) {
                 statusList.push_back(LEDStatus(30, 30, 30, 10));
@@ -232,23 +241,24 @@ void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
             statusLists.push_back(statusList);
         }
         controller.sendAll(castStatusLists(statusLists));
-    }else {
+    } else {
         statusLists.clear();
-        for (int i = 0; i < frameIds.size(); i++) {
+        for (unsigned int i = 0; i < frameIds.size(); i++) {
             statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
         }
         controller.sendAll(castStatusLists(statusLists));
     }
 }
 
-void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *toTerminate) {
+void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
+                     const bool *toTerminate) {
     timeval currentTime;
     vector<vector<LEDStatus>> statusLists;
 
     while (true) {
         if (*toTerminate) {
             statusLists.clear();
-            for (int i = 0; i < frameIds.size(); i++) {
+            for (unsigned int i = 0; i < frameIds.size(); i++) {
                 // dark all
                 statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
             }
@@ -260,11 +270,11 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *t
             gettimeofday(&currentTime, NULL);
             const long elapsedTime = getElapsedTime(*baseTime, currentTime);
 
-            const int currentTimeId = getTimeId(elapsedTime);
-            calculateFrameIds(currentTimeId);
+            // const int currentTimeId = getTimeId(elapsedTime);
+            calculateFrameIds(elapsedTime / 1000l);
 
             statusLists.clear();
-            for (int i = 0; i < frameIds.size(); i++) {
+            for (unsigned int i = 0; i < frameIds.size(); i++) {
                 const int &frameId = frameIds[i];
                 const vector<LEDFrame> &frameList = frameLists[i];
 
@@ -276,18 +286,19 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime, const bool *t
 
                 const LEDFrame &frame = frameList[frameId];
                 if (frame.fade) {
-                    const long startTime = (long)frameList[frameId].start * 1000000l / (long)fps;
-                    const long endTime = (long)frameList[frameId + 1].start * 1000000l / (long)fps;
-                    const float rate =
-                        (float)(elapsedTime - startTime) / (float)(endTime - startTime);
-                    statusLists.push_back(
-                        interpolateFadeFrame(frame, frameList[frameId + 1], rate));
+                    const long startTime = frameList[frameId].start;
+                    const long endTime = frameList[frameId + 1].start;
+                    const float rate = (float)(elapsedTime - startTime) /
+                                       (float)(endTime - startTime);
+                    statusLists.push_back(interpolateFadeFrame(
+                        frame, frameList[frameId + 1], rate));
                 } else {
                     statusLists.push_back(frameList[frameId].statusList);
                 }
             }
 
             controller.sendAll(castStatusLists(statusLists));
+            cout << "[LED] Time " << elapsedTime << endl;
         }
     }
 }

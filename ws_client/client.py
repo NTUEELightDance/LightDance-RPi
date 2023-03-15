@@ -13,7 +13,7 @@ from ntpclient import *
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
-DATA_SAVE_DIR = "/Users/ray/Desktop/lightdance/LightDance-RPi-ray/data"
+DATA_SAVE_DIR = "/home/pi/LightDance-RPi/data"
 
 
 class Client:
@@ -61,7 +61,7 @@ class Client:
         self.send_response("boardInfo", 0, {"MAC": self.MAC})
         print("Mac address sent")
 
-    def on_close(self, ws):
+    def on_close(ws, close_status_code, close_msg):
         print("websocket closed")
 
     def on_error(self, ws, error):
@@ -145,7 +145,7 @@ class Client:
                 process = subprocess.Popen(["load"])
                 message_to_server = "success"
                 status = process.poll()
-                print("load complete")
+                print(f"load complete with status {status}")
 
             except:
                 print("Can't run subprocess load")
