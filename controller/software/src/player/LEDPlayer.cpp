@@ -177,7 +177,7 @@ void LEDPlayer::calculateFrameIds(const int &millisec) {
             }
         }
 
-        if (timeId < frameList[left].start) --left;
+        if (millisec < frameList[left].start) --left;
 
         frameIds[i] = left;
     }
