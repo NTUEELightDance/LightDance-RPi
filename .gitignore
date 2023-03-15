@@ -140,3 +140,5 @@ bin/
 build/
 install/
 fifo
+
+data/*.json

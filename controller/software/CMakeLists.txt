@@ -20,6 +20,14 @@ if(UMBRELLA)
   add_definitions(-DUMBRELLA)
 endif()
 
+# hardware debug
+option(HARDWARE_DEBUG "compile with hardware debug" OFF)
+
+if(HARDWARE_DEBUG)
+  message("-- Compiling with hardware debug...")
+  add_definitions(-DHARDWARE_DEBUG)
+endif()
+
 set(EXECUTABLES
   list
   load
