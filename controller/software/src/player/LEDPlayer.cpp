@@ -199,7 +199,6 @@ vector<LEDStatus> LEDPlayer::interpolateFadeFrame(const LEDFrame &origin,
                                   rate * (float)targetLEDStatus.a);
         statusList.push_back(LEDStatus(r, g, b, a));
     }
-
     return statusList;
 }
 
@@ -268,7 +267,8 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
         }
         if (*playing) {
             gettimeofday(&currentTime, NULL);
-            const long elapsedTime = getElapsedTime(*baseTime, currentTime);
+            const long elapsedTime =
+                getElapsedTime(*baseTime, currentTime);  // us
 
             // const int currentTimeId = getTimeId(elapsedTime);
             calculateFrameIds(elapsedTime / 1000l);
@@ -286,10 +286,11 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
 
                 const LEDFrame &frame = frameList[frameId];
                 if (frame.fade) {
-                    const long startTime = frameList[frameId].start;
-                    const long endTime = frameList[frameId + 1].start;
-                    const float rate = (float)(elapsedTime - startTime) /
-                                       (float)(endTime - startTime);
+                    const long startTime = frameList[frameId].start;    // ms
+                    const long endTime = frameList[frameId + 1].start;  // ms
+                    const float rate =
+                        (float)((elapsedTime / 1000.0) - startTime) /
+                        (float)(endTime - startTime);
                     statusLists.push_back(interpolateFadeFrame(
                         frame, frameList[frameId + 1], rate));
                 } else {
