@@ -57,6 +57,7 @@ class Client:
 
     def on_open(self, ws):
         print("Successfully on_open")
+        self.MAC = ":".join(("%012X" % get_mac())[i : i + 2] for i in range(0, 12, 2))
         print(f"MAC address: {self.MAC}")
         self.send_response("boardInfo", 0, {"MAC": self.MAC})
         print("Mac address sent")
