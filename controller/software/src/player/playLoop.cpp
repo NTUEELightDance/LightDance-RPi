@@ -25,7 +25,7 @@ bool stopTimeAssigned = false;
 bool paused = false, stopped = true, delaying = false, delayingDisplay = true;
 
 // thread safe
-atomic<bool> playing = false, to_terminate = false;
+bool playing = false, to_terminate = false;
 
 enum CMD { PLAY, PAUSE, STOP };
 std::string cmds[10] = {"play", "pause", "stop"};

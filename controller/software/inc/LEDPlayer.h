@@ -62,8 +62,8 @@ class LEDPlayer {
 
     void init();
     // threading function
-    void loop(const atomic<bool> *playing, const timeval *baseTime,
-              const atomic<bool> *toTerminate);
+    void loop(const bool *playing, const timeval *baseTime,
+              const bool *toTerminate);
     void delayDisplay(const bool *delayingDisplay);
 
     template <class Archive>
