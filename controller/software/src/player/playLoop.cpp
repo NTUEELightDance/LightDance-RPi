@@ -228,7 +228,7 @@ int main(int argc, char *argv[]) {
             //     s = tv.tv_sec;
             // }
             // OF lightall for 1/5 times of delay time
-            // of_player.delayDisplay(&delayingDisplay);
+            of_player.delayDisplay(&delayingDisplay);
             led_player.delayDisplay(&delayingDisplay);
             if (delayed_us > delayTime / 5l) delayingDisplay = false;
             if (delayed_us > delayTime) {
