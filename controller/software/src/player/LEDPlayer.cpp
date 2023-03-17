@@ -199,8 +199,8 @@ vector<LEDStatus> LEDPlayer::interpolateFadeFrame(const LEDFrame &origin,
                                   rate * (float)targetLEDStatus.g);
         const int &b = (int)round((1 - rate) * (float)originLEDStatus.b +
                                   rate * (float)targetLEDStatus.b);
-        const int &a = (int)round((1 - rate) * (float)originLEDStatus.a +
-                                  rate * (float)targetLEDStatus.a);
+        const int &a = (int)round(((1 - rate) * (float)originLEDStatus.a +
+                                  rate * (float)targetLEDStatus.a)*10.0f);
         statusList.push_back(LEDStatus(r, g, b, a));
     }
     return statusList;
