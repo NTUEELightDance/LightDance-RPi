@@ -1,6 +1,8 @@
 #include "OFPlayer.h"
-#include "utils.h"
+
 #include <thread>
+
+#include "utils.h"
 
 // ==================== OFStatus ============================
 
@@ -168,8 +170,9 @@ vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
                                   rate * (float)statusNext.g);
         const int &b = (int)round((1 - rate) * (float)status.b +
                                   rate * (float)statusNext.b);
-        const int &a = (int)round(((1 - rate) * (float)status.a +
-                                  rate * (float)statusNext.a)*10.0f);
+        const int &a = (int)round(
+            ((1 - rate) * (float)status.a + rate * (float)statusNext.a) *
+            10.0f);
         fadeFrameStatus[channelId] = OFStatus(r, g, b, a);
     }
 
@@ -238,7 +241,7 @@ void OFPlayer::delayDisplay(const bool *delayingDisplay) {
 
     // Let OF lightall for 1/5 times of delayTime
     if (*delayingDisplay) {
-        setLightStatus(statusList, 30, 30, 30, 10);
+        setLightStatus(statusList, 100, 0, 0, 100);
         controller.sendAll(castStatusList(statusList));
     } else {
         setLightStatus(statusList, 0, 0, 0, 0);
@@ -246,8 +249,8 @@ void OFPlayer::delayDisplay(const bool *delayingDisplay) {
     }
 }
 
-void OFPlayer::loop(const atomic<bool> *playing, const timeval *baseTime,
-                    const atomic<bool> *toTerminate) {
+void OFPlayer::loop(const bool *playing, const timeval *baseTime,
+                    const bool *toTerminate) {
     timeval currentTime;
     vector<OFStatus> statusList;
 
@@ -300,7 +303,7 @@ void OFPlayer::loop(const atomic<bool> *playing, const timeval *baseTime,
 
             fprintf(stderr, "[OF] Time: %s, FPS: %4.2f\n",
                     parseMicroSec(elapsedTime).c_str(), fps);
-            
+
             this_thread::yield();
         }
     }

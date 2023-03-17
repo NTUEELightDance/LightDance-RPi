@@ -61,7 +61,7 @@ class PartTest : public Command {
                 cout << "LED index not specified! Using default\n";
             }
         }
-        return Test(PartName, R, G, B, alpha, n);
+        return Test(PartName, R, G, B, alpha*10, n);
     }
 
    private:

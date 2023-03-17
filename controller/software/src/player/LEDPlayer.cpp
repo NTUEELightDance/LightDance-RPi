@@ -200,7 +200,8 @@ vector<LEDStatus> LEDPlayer::interpolateFadeFrame(const LEDFrame &origin,
         const int &b = (int)round((1 - rate) * (float)originLEDStatus.b +
                                   rate * (float)targetLEDStatus.b);
         const int &a = (int)round(((1 - rate) * (float)originLEDStatus.a +
-                                  rate * (float)targetLEDStatus.a)*10.0f);
+                                   rate * (float)targetLEDStatus.a) *
+                                  10.0f);
         statusList.push_back(LEDStatus(r, g, b, a));
     }
     return statusList;
@@ -239,7 +240,7 @@ void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
         for (unsigned int i = 0; i < frameIds.size(); i++) {
             vector<LEDStatus> statusList;
             for (int j = 0; j < stripShapes[i]; j++) {
-                statusList.push_back(LEDStatus(30, 30, 30, 10));
+                statusList.push_back(LEDStatus(100, 0, 0, 100));
             }
             statusLists.push_back(statusList);
         }
@@ -253,8 +254,8 @@ void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
     }
 }
 
-void LEDPlayer::loop(const atomic<bool> *playing, const timeval *baseTime,
-                     const atomic<bool> *toTerminate) {
+void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
+                     const bool *toTerminate) {
     timeval currentTime;
     vector<vector<LEDStatus>> statusLists;
 #ifdef PLAYER_DEBUG
@@ -294,7 +295,7 @@ void LEDPlayer::loop(const atomic<bool> *playing, const timeval *baseTime,
                     statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
                     continue;
                 }
-                if (frameId < (int)frameList.size() - 1) {
+                if (frameId < (int)frameList.size()) {
                     ended = false;
                 }
 
