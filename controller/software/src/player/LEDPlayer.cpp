@@ -300,7 +300,7 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
                 }
 
                 const LEDFrame &frame = frameList[frameId];
-                if (frame.fade) {
+                if (frame.fade && (frameId + 1) < frameList.size()) {
                     const long startTime = frameList[frameId].start;    // ms
                     const long endTime = frameList[frameId + 1].start;  // ms
                     const float rate =
