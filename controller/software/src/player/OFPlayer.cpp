@@ -156,8 +156,7 @@ vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
     // Do interpolate
     for (unsigned int i = 0; i < frameList[frameId].statusList.size(); i++) {
         if ((unsigned int)frameId + 1 >= frameList.size()) {
-            printf("[OF] Fade for the last frame should be false.\n");
-            break;
+            return statusList[frameId];
         }
         const string &partName = frameList[frameId].statusList[i].first;
         const OFStatus &status = frameList[frameId].statusList[i].second;
