@@ -214,7 +214,10 @@ int OFPlayer::findChannelId(const string &partName) {
     return channelIds[partName];
 }
 
-void OFPlayer::init() { controller.init(); }
+void OFPlayer::init() { 
+    controller.init();
+    frameId = 0;
+}
 
 vector<int> OFPlayer::castStatusList(vector<OFStatus> statusList) {
     vector<int> castedList(statusList.size());

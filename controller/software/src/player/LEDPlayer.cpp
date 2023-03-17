@@ -181,6 +181,8 @@ void LEDPlayer::calculateFrameIds(const int &millisec) {
             }
         }
 
+        if (millisec < frameList[left].start) --left;
+
         frameIds[i] = left;
     }
 }
