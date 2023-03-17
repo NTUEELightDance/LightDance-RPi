@@ -63,8 +63,8 @@ class OFPlayer {
              unordered_map<string, int> &_channelIds, const int &_OFnum);
 
     // threading function
-    void loop(const bool *playing, const timeval *baseTime,
-              const bool *toTerminate);
+    void loop(atomic<bool> *playing, const timeval *baseTime,
+              const atomic<bool> *toTerminate);
     void delayDisplay(const bool *delayingDisplay);
     void init();
 

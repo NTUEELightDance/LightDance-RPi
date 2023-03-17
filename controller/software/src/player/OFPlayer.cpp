@@ -214,7 +214,7 @@ int OFPlayer::findChannelId(const string &partName) {
     return channelIds[partName];
 }
 
-void OFPlayer::init() { 
+void OFPlayer::init() {
     controller.init();
     frameId = 0;
 }
@@ -251,8 +251,8 @@ void OFPlayer::delayDisplay(const bool *delayingDisplay) {
     }
 }
 
-void OFPlayer::loop(const bool *playing, const timeval *baseTime,
-                    const bool *toTerminate) {
+void OFPlayer::loop(atomic<bool> *playing, const timeval *baseTime,
+                    const atomic<bool> *toTerminate) {
     timeval currentTime;
     vector<OFStatus> statusList;
 
@@ -309,6 +309,7 @@ void OFPlayer::loop(const bool *playing, const timeval *baseTime,
             this_thread::yield();
         }
     }
+    *playing = false;
     cerr << "[OF] finish\n";
 #ifdef PLAYER_DEBUG
     logFile << "[OF] finish\n";
