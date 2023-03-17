@@ -1,4 +1,6 @@
 #include "OFPlayer.h"
+#include "utils.h"
+#include <thread>
 
 // ==================== OFStatus ============================
 
@@ -128,10 +130,16 @@ long OFPlayer::getElapsedTime(const struct timeval &base,
            (long)(current.tv_usec - base.tv_usec);
 }
 
+// vector<OFStatus> OFPlayer::findFrameStatus(const long &time) {
+//     frameId = findFrameId(time);
+//     bool fade = frameList[frameId].fade;
+//     printf("[OF] frameId: %d, fade: %d\n", frameId, fade);
+//     return fade ? findFadeFrameStatus(time) : statusList[frameId];
+// }
+
 vector<OFStatus> OFPlayer::findFrameStatus(const long &time) {
-    frameId = findFrameId(time);
     bool fade = frameList[frameId].fade;
-    printf("[OF] frameId: %d, fade: %d\n", frameId, fade);
+    // printf("[OF] frameId: %d, fade: %d\n", frameId, fade);
     return fade ? findFadeFrameStatus(time) : statusList[frameId];
 }
 
@@ -146,7 +154,7 @@ vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
     // Do interpolate
     for (unsigned int i = 0; i < frameList[frameId].statusList.size(); i++) {
         if ((unsigned int)frameId + 1 >= frameList.size()) {
-            printf("Fade for the last frame should be false.");
+            printf("[OF] Fade for the last frame should be false.\n");
             break;
         }
         const string &partName = frameList[frameId].statusList[i].first;
@@ -171,8 +179,7 @@ vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
 int OFPlayer::findFrameId(const long &time) {
     const int totalFrame = frameList.size();
     if (totalFrame == 0 || time <= 0) return 0;
-    if (time > frameList[frameList.size() - 1].start)
-        return frameList.size() - 1;
+    if (time > frameList[frameList.size() - 1].start) return totalFrame - 1;
     if (time >= frameList[frameId].start) {
         if ((unsigned int)frameId < frameList.size() - 1) {
             if (time < frameList[frameId + 1].start) return frameId;
@@ -200,7 +207,7 @@ int OFPlayer::findFrameId(const long &time) {
     return first;
 }
 
-// store infromation of every part
+// store information of every part
 int OFPlayer::findChannelId(const string &partName) {
     return channelIds[partName];
 }
@@ -239,12 +246,20 @@ void OFPlayer::delayDisplay(const bool *delayingDisplay) {
     }
 }
 
-void OFPlayer::loop(const bool *playing, const timeval *baseTime,
-                    const bool *toTerminate) {
+void OFPlayer::loop(const atomic<bool> *playing, const timeval *baseTime,
+                    const atomic<bool> *toTerminate) {
     timeval currentTime;
     vector<OFStatus> statusList;
 
+#ifdef PLAYER_DEBUG
+    ofstream logFile("/tmp/of.log");
+#endif
+
     while (true) {
+        timeval lastTime = currentTime;
+        gettimeofday(&currentTime, NULL);
+        float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
+
         if (*toTerminate) {
             // TODO: finish darkall
             setLightStatus(statusList, 0, 0, 0, 0);
@@ -252,24 +267,46 @@ void OFPlayer::loop(const bool *playing, const timeval *baseTime,
             break;
         }
         if (*playing) {
-            gettimeofday(&currentTime, NULL);
             const long elapsedTime = getElapsedTime(*baseTime, currentTime);
+            const long elapsedTimeInMs = elapsedTime / 1000l;
             statusList.clear();
-            // printf("Time: %f\n", elapsedTime / 1000000.0f);
 
             // find status
-            statusList = findFrameStatus(elapsedTime / 1000l);
-
-#ifdef HARDWARE_DEBUG
-            printf("%d strips sent: ", (int)statusList.size());
-            for (int i = 0; i < statusList.size(); i++) {
-                printf("%d ", statusList[i]);
-            }
-            printf("\n");
-#endif
+            frameId = findFrameId(elapsedTimeInMs);
+            statusList = findFrameStatus(elapsedTimeInMs);
 
             controller.sendAll(castStatusList(statusList));
-            cout << "[OF] Time: " << elapsedTime << endl;
+
+#ifdef PLAYER_DEBUG
+            char buf[1024];
+            sprintf(buf, "[OF] Time: %s Frame: %d / %d\n",
+                    parseMicroSec(elapsedTime).c_str(), frameId,
+                    (int)frameList.size() - 1);
+
+            for (int i = 0; i < statusList.size(); i++) {
+                sprintf(buf + strlen(buf), "OF%2d: [%3d,%3d,%3d,%3d]\n", i,
+                        statusList[i].r, statusList[i].g, statusList[i].b,
+                        statusList[i].a);
+            }
+            logFile << buf;
+
+            if (frameId == frameList.size() - 1) {
+                break;
+            }
+#endif
+            if (frameId == frameList.size() - 1) {
+                break;
+            }
+
+            fprintf(stderr, "[OF] Time: %s, FPS: %4.2f\n",
+                    parseMicroSec(elapsedTime).c_str(), fps);
+            
+            this_thread::yield();
         }
     }
+    cerr << "[OF] finish\n";
+#ifdef PLAYER_DEBUG
+    logFile << "[OF] finish\n";
+    logFile.close();
+#endif
 }

@@ -15,15 +15,18 @@
 #include "LEDPlayer.h"
 #include "OFPlayer.h"
 #include "player.h"
+#include "utils.h"
 
 #define MAXLEN 100
 
 timeval baseTime, startTime;
 long stopTime, delayTime;
 bool stopTimeAssigned = false;
-bool playing = false, paused = false, stopped = true, delaying = false,
-     delayingDisplay = true;
-bool to_terminate = false;
+bool paused = false, stopped = true, delaying = false, delayingDisplay = true;
+
+// thread safe
+atomic<bool> playing = false, to_terminate = false;
+
 enum CMD { PLAY, PAUSE, STOP };
 std::string cmds[10] = {"play", "pause", "stop"};
 
@@ -33,6 +36,8 @@ Player player;
 LEDPlayer led_player;
 OFPlayer of_player;
 
+int dancer_fd;
+string path = string(BASE_PATH) + "data/dancer.dat";
 const char *rd_fifo = "/tmp/cmd_to_player";
 const char *wr_fifo = "/tmp/player_to_cmd";
 
@@ -85,16 +90,25 @@ bool restart() {
     printf("restart\n");
     playing = false;
 
-    string path = string(BASE_PATH) + "data/dancer.dat";
+    dancer_fd = tryGetLock(path.c_str());
+    if (dancer_fd == -1) {
+        cerr << "[Error] Dancer is playing! Please stop it first!\n";
+        return 0;
+    } else if (dancer_fd == -2) {
+        cerr << "[Error] dancer.dat file not found!\n";
+        return 0;
+    }
+
     if (!restorePlayer(player, path.c_str())) {
-        fprintf(stderr, "restorePlayer ERROR\n");
+        // fprintf(stderr, "restorePlayer ERROR\n");
+        cerr << "[Error] Can't restorePlayer!\n";
         return false;
     }
     led_player = player.myLEDPlayer;
     led_player.init();
     of_player = player.myOFPlayer;
     of_player.init();
-    fprintf(stderr, "Player loaded\n");
+    cout << "Player loaded\n";
 
     to_terminate = false;
     led_loop = std::thread(&LEDPlayer::loop, &led_player, &playing, &baseTime,
@@ -108,12 +122,6 @@ void stop() {
     printf("stop\n");
     playing = paused = stopTimeAssigned = delaying = false;
     stopped = to_terminate = true;
-    if (led_loop.joinable()) {
-        led_loop.join();
-    }
-    if (of_loop.joinable()) {
-        of_loop.join();
-    }
 }
 
 int parse_command(std::string str) {
@@ -197,7 +205,7 @@ int main(int argc, char *argv[]) {
     char cmd_buf[MAXLEN];
     playing = false;
     timeval playedTime;
-    long s = -1;
+    // long s = -1;
     while (1) {
         timeval tv;
         tv = getCalculatedTime(baseTime);
@@ -210,7 +218,7 @@ int main(int argc, char *argv[]) {
             if (played_us > stopTime && stopTime != -1) {
                 stopTimeAssigned = false;
                 stop();
-                s = -1;
+                // s = -1;
             }
         }
         if (delaying) {
@@ -234,8 +242,17 @@ int main(int argc, char *argv[]) {
                 }
                 playing = true;
                 paused = false;
-                s = -1;
+                // s = -1;
             }
+        }
+
+        if (led_loop.joinable() && of_loop.joinable() && playing) {
+            led_loop.join();
+            of_loop.join();
+            playing = paused = stopTimeAssigned = delaying = false;
+            stopped = to_terminate = true;
+            cerr << "[Loop] finished" << endl;
+            releaseLock(dancer_fd, path.c_str());
         }
 
         n = read(rd_fd, cmd_buf, MAXLEN);
@@ -243,10 +260,11 @@ int main(int argc, char *argv[]) {
         if (n > 0) {
             // fprintf(stderr, "n: %d\n", n);
             int cmd = parse_command(cmd_buf);
-            fprintf(stderr, "cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
+            fprintf(stderr, "[Loop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
             switch (cmd) {
                 case PLAY:
-                    fprintf(stderr, "ACTION: play\n");
+                    // fprintf(stderr, "[Loop] ACTION: play\n");
+                    cerr << "[Loop] ACTION: play" << endl;
                     playing = false;
                     if (stopped) {
                         if (!restart()) {
@@ -259,15 +277,14 @@ int main(int argc, char *argv[]) {
                     stopped = false;
                     break;
                 case PAUSE:
-                    fprintf(stderr, "ACTION: pause\n");
                     if (paused || stopped || delaying) break;
-                    printf("pause\n");
                     playing = false;
                     paused = true;
                     playedTime = getCalculatedTime(baseTime);
+                    cerr << "[Loop] ACTION: pause" << playedTime.tv_sec << endl;
                     break;
                 case STOP:
-                    fprintf(stderr, "ACTION: stop\n");
+                    cerr << "[Loop] ACTION: stop" << endl;
                     if (!stopped) stop();
                     break;
                 default:

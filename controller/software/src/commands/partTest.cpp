@@ -1,5 +1,6 @@
 #include "command.h"
 #include "const.h"
+#include "utils.h"
 #include "player.h"
 
 class PartTest : public Command {
@@ -84,6 +85,15 @@ class PartTest : public Command {
         string base_path = BASE_PATH;
         string path = base_path + "data/dancer.dat";
 
+        int dancer_fd = tryGetLock(path.c_str());
+        if (dancer_fd == -1) {
+            cout << "[Error] Dancer is playing! Please stop it first!\n";
+            return 0;
+        } else if (dancer_fd == -2) {
+            cout << "[Error] dancer.dat file not found!\n";
+            return 0;
+        }
+
         if (!restorePlayer(player, path.c_str())) {
             cout << "Need to load first!\n";
             return 0;
@@ -148,6 +158,8 @@ class PartTest : public Command {
 
         savePlayer(player, path.c_str());
         cout << "Done" << endl;
+
+        releaseLock(dancer_fd, path.c_str());
 
         return 0;
     }

@@ -16,7 +16,13 @@ cmake -DUMBRELLA=OFF .. && make -j4 install
 # install controller binaries to /usr/local/bin
 cd $WORKSPACE/controller
 sudo rm -rf /usr/local/bin/*
+
 sudo cp -r bin/* /usr/local/bin/
+sudo cp scripts/close /usr/local/bin/
+sudo cp scripts/install /usr/local/bin/
+sudo cp scripts/update /usr/local/bin/
+sudo cp scripts/restart /usr/local/bin/
+
 sudo chown root /usr/local/bin/*
 sudo chmod u+s /usr/local/bin/*
 
