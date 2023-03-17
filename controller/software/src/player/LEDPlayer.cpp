@@ -1,5 +1,9 @@
 #include "LEDPlayer.h"
 
+#include <thread>
+
+#include "utils.h"
+
 // ==================== LEDStatus ============================
 
 template <class Archive>
@@ -249,12 +253,19 @@ void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
     }
 }
 
-void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
-                     const bool *toTerminate) {
+void LEDPlayer::loop(const atomic<bool> *playing, const timeval *baseTime,
+                     const atomic<bool> *toTerminate) {
     timeval currentTime;
     vector<vector<LEDStatus>> statusLists;
+#ifdef PLAYER_DEBUG
+    ofstream logFile("/tmp/led.log");
+#endif
 
     while (true) {
+        timeval lastTime = currentTime;
+        gettimeofday(&currentTime, NULL);
+        float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
+
         if (*toTerminate) {
             statusLists.clear();
             for (unsigned int i = 0; i < frameIds.size(); i++) {
@@ -266,7 +277,6 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
             break;
         }
         if (*playing) {
-            gettimeofday(&currentTime, NULL);
             const long elapsedTime =
                 getElapsedTime(*baseTime, currentTime);  // us
 
@@ -274,6 +284,7 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
             calculateFrameIds(elapsedTime / 1000l);
 
             statusLists.clear();
+            bool ended = true;
             for (unsigned int i = 0; i < frameIds.size(); i++) {
                 const int &frameId = frameIds[i];
                 const vector<LEDFrame> &frameList = frameLists[i];
@@ -282,6 +293,9 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
                     // use dark frame for invalid time or non-exist part
                     statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
                     continue;
+                }
+                if (frameId < (int)frameList.size() - 1) {
+                    ended = false;
                 }
 
                 const LEDFrame &frame = frameList[frameId];
@@ -297,9 +311,36 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
                     statusLists.push_back(frameList[frameId].statusList);
                 }
             }
+            if (ended) {
+                break;
+            }
 
             controller.sendAll(castStatusLists(statusLists));
-            cout << "[LED] Time " << elapsedTime << endl;
+
+            fprintf(stderr, "[LED] Time: %s, FPS: %4.2f\n",
+                    parseMicroSec(elapsedTime).c_str(), fps);
+
+#ifdef PLAYER_DEBUG
+            char buf[20000];
+            sprintf(buf, "[LED] Time: %s\n",
+                    parseMicroSec(elapsedTime).c_str());
+            for (int i = 0; i < statusLists.size(); i++) {
+                sprintf(buf + strlen(buf), "LED%2d:\n", i);
+                for (int j = 0; j < statusLists[i].size(); j++) {
+                    sprintf(buf + strlen(buf), "\r%3d:[%3d,%3d,%3d,%3d]\n", j,
+                            statusLists[i][j].r, statusLists[i][j].g,
+                            statusLists[i][j].b, statusLists[i][j].a);
+                }
+            }
+            logFile << buf;
+#endif
+            this_thread::yield();
         }
     }
+    cerr << "[LED] finish\n";
+    controller.finish();
+#ifdef PLAYER_DEBUG
+    logFile << "[LED] finish\n";
+    logFile.close();
+#endif
 }

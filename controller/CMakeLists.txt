@@ -3,7 +3,7 @@ project(controller)
 
 set(
     CMAKE_CXX_FLAGS
-    "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -lpthread"
+    "${CMAKE_CXX_FLAGS} -std=c++17 -Wall"
 )
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
