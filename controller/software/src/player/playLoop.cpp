@@ -25,12 +25,13 @@ bool stopTimeAssigned = false;
 bool paused = false, stopped = true, delaying = false, delayingDisplay = true;
 
 // thread safe
-bool playing = false, to_terminate = false;
+atomic<bool> to_terminate = false;
 
 enum CMD { PLAY, PAUSE, STOP };
 std::string cmds[10] = {"play", "pause", "stop"};
 
 std::thread led_loop, of_loop;
+atomic<bool> led_playing = false, of_playing = false;
 
 Player player;
 LEDPlayer led_player;
@@ -88,7 +89,9 @@ timeval getCalculatedTime(timeval subtrahend) {
 
 bool restart() {
     printf("restart\n");
-    playing = false;
+    // playing = false;
+    led_playing = false;
+    of_playing = false;
 
     dancer_fd = tryGetLock(path.c_str());
     if (dancer_fd == -1) {
@@ -111,16 +114,16 @@ bool restart() {
     cout << "Player loaded\n";
 
     to_terminate = false;
-    led_loop = std::thread(&LEDPlayer::loop, &led_player, &playing, &baseTime,
-                           &to_terminate);
-    of_loop = std::thread(&OFPlayer::loop, &of_player, &playing, &baseTime,
+    led_loop = std::thread(&LEDPlayer::loop, &led_player, &led_playing,
+                           &baseTime, &to_terminate);
+    of_loop = std::thread(&OFPlayer::loop, &of_player, &of_playing, &baseTime,
                           &to_terminate);
     return true;
 }
 
 void stop() {
     printf("stop\n");
-    playing = paused = stopTimeAssigned = delaying = false;
+    of_playing = led_playing = paused = stopTimeAssigned = delaying = false;
     stopped = to_terminate = true;
 }
 
@@ -203,10 +206,13 @@ int main(int argc, char *argv[]) {
     // fcntl(rd_fd, F_SETFL, flags);
 
     char cmd_buf[MAXLEN];
-    playing = false;
+    // playing = false;
+    of_playing = false;
+    led_playing = false;
     timeval playedTime;
     // long s = -1;
     while (1) {
+        // cerr << ".";
         timeval tv;
         tv = getCalculatedTime(baseTime);
         if (stopTimeAssigned && !paused && !stopped && !delaying) {
@@ -240,16 +246,20 @@ int main(int argc, char *argv[]) {
                     printf("play\n");
                     baseTime = getCalculatedTime(startTime);
                 }
-                playing = true;
+                // playing = true;
+                of_playing = true;
+                led_playing = true;
                 paused = false;
                 // s = -1;
             }
         }
 
-        if (led_loop.joinable() && of_loop.joinable() && playing) {
+        if (!led_playing && !of_playing && led_loop.joinable() && of_loop.joinable()) {
+            // cerr << "[Loop] join" << endl;
             led_loop.join();
             of_loop.join();
-            playing = paused = stopTimeAssigned = delaying = false;
+            led_playing = of_playing = paused = stopTimeAssigned = delaying =
+                false;
             stopped = to_terminate = true;
             cerr << "[Loop] finished" << endl;
             releaseLock(dancer_fd, path.c_str());
@@ -263,9 +273,10 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "[Loop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
             switch (cmd) {
                 case PLAY:
-                    // fprintf(stderr, "[Loop] ACTION: play\n");
                     cerr << "[Loop] ACTION: play" << endl;
-                    playing = false;
+                    // playing = false;
+                    of_playing = false;
+                    led_playing = false;
                     if (stopped) {
                         if (!restart()) {
                             break;
@@ -278,7 +289,9 @@ int main(int argc, char *argv[]) {
                     break;
                 case PAUSE:
                     if (paused || stopped || delaying) break;
-                    playing = false;
+                    // playing = false;
+                    of_playing = false;
+                    led_playing = false;
                     paused = true;
                     playedTime = getCalculatedTime(baseTime);
                     cerr << "[Loop] ACTION: pause" << playedTime.tv_sec << endl;

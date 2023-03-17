@@ -256,8 +256,8 @@ void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
     }
 }
 
-void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
-                     const bool *toTerminate) {
+void LEDPlayer::loop(atomic<bool> *playing, const timeval *baseTime,
+                     const atomic<bool> *toTerminate) {
     timeval currentTime;
     vector<vector<LEDStatus>> statusLists;
 #ifdef PLAYER_DEBUG
@@ -270,6 +270,7 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
         float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
 
         if (*toTerminate) {
+            *playing = false;
             statusLists.clear();
             for (unsigned int i = 0; i < frameIds.size(); i++) {
                 // dark all
@@ -297,7 +298,7 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
                     statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
                     continue;
                 }
-                if (frameId < (int)frameList.size()) {
+                if (frameId != (int)frameList.size() - 1) {
                     ended = false;
                 }
 
@@ -313,9 +314,6 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
                 } else {
                     statusLists.push_back(frameList[frameId].statusList);
                 }
-            }
-            if (ended) {
-                break;
             }
 
             controller.sendAll(castStatusLists(statusLists));
@@ -337,9 +335,13 @@ void LEDPlayer::loop(const bool *playing, const timeval *baseTime,
             }
             logFile << buf;
 #endif
+            if (ended) {
+                break;
+            }
             this_thread::yield();
         }
     }
+    *playing = false;
     cerr << "[LED] finish\n";
     controller.finish();
 #ifdef PLAYER_DEBUG
