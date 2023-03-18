@@ -6,10 +6,10 @@ import time
 import subprocess
 
 import websocket
-from uuid import getnode as get_mac
+from getmac import get_mac_address
 
 from config import *
-from ntpclient import *
+# from ntpclient import *
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
@@ -22,12 +22,12 @@ class Client:
         self.url = f"ws://{SERVER_IP}:{SERVER_PORT}"
         self.action = ""
         self.payload = {}
-        self.ntp_client = NTPClient()
-        self.MAC = ":".join(("%012X" % get_mac())[i : i + 2] for i in range(0, 12, 2))
+        # self.ntp_client = NTPClient()
+        self.MAC = ""
         self.ws = None
 
     def start_client(self):
-        print(f"connecting to {self.url}")
+        print(f"Connecting to {self.url}")
         while True:
             try:
                 self.ws = websocket.WebSocketApp(
@@ -51,48 +51,51 @@ class Client:
                 "payload": payload,
             }
         )
-        print("Send message to server:")
-        print(message)
+        print(f"[To Server] {message}")
         self.ws.send(message)
 
     def on_open(self, ws):
         print("Successfully on_open")
-        self.MAC = ":".join(("%012X" % get_mac())[i : i + 2] for i in range(0, 12, 2))
-        print(f"MAC address: {self.MAC}")
+        self.MAC = get_mac_address()
+        print(f"[Info] MAC address: {self.MAC}")
         self.send_response("boardInfo", 0, {"MAC": self.MAC})
-        print("Mac address sent")
+        # print("Mac address sent")
 
-    def on_close(ws, close_status_code, close_msg):
-        print("websocket closed")
+    def on_close(self, ws, close_status_code, close_msg):
+        print(f"websocket closed")
 
     def on_error(self, ws, error):
-        print("The error is %s" % error)
+        print("[Error] %s" % error)
 
     def parse_server_data(self, message):
-        print("Message from server:")
-        print(message)
         try:
             message = json.loads(message)
             topic = message["topic"]
             payload = message["payload"]
-            print(topic, payload)
+            payload_short = (
+                str(payload)[:200] + "..." if len(str(payload)) > 200 else str(payload)
+            )
+            print(f"[From Server] Topic: {topic}, Payload: {payload_short}")
             return topic, payload
         except:
             print("Invalid json format:")
             print(message)
 
     def on_message(self, ws, message):
+        print()
+        # self.MAC = get_mac_address()
         topic, payload = self.parse_server_data(message)
 
         if topic == "command":
-            print("execute payload:")
-            print(payload)
+            # print("execute payload:")
+            # print(payload)
             status = -1
             message_to_server = ""
 
             try:
+                # print(f"Executing command: {payload}")
                 process = subprocess.Popen(
-                    payload, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                    payload, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
                 )
                 outs, errs = process.communicate()
                 outs = outs.decode()
@@ -100,71 +103,81 @@ class Client:
                 status = process.poll()
                 if status == 0:
                     message_to_server = outs
-                    print("Subprocess Success")
+                    print("[Info] Subprocess Success")
 
                 else:
                     message_to_server = errs
-                    print("Subprocess Error")
-                    print("Error message:")
-                    print(errs)
+                    print(f'[Error] Subprocess Error: "{errs}"')
             except:
-                print("hi")
                 print("Unable to run Subprocess")
                 message_to_server = "Unable to run Subprocess"
 
-            command = [str(w) for w in payload]
             payload_to_server = {
                 "MAC": self.MAC,
-                "command": " ".join(command),
+                "command": payload,
                 "message": message_to_server,
             }
-            print(payload_to_server)
+            # print(payload_to_server)
             self.send_response("command", status, payload_to_server)
 
         elif topic == "upload":
-            print("upload")
-            try:
-                os.mkdir(DATA_SAVE_DIR)
-            except:
-                print(f"directory {DATA_SAVE_DIR} exist")
-
-            print(os.path.join(DATA_SAVE_DIR, "control.json"))
             with open(os.path.join(DATA_SAVE_DIR, "control.json"), "w") as f:
-                print("Writing control.json")
+                print("[Info] Writing control.json")
                 json.dump(payload[0], f, indent=4)
             with open(os.path.join(DATA_SAVE_DIR, "OF.json"), "w") as f:
-                print("Writing OF.json")
+                print("[Info] Writing OF.json")
                 json.dump(payload[1], f, indent=4)
             with open(os.path.join(DATA_SAVE_DIR, "LED.json"), "w") as f:
-                print("Writing LED.json")
+                print("[Info] Writing LED.json")
                 json.dump(payload[2], f, indent=4)
 
+            status = 0
             message_to_server = ""
-            status = -1
+            with open(os.path.join(DATA_SAVE_DIR, "control.json"), "r") as f:
+                print("[Info] Checking control.json")
+                control = json.load(f)
+                if control != payload[0]:
+                    status -= 1
+                    message_to_server += "control.json not match. "
 
-            try:
-                process = subprocess.Popen(["load"])
-                message_to_server = "success"
-                status = process.poll()
-                print(f"load complete with status {status}")
+            with open(os.path.join(DATA_SAVE_DIR, "OF.json"), "r") as f:
+                print("[Info] Checking OF.json")
+                OF = json.load(f)
+                if OF != payload[1]:
+                    status -= 1
+                    message_to_server += "OF.json not match. "
 
-            except:
-                print("Can't run subprocess load")
-                message_to_server = "can not run subprocess load"
-                status = -1
+            with open(os.path.join(DATA_SAVE_DIR, "LED.json"), "r") as f:
+                print("[Info] Checking LED.json")
+                LED = json.load(f)
+                if LED != payload[2]:
+                    status -= 1
+                    message_to_server += "LED.json not match."
+
+            if status == 0:
+                print("[Info] Upload Success")
+                message_to_server = "Success"
 
             self.send_response(
-                "command",
+                "upload",
                 status,
                 {
                     "MAC": self.MAC,
-                    "command": "load",
+                    "command": "upload",
                     "message": message_to_server,
                 },
             )
 
-        elif topic == "sync":
-            print("sync")
+        elif topic == "ping":
+            self.send_response(
+                "ping",
+                0,
+                {
+                    "MAC": self.MAC,
+                    "command": "ping",
+                    "message": "pong",
+                },
+            )
 
         else:
             print("Invalid action")

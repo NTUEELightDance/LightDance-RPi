@@ -1,0 +1,2 @@
+websocket-client==1.5.1
+getmac==0.9.3
