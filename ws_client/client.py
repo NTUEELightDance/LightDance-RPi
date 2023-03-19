@@ -1,3 +1,5 @@
+#! /usr/bin/env python3 -u
+
 # from asyncio.windows_events import NULL
 import json
 import os
