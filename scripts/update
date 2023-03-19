@@ -9,3 +9,4 @@ rm -rf controller/hardware
 git submodule update --init
 cd $WORKSPACE/controller/hardware
 git checkout main
+git pull
