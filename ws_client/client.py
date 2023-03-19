@@ -161,7 +161,7 @@ class Client:
                 message_to_server = "Success"
 
             self.send_response(
-                "upload",
+                "command",
                 status,
                 {
                     "MAC": self.MAC,
