@@ -1,0 +1,11 @@
+[Unit]
+Description=player
+
+[Service]
+User=<USERNAME>
+WorkingDirectory=<WORKSPACE>
+ExecStart=player
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

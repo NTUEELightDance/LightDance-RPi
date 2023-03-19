@@ -1,0 +1,4 @@
+load
+parttest --rgb 255 0 0
+sleep 3
+parttest --rgb 0 0 0

@@ -1,0 +1,11 @@
+[Unit]
+Description=startup
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/LightDance-RPi
+ExecStart=/home/pi/LightDance-RPi/scripts/startup
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
