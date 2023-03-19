@@ -5,7 +5,6 @@ Description=player
 User=<USERNAME>
 WorkingDirectory=<WORKSPACE>
 ExecStart=player
-Restart=always
 
 [Install]
 WantedBy=multi-user.target
