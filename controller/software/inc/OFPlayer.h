@@ -59,12 +59,12 @@ class OFPlayer {
 
     OFPlayer();
     OFPlayer(const int &_fps, const vector<OFFrame> &_frameList,
-             const vector<vector<OFStatus>> &_statusList,
-             unordered_map<string, int> &_channelIds, const int &_OFnum);
+             const vector<vector<OFStatus>> &_statusList, unordered_map<string, int> &_channelIds,
+             const int &_OFnum);
 
     // threading function
-    void loop(atomic<bool> *playing, const timeval *baseTime,
-              const atomic<bool> *toTerminate);
+    void loop(atomic<bool> *playing, const timeval *baseTime, const atomic<bool> *toTerminate,
+              atomic<bool> *finished);
     void delayDisplay(const bool *delayingDisplay);
     void init();
 
@@ -81,14 +81,12 @@ class OFPlayer {
     unordered_map<string, int> channelIds;
 
     // functions for finding frame at specific time
-    long getElapsedTime(const struct timeval &base,
-                        const struct timeval &current);
+    long getElapsedTime(const struct timeval &base, const struct timeval &current);
     vector<OFStatus> findFrameStatus(const long &time);
     vector<OFStatus> findFadeFrameStatus(const long &time);
     int findFrameId(const long &time);
     int findChannelId(const string &partName);
-    void setLightStatus(vector<OFStatus> &statusList, int r, int g, int b,
-                        int a);
+    void setLightStatus(vector<OFStatus> &statusList, int r, int g, int b, int a);
 
     vector<int> castStatusList(const vector<OFStatus> statusList);
 

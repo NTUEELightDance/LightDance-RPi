@@ -44,8 +44,7 @@ struct LEDFrame {
     vector<LEDStatus> statusList;
     LEDFrame();
     LEDFrame(const int &_start, const bool &_fade, const int &len);
-    LEDFrame(const int &_start, const bool &_fade,
-             const vector<LEDStatus> &_statusList);
+    LEDFrame(const int &_start, const bool &_fade, const vector<LEDStatus> &_statusList);
 
     template <class Archive>
     void serialize(Archive &archive, const unsigned int version);
@@ -62,8 +61,8 @@ class LEDPlayer {
 
     void init();
     // threading function
-    void loop(atomic<bool> *playing, const timeval *baseTime,
-              const atomic<bool> *toTerminate);
+    void loop(atomic<bool> *playing, const timeval *baseTime, const atomic<bool> *toTerminate,
+              atomic<bool> *finished);
     void delayDisplay(const bool *delayingDisplay);
 
     template <class Archive>
@@ -77,16 +76,13 @@ class LEDPlayer {
     vector<int> stripShapes;
 
     // time calculation
-    long getElapsedTime(const struct timeval &base,
-                        const struct timeval &current);
+    long getElapsedTime(const struct timeval &base, const struct timeval &current);
     int getTimeId(const long &elapsedTime);
     // frame calculation
     void calculateFrameIds(const int &timeId);
-    vector<LEDStatus> interpolateFadeFrame(const LEDFrame &origin,
-                                           const LEDFrame &target,
+    vector<LEDStatus> interpolateFadeFrame(const LEDFrame &origin, const LEDFrame &target,
                                            const float &rate);
-    vector<vector<int>> castStatusLists(
-        const vector<vector<LEDStatus>> statusLists);
+    vector<vector<int>> castStatusLists(const vector<vector<LEDStatus>> statusLists);
 
    private:
     // serialization
