@@ -56,7 +56,7 @@ class Client:
 
     def on_open(self, ws):
         print("Successfully on_open")
-        self.MAC = get_mac_address()
+        self.MAC = get_mac_address().upper()
         print(f"[Info] MAC address: {self.MAC}")
         self.send_response("boardInfo", 0, {"MAC": self.MAC})
         # print("Mac address sent")
