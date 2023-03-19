@@ -162,7 +162,7 @@ vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
         const int &g = (int)round((1 - rate) * (float)status.g + rate * (float)statusNext.g);
         const int &b = (int)round((1 - rate) * (float)status.b + rate * (float)statusNext.b);
         const int &a =
-            (int)round(((1 - rate) * (float)status.a + rate * (float)statusNext.a) * 10.0f);
+            (int)round(((1 - rate) * (float)status.a + rate * (float)statusNext.a));
         fadeFrameStatus[channelId] = OFStatus(r, g, b, a);
     }
 
