@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+
+USERNAME="pi"
+WORKSPACE="/home/pi/LightDance-RPi"
+
+git config --global user.email "ntuee@ntu.edu.tw"
+git config --global user.name "lightdance"
+
+# copy authorized_keys
+mkdir -p /home/$USERNAME/.ssh
+cp $WORKSPACE/authorized_keys /home/$USERNAME/.ssh/
+
+# build and set daemon
+cd $WORKSPACE/scripts
+./build_umb
+./set-service
+
+# HOSTNAME=$1
+# SERVER_IP=$2
+
+# ./set-hostname.sh $HOSTNAME
+# ./set-server-ip.sh $SERVER_IP
