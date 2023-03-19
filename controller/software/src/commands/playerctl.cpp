@@ -14,8 +14,8 @@
 #include "command.h"
 
 using namespace std;
-#define secAdjust 1000
-#define msecAdjust 1
+#define secAdjust 1000000
+#define msecAdjust 1000
 class Play : public Command {
    public:
     Play() : Command() {
@@ -119,7 +119,7 @@ class Play : public Command {
         stringstream cmd;
         // cout << delayTime[0] << endl;
         cmd << "play " << start << " " << end << " -d "
-            << (needDelay ? ((long)delayTime[0] * secAdjust) : 0);
+            << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0);
         string mycmd = cmd.str();
         sendToPlayLoop(mycmd);
         cout << mycmd << endl;
