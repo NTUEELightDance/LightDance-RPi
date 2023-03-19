@@ -10,6 +10,10 @@ git config --global user.name "lightdance"
 mkdir -p /home/$USERNAME/.ssh
 cp $WORKSPACE/authorized_keys /home/$USERNAME/.ssh/
 
+# client.py requirements
+cd $WORKSPACE/ws_client
+pip3 install -r requirements.txt
+
 # build and set daemon
 cd $WORKSPACE/scripts
 ./build
