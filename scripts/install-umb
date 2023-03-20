@@ -12,7 +12,7 @@ cp $WORKSPACE/authorized_keys /home/$USERNAME/.ssh/
 
 # build and set daemon
 cd $WORKSPACE/scripts
-./build_umb
+./build-umb
 ./set-service
 
 # HOSTNAME=$1
