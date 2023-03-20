@@ -3,7 +3,7 @@ import socket
 from datetime import datetime
 from config import *
 
-HOST = (SERVER_IP, SERVER_PORT)
+HOST = (SERVER_IP, NTP_SERVER_PORT)
 
 
 class NTPClient:

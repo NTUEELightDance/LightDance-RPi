@@ -25,3 +25,4 @@ sudo systemctl enable startup.service
 sudo systemctl start player.service
 sudo systemctl start client.service
 sudo systemctl start startup.service
+sudo systemctl disable systemd-timesyncd.service

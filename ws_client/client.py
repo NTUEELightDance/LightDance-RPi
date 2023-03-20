@@ -6,12 +6,13 @@ import os
 import sys
 import time
 import subprocess
+import time
 
 import websocket
 from getmac import get_mac_address
 
 from config import *
-# from ntpclient import *
+from ntpclient import *
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
@@ -24,7 +25,7 @@ class Client:
         self.url = f"ws://{SERVER_IP}:{SERVER_PORT}"
         self.action = ""
         self.payload = {}
-        # self.ntp_client = NTPClient()
+        self.ntp_client = NTPClient()
         self.MAC = ""
         self.ws = None
 
@@ -93,6 +94,13 @@ class Client:
             # print(payload)
             status = -1
             message_to_server = ""
+
+            if "playerctl play" in payload:
+                print("[Info] Adjusting time")
+                commands = payload.split()
+                commands[4] = str(int(commands[4]) - round(time.time() * 1000))
+                payload = " ".join(commands)
+                print(f"[Info] Adjusted command: {payload}")
 
             try:
                 # print(f"Executing command: {payload}")
@@ -170,14 +178,19 @@ class Client:
                 },
             )
 
-        elif topic == "ping":
+        elif topic == "sync":
+            self.ntp_client.startTimeSync()
+            result = self.ntp_client.recvMes()
+            delay = result["delay"]
+            offset = result["offset"]
+
             self.send_response(
-                "ping",
+                "sync",
                 0,
                 {
                     "MAC": self.MAC,
-                    "command": "ping",
-                    "message": "pong",
+                    "command": "sync",
+                    "message": f"Delay: {delay}, Offset: {offset}",
                 },
             )
 
