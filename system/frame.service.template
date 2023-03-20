@@ -4,7 +4,7 @@ Description=frame
 [Service]
 User=<USERNAME>
 WorkingDirectory=<WORKSPACE>
-ExecStart=<WORKSPACE>/data/light-frame.py
+ExecStart=python3 -u <WORKSPACE>/data/light-frame.py
 Restart=always
 
 [Install]
