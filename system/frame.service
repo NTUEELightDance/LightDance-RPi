@@ -1,0 +1,11 @@
+[Unit]
+Description=frame
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/LightDance-RPi
+ExecStart=/home/pi/LightDance-RPi/data/light-frame.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

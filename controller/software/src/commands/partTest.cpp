@@ -126,8 +126,8 @@ class PartTest : public Command {
             OFbuf[id] = color;
         } else if (player.LEDPARTS.find(part) != player.LEDPARTS.end()) {
             int i = player.LEDPARTS[part].id;
-            cout << "LED part " << part << " found at index " << i << endl;
-            cout << "n = " << n << "\n";
+            // cout << "LED part " << part << " found at index " << i << endl;
+            // cout << "n = " << n << "\n";
             if (n >= 0 && n < Shape[i]) {
                 LEDbuf[i][n] = color;
             } else if (n == -1) {

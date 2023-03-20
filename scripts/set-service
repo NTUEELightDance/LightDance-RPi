@@ -17,12 +17,15 @@ cd $WORKSPACE/system
 sudo cp player.service /etc/systemd/system/
 sudo cp client.service /etc/systemd/system/
 sudo cp startup.service /etc/systemd/system/
+sudo cp frame.service /etc/systemd/system/
 
 sudo systemctl daemon-reload
 sudo systemctl enable player.service
 sudo systemctl enable client.service
 sudo systemctl enable startup.service
+sudo systemctl enable frame.service
 sudo systemctl start player.service
 sudo systemctl start client.service
 sudo systemctl start startup.service
+sudo systemctl start frame.service
 sudo systemctl disable systemd-timesyncd.service
