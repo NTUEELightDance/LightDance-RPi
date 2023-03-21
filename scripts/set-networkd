@@ -1,0 +1,79 @@
+sudo apt-get update
+sudo cat > /etc/systemd/network/04-wired.network <<EOF
+[Match]
+Name=e*
+
+[Network]
+## Uncomment only one option block
+# Option: using a DHCP server and multicast DNS
+LLMNR=no
+LinkLocalAddressing=no
+MulticastDNS=yes
+DHCP=ipv4
+
+# Option: using link-local ip addresses and multicast DNS
+#LLMNR=no
+#LinkLocalAddressing=yes
+#MulticastDNS=yes
+
+# Option: using static ip address and multicast DNS
+# (example, use your settings)
+#Address=192.168.50.60/24
+#Gateway=192.168.50.1
+#DNS=84.200.69.80 1.1.1.1
+#MulticastDNS=yes
+EOF
+
+sudo cat > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf <<EOF
+country=TW
+ctrl_interface=DIR=/run/wpa_supplicant GROUP=netdev
+update_config=1
+p2p_disabled=1
+
+network={
+    ssid="LightDance_2.4G"
+    psk="ntueelightdance"
+}
+EOF
+
+sudo cat > /etc/systemd/network/08-wifi.network <<EOF
+[Match]
+Name=wl*
+
+[Network]
+## Uncomment only one option block
+# Option: using a DHCP server and multicast DNS
+LLMNR=no
+LinkLocalAddressing=no
+MulticastDNS=yes
+DHCP=ipv4
+
+# Option: using link-local ip addresses and multicast DNS
+#LLMNR=no
+#LinkLocalAddressing=yes
+#MulticastDNS=yes
+
+# Option: using static ip address and multicast DNS
+# (example, use your settings)
+#Address=192.168.50.61/24
+#Gateway=192.168.50.1
+#DNS=84.200.69.80 1.1.1.1
+#MulticastDNS=yes
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl disable --now ifupdown dhcpcd dhcpcd5 isc-dhcp-client isc-dhcp-common rsyslog
+sudo apt -y --autoremove purge ifupdown dhcpcd dhcpcd5 isc-dhcp-client isc-dhcp-common rsyslog
+sudo rm -r /etc/network /etc/dhcp
+
+sudo systemctl disable --now avahi-daemon libnss-mdns
+sudo apt -y --autoremove purge avahi-daemon
+sudo apt -y install libnss-resolve
+sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+sudo apt-mark hold avahi-daemon dhcpcd dhcpcd5 ifupdown isc-dhcp-client isc-dhcp-common libnss-mdns openresolv raspberrypi-net-mods rsyslog
+sudo systemctl enable systemd-networkd.service systemd-resolved.service
+
+sudo chmod 600 /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+sudo systemctl disable wpa_supplicant.service
+sudo systemctl enable wpa_supplicant@wlan0.service
+sudo rfkill unblock wlan

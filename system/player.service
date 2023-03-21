@@ -4,6 +4,7 @@ Description=player
 [Service]
 User=pi
 WorkingDirectory=/home/pi/LightDance-RPi
+ExecStartPre=/home/pi/LightDance-RPi/scripts/startup
 ExecStart=player
 Restart=always
 

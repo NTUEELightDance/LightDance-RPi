@@ -2,5 +2,9 @@
 
 load
 parttest --rgb 255 0 0
-sleep 3
+sleep 1
+parttest --rgb 0 255 0
+sleep 1
+parttest --rgb 0 0 255
+sleep 1
 parttest --rgb 0 0 0
