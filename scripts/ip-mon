@@ -1,4 +1,4 @@
-#/bin/bash
+#!/usr/bin/env sh
 
 ip mon addr | sed -nu -r 's/.*[[:digit:]]+:[[:space:]]+([^[:space:]]+).*/\1/p' | while read iface; do
   systemctl restart client
