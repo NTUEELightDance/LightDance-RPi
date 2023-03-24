@@ -161,8 +161,7 @@ vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
         const int &r = (int)round((1 - rate) * (float)status.r + rate * (float)statusNext.r);
         const int &g = (int)round((1 - rate) * (float)status.g + rate * (float)statusNext.g);
         const int &b = (int)round((1 - rate) * (float)status.b + rate * (float)statusNext.b);
-        const int &a =
-            (int)round(((1 - rate) * (float)status.a + rate * (float)statusNext.a));
+        const int &a = (int)round(((1 - rate) * (float)status.a + rate * (float)statusNext.a));
         fadeFrameStatus[channelId] = OFStatus(r, g, b, a);
     }
 
@@ -171,7 +170,8 @@ vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
 
 int OFPlayer::findFrameId(const long &time) {
     const int totalFrame = frameList.size();
-    if (totalFrame == 0 || time <= 0) return 0;
+    // printf("totalFrame :%d",totalFrame);
+    if (totalFrame == 0 || time <= 0) return -1;
     if (time > frameList[frameList.size() - 1].start) return totalFrame - 1;
     if (time >= frameList[frameId].start) {
         if ((unsigned int)frameId < frameList.size() - 1) {
@@ -218,7 +218,7 @@ vector<int> OFPlayer::castStatusList(vector<OFStatus> statusList) {
 }
 
 void OFPlayer::setLightStatus(vector<OFStatus> &statusList, int r, int g, int b, int a) {
-    statusList.resize(channelIds.size());
+    statusList.resize(OFnum);
     for (auto &status : statusList) {
         status = OFStatus(r, g, b, a);
     }
@@ -265,6 +265,7 @@ void OFPlayer::loop(atomic<bool> *playing, const timeval *baseTime, const atomic
 
             // find status
             frameId = findFrameId(elapsedTimeInMs);
+            if (frameId == -1) break;
             statusList = findFrameStatus(elapsedTimeInMs);
 
             controller.sendAll(castStatusList(statusList));
