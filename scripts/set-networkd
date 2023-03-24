@@ -11,6 +11,9 @@ LinkLocalAddressing=no
 MulticastDNS=yes
 DHCP=ipv4
 
+[DHCP]
+RouteMetric=512
+
 # Option: using link-local ip addresses and multicast DNS
 #LLMNR=no
 #LinkLocalAddressing=yes

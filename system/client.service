@@ -8,4 +8,5 @@ ExecStart=python3 -u /home/pi/LightDance-RPi/ws_client/client.py
 Restart=always
 
 [Install]
+After=systemd-networkd.service                                                                             
 WantedBy=multi-user.target
