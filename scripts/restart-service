@@ -16,3 +16,5 @@ WORKSPACE="/home/pi/LightDance-RPi"
 sudo systemctl daemon-reload
 sudo systemctl restart player.service
 sudo systemctl restart client.service
+sudo systemctl restart ip-mon.service
+sudo systemctl restart frame.service
