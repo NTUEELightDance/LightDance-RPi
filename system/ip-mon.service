@@ -1,0 +1,12 @@
+[Unit]
+Description=IP Change Monitor
+Wants=network.target
+After=network-online.target
+
+[Service]
+ExecStart=:/bin/bash -c "ip mon addr | sed -nu -r
+\'s/.*[[:digit:]]+:[[:space:]]+([^[:space:]]+).*/\\1/p\' | while read iface; do
+systemctl restart client.service; done"
+
+[Install]
+WantedBy=multi-user.target default.target

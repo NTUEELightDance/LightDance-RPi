@@ -1,16 +1,5 @@
 #!/usr/bin/env sh
 
-# USERNAME=$1
-# WORKSPACE="${2/#\~/$HOME}"
-#
-# cp system/player.service.template system/player.service
-# sed -i "s!<USERNAME>!${USERNAME}!g" system/player.service
-# sed -i "s!<WORKSPACE>!${WORKSPACE}!g" system/player.service
-#
-# cp system/client.service.template system/client.service
-# sed -i "s!<USERNAME>!${USERNAME}!g" system/client.service
-# sed -i "s!<WORKSPACE>!${WORKSPACE}!g" system/client.service
-
 WORKSPACE="/home/pi/LightDance-RPi"
 
 cd $WORKSPACE/system
@@ -18,6 +7,7 @@ sudo cp player.service /etc/systemd/system/
 sudo cp client.service /etc/systemd/system/
 # sudo cp startup.service /etc/systemd/system/
 sudo cp frame.service /etc/systemd/system/
+sudo cp ip-mon.service /etc/systemd/system/
 # sudo cp wire.service /etc/systemd/system/
 
 sudo systemctl daemon-reload
@@ -26,12 +16,14 @@ sudo systemctl disable startup.service
 sudo systemctl enable player.service
 sudo systemctl enable client.service
 # sudo systemctl enable startup.service
+sudo systemctl enable ip-mon.service
 sudo systemctl enable frame.service
 # sudo systemctl enable wire.service
 
 sudo systemctl start player.service
 sudo systemctl start client.service
 # sudo systemctl start startup.service
+sudo systemctl start ip-mon.service
 sudo systemctl start frame.service
 # sudo systemctl start wire.service
 sudo systemctl disable systemd-timesyncd.service
