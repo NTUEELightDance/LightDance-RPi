@@ -28,6 +28,7 @@ class Client:
         self.ntp_client = NTPClient()
         self.MAC = ""
         self.ws = None
+        self.last_sync_time = 0
 
     def start_client(self):
         print(f"Connecting to {self.url}")
@@ -96,6 +97,17 @@ class Client:
             message_to_server = ""
 
             if "playerctl play" in payload:
+                if time.time() - self.last_sync_time > 10:
+                    status = -1
+                    message_to_server = "Time not sync"
+                    payload_to_server = {
+                        "MAC": self.MAC,
+                        "command": payload,
+                        "message": message_to_server,
+                    }
+                    self.send_response("command", status, payload_to_server)
+                    return
+                    
                 print("[Info] Adjusting time")
                 commands = payload.split()
                 commands[4] = str(int(commands[4]) - round(time.time() * 1000))
@@ -183,6 +195,7 @@ class Client:
             result = self.ntp_client.recvMes()
             delay = result["delay"]
             offset = result["offset"]
+            self.last_sync_time = time.time()
 
             self.send_response(
                 "sync",

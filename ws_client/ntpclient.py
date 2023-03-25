@@ -42,10 +42,12 @@ class NTPClient:
         t3 = self.timeData["t3"]
         print(f"t0: {t0}, t1: {t1}, t2: {t2}, t3: {t3}")
 
-        delay = round((t3 - t0) - (t2 - t1))
         offset = round(((t1 - t0) + (t2 - t3)) / 2)
+        delay = round((t3 - t0) - (t2 - t1))
         # print(f"sudo date +%s -s @{(t2 + delay) / 1000}")
-        os.system(f"sudo date +%s -s @{(t2 + delay) / 1000}")
+        os.system(
+            f"sudo date +%s.%N -s @{((datetime.now().timestamp() * 1000) + offset + 20) / 1000}"
+        )
 
         print(f"delay: {delay}ms, offset: {offset}ms")
         return {"delay": delay, "offset": offset}
