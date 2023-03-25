@@ -171,7 +171,7 @@ vector<OFStatus> OFPlayer::findFadeFrameStatus(const long &time) {
 int OFPlayer::findFrameId(const long &time) {
     const int totalFrame = frameList.size();
     // printf("totalFrame :%d",totalFrame);
-    if (totalFrame == 0 || time <= 0) return -1;
+    if (totalFrame == 0 || time < 0) return -1;
     if (time > frameList[frameList.size() - 1].start) return totalFrame - 1;
     if (time >= frameList[frameId].start) {
         if ((unsigned int)frameId < frameList.size() - 1) {
