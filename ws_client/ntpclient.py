@@ -14,7 +14,7 @@ class NTPClient:
 
     def startTimeSync(self) -> None:
         self.timeData = {
-            "t0": datetime.now().timestamp(),
+            "t0": datetime.now().timestamp() * 1000,
             "t1": None,
             "t2": None,
             "t3": None,
@@ -34,7 +34,7 @@ class NTPClient:
     def setTime(self, serverSysTime: int) -> dict:
         self.timeData["t1"] = serverSysTime
         self.timeData["t2"] = serverSysTime
-        self.timeData["t3"] = datetime.now().timestamp()
+        self.timeData["t3"] = datetime.now().timestamp() * 1000
 
         t0 = self.timeData["t0"]
         t1 = self.timeData["t1"]
@@ -42,9 +42,10 @@ class NTPClient:
         t3 = self.timeData["t3"]
         print(f"t0: {t0}, t1: {t1}, t2: {t2}, t3: {t3}")
 
-        delay = round((t3 - t0 - (t2 - t1)) / 2)
+        delay = round((t3 - t0) - (t2 - t1))
         offset = round(((t1 - t0) + (t2 - t3)) / 2)
+        # print(f"sudo date +%s -s @{(t2 + delay) / 1000}")
         os.system(f"sudo date +%s -s @{(t2 + delay) / 1000}")
 
-        print(f"delay: {delay}, offset: {offset}")
+        print(f"delay: {delay}ms, offset: {offset}ms")
         return {"delay": delay, "offset": offset}
