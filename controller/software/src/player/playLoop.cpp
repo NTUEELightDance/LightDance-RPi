@@ -16,6 +16,7 @@
 #include "OFPlayer.h"
 #include "player.h"
 #include "utils.h"
+#include "FiniteStateMachine.h"
 
 #define MAXLEN 100
 
@@ -182,6 +183,7 @@ int parse_command(std::string str) {
     return -1;
 }
 
+
 int main(int argc, char *argv[]) {
     // create player_to_cmd
     if (mkfifo(wr_fifo, 0666) == -1) {
@@ -214,6 +216,7 @@ int main(int argc, char *argv[]) {
     of_playing = false;
     led_playing = false;
     timeval playedTime;
+    StateMachine PlayingState{};
     // long s = -1;
     while (1) {
         // cerr << ".";
@@ -301,7 +304,8 @@ int main(int argc, char *argv[]) {
         std::string cmd_str = cmd_buf;
         if (n > 0) {
             // fprintf(stderr, "n: %d\n", n);
-            int cmd = parse_command(cmd_buf);
+            //int cmd = parse_command(cmd_buf);
+            
             fprintf(stderr, "[Loop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
             switch (cmd) {
                 case PLAY:
