@@ -1,6 +1,6 @@
 #include <functional>
 #include <iostream>
-enum class Event{
+enum Event{
     PLAY,
     PAUSE,
     STOP,
@@ -9,7 +9,7 @@ enum class Event{
 class StateMachine{
 public:
     StateMachine();
-    enum {EVENT_IGNORE, CANNOT_HAPPEN};
+    enum {EVENT_IGNORE=0xef, CANNOT_HAPPEN=0xff};
 private:
     enum {S_PLAY, S_PAUSE, S_STOP};
     int currentState, newState;
@@ -43,4 +43,14 @@ void (StateMachine::*EN_func[3])() = {
         &StateMachine::EN_Stop
     };
 
+int transistion(int);
+void stating(int);
+void entering(int);
+void exiting(int);
+
+int TransitionTable[3][4]={
+    {S_PAUSE, EVENT_IGNORE, EVENT_IGNORE, S_STOP},
+    {EVENT_IGNORE, S_PLAY, EVENT_IGNORE, S_STOP},
+    {EVENT_IGNORE, EVENT_IGNORE, S_PLAY, EVENT_IGNORE}
+};
 };

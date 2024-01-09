@@ -44,3 +44,25 @@ void StateMachine::EN_Pause() {
 void StateMachine::EN_Stop() {
     std::cout << "Entering state STOP\n";
 }
+
+int StateMachine::transistion(int cmd){
+    if(TransitionTable[currentState][cmd]!=EVENT_IGNORE){
+        newState=TransitionTable[currentState][cmd];
+    }
+    else return -1;
+}
+
+void StateMachine::stating(int state){
+    (this->*ST_func[state])();
+}
+
+void StateMachine::entering(int state){
+    (this->*EN_func[state])();
+}
+
+void StateMachine::exiting(int state){
+    (this->*EX_func[state])();
+}
+
+
+
