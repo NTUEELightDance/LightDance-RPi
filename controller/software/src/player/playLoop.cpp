@@ -368,8 +368,8 @@ int main(int argc, char *argv[]) {
 
                 default:
                     break;
-            }
-        }*/
+            }*/
+        }
     }
         else{
            playingState.stating(playingState.currentState); 
@@ -377,3 +377,4 @@ int main(int argc, char *argv[]) {
     close(rd_fd);
     return 0;
 }
+
