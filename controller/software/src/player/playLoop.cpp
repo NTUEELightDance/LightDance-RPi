@@ -183,7 +183,6 @@ int parse_command(std::string str) {
     return -1;
 }
 
-
 int main(int argc, char *argv[]) {
     // create player_to_cmd
     if (mkfifo(wr_fifo, 0666) == -1) {
@@ -216,7 +215,7 @@ int main(int argc, char *argv[]) {
     of_playing = false;
     led_playing = false;
     timeval playedTime;
-    StateMachine PlayingState{};
+    StateMachine playingState {};
     // long s = -1;
     while (1) {
         // cerr << ".";
@@ -303,11 +302,21 @@ int main(int argc, char *argv[]) {
         // cerr << "readed" << endl;
         std::string cmd_str = cmd_buf;
         if (n > 0) {
+
             // fprintf(stderr, "n: %d\n", n);
-            //int cmd = parse_command(cmd_buf);
-            
+            int cmd = parse_command(cmd_buf);
+            int trans = PS.transition(cmd);
+            if(trans == -1){
+                playingState.stating(playingState.currentState);
+            }else{
+                playingState.exiting(playingState.currentState);
+                playingState.entering(playingState.newState);
+                playingState.currentState=playingState.newState;
+                playingState.stating(playingState.currentState);
+            }
+
             fprintf(stderr, "[Loop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
-            switch (cmd) {
+            /*switch (cmd) {
                 case PLAY:
                     cerr << "[Loop] ACTION: play" << endl;
                     // playing = false;
@@ -360,8 +369,11 @@ int main(int argc, char *argv[]) {
                 default:
                     break;
             }
-        }
+        }*/
     }
+        else{
+           playingState.stating(playingState.currentState); 
+        }
     close(rd_fd);
     return 0;
 }
