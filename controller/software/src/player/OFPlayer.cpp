@@ -237,29 +237,28 @@ void OFPlayer::delayDisplay(const bool *delayingDisplay) {
     }
 }
 
-void OFPlayer::loop(atomic<bool> *playing, const timeval *baseTime, const atomic<bool> *toTerminate,
-                    atomic<bool> *finished) {
+void OFPlayer::loop(StateMachine *fsm) {
     timeval currentTime;
     vector<OFStatus> statusList;
 
 #ifdef PLAYER_DEBUG
     ofstream logFile("/tmp/of.log");
 #endif
-    *finished = false;
+    // *finished = false;
 
     while (true) {
         timeval lastTime = currentTime;
         gettimeofday(&currentTime, NULL);
         float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
 
-        if (*toTerminate) {
+        if (fsm->getCurrentState() == S_STOP||fsm->getCurrentState() == S_PAUSE) {
             // TODO: finish darkall
             setLightStatus(statusList, 0, 0, 0, 0);
             controller.sendAll(castStatusList(statusList));
             break;
         }
-        if (*playing) {
-            const long elapsedTime = getElapsedTime(*baseTime, currentTime);
+        if (fsm->getCurrentState() == S_PLAY) {
+            const long elapsedTime = getElapsedTime(fsm->data.baseTime, currentTime);
             const long elapsedTimeInMs = elapsedTime / 1000l;
             statusList.clear();
 
@@ -295,12 +294,11 @@ void OFPlayer::loop(atomic<bool> *playing, const timeval *baseTime, const atomic
             this_thread::yield();
         }
     }
-    *playing = false;
     cerr << "[OF] finish\n";
 
 #ifdef PLAYER_DEBUG
     logFile << "[OF] finish\n";
     logFile.close();
 #endif
-    *finished = true;
+    fsm->setState(S_STOP);
 }

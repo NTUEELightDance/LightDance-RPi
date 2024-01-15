@@ -27,6 +27,7 @@
 #include <boost/serialization/version.hpp>
 
 #include "OFController.h"
+#include "StateMachine.h"
 
 using namespace std;
 
@@ -63,8 +64,7 @@ class OFPlayer {
              const int &_OFnum);
 
     // threading function
-    void loop(atomic<bool> *playing, const timeval *baseTime, const atomic<bool> *toTerminate,
-              atomic<bool> *finished);
+    void loop(StateMachine *fsm);
     void delayDisplay(const bool *delayingDisplay);
     void init();
 

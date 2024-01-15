@@ -255,21 +255,18 @@ void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
     }
 }
 
-void LEDPlayer::loop(atomic<bool> *playing, const timeval *baseTime,
-                     const atomic<bool> *toTerminate, atomic<bool> *finished) {
+void LEDPlayer::loop(StateMachine *fsm) {
     timeval currentTime;
     vector<vector<LEDStatus>> statusLists;
 #ifdef PLAYER_DEBUG
     ofstream logFile("/tmp/led.log");
 #endif
-    *finished = false;
     while (true) {
         timeval lastTime = currentTime;
         gettimeofday(&currentTime, NULL);
         float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
 
-        if (*toTerminate) {
-            *playing = false;
+        if (fsm->getCurrentState() == S_STOP||fsm->getCurrentState() == S_PAUSE) {
             statusLists.clear();
             for (unsigned int i = 0; i < frameIds.size(); i++) {
                 // dark all
@@ -279,9 +276,9 @@ void LEDPlayer::loop(atomic<bool> *playing, const timeval *baseTime,
             // controller.finish();
             break;
         }
-        if (*playing) {
+        if (fsm->getCurrentState()==S_PLAY) {
             const long elapsedTime =
-                getElapsedTime(*baseTime, currentTime);  // us
+                getElapsedTime(fsm->data.baseTime, currentTime);  // us
 
             // const int currentTimeId = getTimeId(elapsedTime);
             calculateFrameIds(elapsedTime / 1000l);
@@ -317,10 +314,6 @@ void LEDPlayer::loop(atomic<bool> *playing, const timeval *baseTime,
 
             controller.sendAll(castStatusLists(statusLists));
 
-            // fprintf(stderr, "[LED] Time: %s, FPS: %4.2f\n",
-            // parseMicroSec(elapsedTime).c_str(),
-            //         fps);
-
 #ifdef PLAYER_DEBUG
             char buf[20000];
             sprintf(buf, "[LED] Time: %s\n",
@@ -341,12 +334,11 @@ void LEDPlayer::loop(atomic<bool> *playing, const timeval *baseTime,
             this_thread::yield();
         }
     }
-    *playing = false;
     cerr << "[LED] finish\n";
     controller.finish();
 #ifdef PLAYER_DEBUG
     logFile << "[LED] finish\n";
     logFile.close();
 #endif
-    *finished = true;
+    fsm->setState(S_STOP);
 }
