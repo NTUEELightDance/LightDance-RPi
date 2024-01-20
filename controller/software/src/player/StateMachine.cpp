@@ -1,4 +1,4 @@
-# include <FiniteStateMachine.h>
+# include <StateMachine.h>
 # include <FSM_Common.h>
 StateMachine::StateMachine(){
     timeval tv;
@@ -62,7 +62,7 @@ void StateMachine::EX_Pause() {
 }
 
 void StateMachine::EX_Stop() {
-     restart(); 
+     restart(this); 
 }
 
 // Entry functions
@@ -95,8 +95,8 @@ void StateMachine::EN_Pause() {
 void StateMachine::EN_Stop() {
     fprintf(stderr, "stop\n");
     // of_playing = led_playing = paused = 
-    fsm->data.stopTimeAssigned = delaying = false;
-    fsm->data.stopTime = -1;
+    data.stopTimeAssigned = delaying = false;
+    data.stopTime = -1;
     //fsm->setState(S_STOP);
 }
 

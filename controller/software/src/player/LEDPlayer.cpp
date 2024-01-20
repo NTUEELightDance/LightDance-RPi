@@ -340,5 +340,5 @@ void LEDPlayer::loop(StateMachine *fsm) {
     logFile << "[LED] finish\n";
     logFile.close();
 #endif
-    fsm->setState(S_STOP);
+    //fsm->setState(S_STOP);
 }

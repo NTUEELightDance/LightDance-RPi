@@ -16,13 +16,11 @@
 #include "OFPlayer.h"
 #include "player.h"
 #include "utils.h"
-#include "FiniteStateMachine.h"
+#include "StateMachine.h"
 #include "FSM_Common.h"
 
 #define MAXLEN 100
 
-delaying = false;
-delayingDisplay = true;
 int main(int argc, char *argv[]){
     // create player_to_cmd
     if (mkfifo(wr_fifo, 0666) == -1) {
@@ -48,7 +46,7 @@ int main(int argc, char *argv[]){
     // of_playing = false;
     // led_playing = false;
     // timeval playedTime;
-    StateMachine playingState();
+    StateMachine playingState;
 
     while (1) {
         /*timeval tv;
@@ -78,11 +76,11 @@ int main(int argc, char *argv[]){
         if (n > 0) {
             int cmd = parse_command(cmd_buf);
             fprintf(stderr, "[Loop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
-            int trans = playingState.transition(cmd);
+            playingState.transition(cmd);//trans?
            
         }
         else{
-           playingState.ST_func[playingState.getCurrentState()](); 
+           playingState.stating(playingState.getCurrentState());
         }
     }
     close(rd_fd);

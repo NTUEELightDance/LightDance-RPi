@@ -5,19 +5,20 @@
 #include <iostream>
 #include <thread> 
 #include <const.h>
-#include <FiniteStateMachine.h>
+#include <StateMachine.h>
 #include <LEDPlayer.h>
 #include <OFPlayer.h>
 #include <player.h>
 #include <string>
 
 bool delaying, delayingDisplay;
-enum CMD { PLAY, PAUSE, STOP, RESUME };
+enum CMD { C_PLAY, C_PAUSE, C_STOP, C_RESUME };
 const std::string cmds[10] = {"play", "pause", "stop"};
 std::thread led_loop, of_loop;
 Player player;
 LEDPlayer led_player;
-StateMachine fsm;
+OFPlayer of_player;
+//StateMachine fsm;
 int dancer_fd;
 string path = string(BASE_PATH) + "data/dancer.dat";
 const char *rd_fifo = "/tmp/cmd_to_player";
@@ -25,7 +26,6 @@ const char *wr_fifo = "/tmp/player_to_cmd";
 
 
 #endif // FSM_COMMON_H
-OFPlayer of_player;
 inline void write_fifo(bool success) {
     int wr_fd;
     std::string msg;
@@ -73,7 +73,7 @@ inline timeval getCalculatedTime(timeval subtrahend) {
     }
     return time;
 }
-inline bool restart() {
+inline bool restart(StateMachine* fsm) {
     printf("restart\n");
     dancer_fd = tryGetLock(path.c_str());
     if (dancer_fd == -1) {
@@ -94,8 +94,8 @@ inline bool restart() {
     of_player = player.myOFPlayer;
     of_player.init();
     cerr << "Player loaded\n";
-    led_loop = std::thread(&LEDPlayer::loop, &fsm);
-    of_loop = std::thread(&OFPlayer::loop, &fsm);
+    led_loop = std::thread(&LEDPlayer::loop, &led_player, fsm);
+    of_loop = std::thread(&OFPlayer::loop, &of_player, fsm);
     return true;
 }
 inline int parse_command(StateMachine* fsm,std::string str) {
@@ -106,12 +106,12 @@ inline int parse_command(StateMachine* fsm,std::string str) {
     long startusec=0;
     for (int i = 0; i < 3; i++) {
         if (cmd[0] == cmds[i]) {
-            if (i == PLAY) {
+            if (i == C_PLAY) {
             fsm->data.delayTime=0;
             gettimeofday(&fsm->data.baseTime, NULL);//for delay display
             if(fsm->getCurrentState()==S_PAUSE && cmd[1]=="0"&& cmd[2] == "-1" && cmd[4] == "0"){
                 write_fifo(true);
-                cmd_recv=RESUME;
+                cmd_recv=C_RESUME;
                 return cmd_recv;
             }
             else if (cmd.size() >= 3 && cmd[cmd.size() - 2] == "-d") {
@@ -150,4 +150,3 @@ inline int parse_command(StateMachine* fsm,std::string str) {
     fsm->data.stopTime = -1;
     fsm->setState(S_STOP);
 }*/
-#endif

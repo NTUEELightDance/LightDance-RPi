@@ -300,5 +300,5 @@ void OFPlayer::loop(StateMachine *fsm) {
     logFile << "[OF] finish\n";
     logFile.close();
 #endif
-    fsm->setState(S_STOP);
+    //fsm->setState(S_STOP);
 }
