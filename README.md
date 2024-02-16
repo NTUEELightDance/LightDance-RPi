@@ -1,61 +1,32 @@
-# 2023-LightDance-RPi
+# 2024-LightDance-RPi
 
-## playloop
+## Develope flow
+Step 1. Fork a copy from the organization repo  to your personal repo
 
-### OF
+Step 2. Clone the repo to your local machine
 
-```c++
-struct Status {
-	int r;
-	int g;
-	int b;
-	int a;
-};
+```shell
+# USERNAME – your Github user account name.
+# flag --recursive to completely clone repos including hardware
+git clone --recursive git@github.com:${USERNAME}/LightDance-RPi.git
+cd LightDance-RPi
+# set upstream
+git remote add upstream git@github.com:NTUEELightDance/LightDance-RPi.git
 
-vector<vector<Status>> frames;
 
-class OpticalFiberController {
-	public:
-		OpticalFiberController();
-		int init(vector<int> map);
-		int sendAll(vector<Status> status); // lightall, darkall
-};
-
-// logic
-while(1) {
-	status = findFrame(getTime());
-	sendAll(status);
-	sleep(5ms);
-}
+# Make sure don’t accidentally merge
+git config --add merge.ff only
+git config --add pull.ff only
 ```
 
-### LED
+Step 3. Build your local project
 
-```c++
-struct Status {
-	int r;
-	int g;
-	int b;
-	int a;
-};
-
-vector<LEDStatus> stripStatus(size);
-
-class LEDStripController {
-	public:
-		LEDStripController();
-		int init(vector<int> shape);
-		int checkReady();
-		int sendAll(vector<vector<Status>> status);
-};
-
-// logic
-while(1) {
-	while(checkReady() == 0){
-		sleep(1ms);
-  }
-	status = findFrame(getTime());
-	sendAll(status);
-	sleep(5ms);
-}
+```shell
+cd controller/hardware/
+git checkout origin/local_test
+cd ..
+mkdir build
+cd build
+cmake ..
+make install
 ```
