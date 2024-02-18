@@ -1,6 +1,3 @@
 [submodule "controller/hardware"]
 	path = controller/hardware
 	url = https://github.com/NTUEELightDance/Hardware-Library.git
-[submodule "controller/controller/hardware"]
-	path = controller/controller/hardware
-	url = git@github.com:NTUEELightDance/Hardware-Library.git
