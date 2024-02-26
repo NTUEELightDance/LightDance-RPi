@@ -26,7 +26,7 @@ class PartTest : public Command {
             PartName = argv[1];
         }
 
-        int R = 255, G = 255, B = 255, alpha = 10;
+        int R = 255, G = 255, B = 255, alpha = 200;
         int n = -1;
         if (cmdOptionExists(argv, argv + argc, "--rgb")) {
             vector<int> rgb = getCmdOptionInt(argv, argv + argc, "--rgb");
@@ -61,7 +61,7 @@ class PartTest : public Command {
                 cout << "LED index not specified! Using default\n";
             }
         }
-        return Test(PartName, R, G, B, alpha*10, n);
+        return Test(PartName, R, G, B, alpha, n);
     }
 
    private:
@@ -84,7 +84,6 @@ class PartTest : public Command {
         Player player;
         string base_path = BASE_PATH;
         string path = base_path + "data/dancer.dat";
-
         int dancer_fd = tryGetLock(path.c_str());
         if (dancer_fd == -1) {
             cout << "[Error] Dancer is playing! Please stop it first!\n";

@@ -26,6 +26,7 @@
 #include <boost/serialization/version.hpp>
 
 #include "LEDController.h"
+#include "StateMachine.h"
 
 using namespace std;
 
@@ -61,10 +62,10 @@ class LEDPlayer {
 
     void init();
     // threading function
-    void loop(atomic<bool> *playing, const timeval *baseTime, const atomic<bool> *toTerminate,
-              atomic<bool> *finished);
+    void* loop_helper(void *context, StateMachine* fsm);
+    void loop(StateMachine *fsm);
     void delayDisplay(const bool *delayingDisplay);
-
+    void darkAll();
     template <class Archive>
     void serialize(Archive &archive, const unsigned int version);
     string list() const;

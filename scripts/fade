@@ -1,0 +1,8 @@
+USERNAME="pi"
+WORKSPACE="/home/pi/LightDance-RPi"
+
+cd $WORKSPACE/data
+python3 gen_json.py
+load
+
+playerctl play 0 7 -d 0

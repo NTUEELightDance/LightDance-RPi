@@ -51,9 +51,12 @@ include_directories(${INCLUDES} ${HARDWARE_INCLUDES})
 
 add_library(playerLIB STATIC
   ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp
-  ${SOURCE}/commands/player.cpp)
+  ${SOURCE}/commands/player.cpp )
+  # ${SOURCE}/commands/player.cpp ${SOURCE}/player/StateMachine.cpp)
+  add_library(StateMachineLIB STATIC ${SOURCE}/player/StateMachine.cpp ${SOURCE}/player/FSM_Common.cpp)
 # target_include_directories(playerLIB PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
-target_link_libraries(playerLIB ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
+target_link_libraries(playerLIB StateMachineLIB ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
+target_link_libraries(StateMachineLIB playerLIB ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
 # list
 add_executable(
@@ -97,7 +100,7 @@ target_link_libraries(playerctl ${Boost_LIBRARIES})
 add_executable(
   parttest ${SOURCE}/commands/partTest.cpp)
 # target_include_directories(parttest PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
-target_link_libraries(parttest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES} playerLIB)
+target_link_libraries(parttest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES} playerLIB StateMachineLIB)
 
 # color_palette
 # add_executable(
@@ -109,12 +112,14 @@ target_link_libraries(parttest ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES} playerLI
 # player
 add_executable(
   player ${SOURCE}/player/playLoop.cpp)
+
 set_target_properties(player PROPERTIES COMPILE_FLAGS "-pthread"
   LINK_FLAGS "-pthread")
 # target_include_directories(player PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(player ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES}
-  ${CMAKE_THREAD_LIBS_INIT} playerLIB Threads::Threads)
-
+	${CMAKE_THREAD_LIBS_INIT} playerLIB StateMachineLIB Threads::Threads pthread)
+# ${CMAKE_THREAD_LIBS_INIT} playerLIB StateMachineLIB Threads::Threads pthread)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 # socket
 # add_executable(socket ${SOURCE}/socket/client.cpp)
 # target_include_directories(socket PUBLIC ${INCLUDES})

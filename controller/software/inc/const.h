@@ -2,12 +2,8 @@
 #define __CONST_H__
 
 #define BASE_PATH "/home/pi/LightDance-RPi/"
-#define OF_NUM 35
+#define OF_NUM 40
 
-#ifndef UMBRELLA
 #define LED_NUM 8
-#else
-#define LED_NUM 2
-#endif
 
 #endif

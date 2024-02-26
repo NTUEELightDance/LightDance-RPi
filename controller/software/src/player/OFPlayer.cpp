@@ -81,7 +81,7 @@ void saveOFPlayer(OFPlayer &player, const char *filename) {
     // make an archive
     ofstream ofs(filename);
     if (!ofs) {
-        cerr << "File Not Found! ( " << filename << " )" << endl;
+        cerr << "[OFPlayer] File Not Found! ( " << filename << " )" << endl;
         return;
     }
     boost::archive::text_oarchive oa(ofs);
@@ -92,7 +92,7 @@ bool restoreOFPlayer(OFPlayer &player, const char *filename) {
     // open the archive
     ifstream ifs(filename);
     if (!ifs) {
-        cerr << "File Not Found! ( " << filename << " )" << endl;
+        cerr << "[OFPlayer] File Not Found! ( " << filename << " )" << endl;
         return false;
     }
     boost::archive::text_iarchive ia(ifs);
@@ -226,10 +226,9 @@ void OFPlayer::setLightStatus(vector<OFStatus> &statusList, int r, int g, int b,
 
 void OFPlayer::delayDisplay(const bool *delayingDisplay) {
     vector<OFStatus> statusList;
-
     // Let OF lightall for 1/5 times of delayTime
     if (*delayingDisplay) {
-        setLightStatus(statusList, 100, 0, 0, 100);
+        setLightStatus(statusList,100, 0, 0, 255);
         controller.sendAll(castStatusList(statusList));
     } else {
         setLightStatus(statusList, 0, 0, 0, 0);
@@ -237,39 +236,49 @@ void OFPlayer::delayDisplay(const bool *delayingDisplay) {
     }
 }
 
-void OFPlayer::loop(atomic<bool> *playing, const timeval *baseTime, const atomic<bool> *toTerminate,
-                    atomic<bool> *finished) {
+/*void *OFPlayer::loop_helper(void *context, StateMachine* fsm){
+        OFPlayer* ofptr=(OFPlayer *)context;
+        ofptr->loop(fsm);
+	return NULL;
+}*/
+void OFPlayer::darkAll(){ 
+  vector<OFStatus> statusList;
+  setLightStatus(statusList, 0, 0, 0, 0);
+  controller.sendAll(castStatusList(statusList));
+  return;
+}
+
+void OFPlayer::loop(StateMachine *fsm) {
     timeval currentTime;
     vector<OFStatus> statusList;
 
 #ifdef PLAYER_DEBUG
     ofstream logFile("/tmp/of.log");
 #endif
-    *finished = false;
-
     while (true) {
         timeval lastTime = currentTime;
         gettimeofday(&currentTime, NULL);
         float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
-
-        if (*toTerminate) {
+	    cerr<<"[OFPlayer] fps:"<<fps<<"\n";
+        if (fsm->getCurrentState() == S_STOP) {
             // TODO: finish darkall
-            setLightStatus(statusList, 0, 0, 0, 0);
-            controller.sendAll(castStatusList(statusList));
+            //setLightStatus(statusList, 0, 0, 0, 0);
+            //controller.sendAll(castStatusList(statusList));
             break;
         }
-        if (*playing) {
-            const long elapsedTime = getElapsedTime(*baseTime, currentTime);
+	    if(fsm->getCurrentState() == S_PAUSE) {
+	        break;
+	    }
+        if (fsm->getCurrentState() == S_PLAY) {
+            const long elapsedTime = getElapsedTime(fsm->data.baseTime, currentTime);
             const long elapsedTimeInMs = elapsedTime / 1000l;
             statusList.clear();
-
             // find status
             frameId = findFrameId(elapsedTimeInMs);
             if (frameId == -1) break;
             statusList = findFrameStatus(elapsedTimeInMs);
-
             controller.sendAll(castStatusList(statusList));
-
+	        cerr << "[OFPlayer] Status Sent\n";
 #ifdef PLAYER_DEBUG
             char buf[1024];
             sprintf(buf, "[OF] Time: %s Frame: %d / %d\n", parseMicroSec(elapsedTime).c_str(),
@@ -280,27 +289,23 @@ void OFPlayer::loop(atomic<bool> *playing, const timeval *baseTime, const atomic
                         statusList[i].g, statusList[i].b, statusList[i].a);
             }
             logFile << buf;
-
             if (frameId == frameList.size() - 1) {
                 break;
             }
 #endif
-            if (frameId == frameList.size() - 1) {
+            if (frameId == static_cast<int>(frameList.size() - 1)) {
                 break;
             }
-
             // fprintf(stderr, "[OF] Time: %s, FPS: %4.2f\n",
             //         parseMicroSec(elapsedTime).c_str(), fps);
-
             this_thread::yield();
         }
     }
-    *playing = false;
-    cerr << "[OF] finish\n";
+    cerr << "[OFPlayer] finish\n";
 
 #ifdef PLAYER_DEBUG
     logFile << "[OF] finish\n";
     logFile.close();
 #endif
-    *finished = true;
+    //fsm->setState(S_STOP);
 }

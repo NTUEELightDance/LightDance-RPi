@@ -1,14 +1,14 @@
 import json
-
+brightness = 150
 frames = [
     # [r, g, b, a]
-    [255, 0, 0, 10],  # red
-    [255, 255, 0, 10],  # yellow
-    [0, 255, 0, 10],  # green
-    [0, 255, 255, 10],  # cyan
-    [0, 0, 255, 10],  # blue
-    [255, 0, 255, 10],  # pink
-    [255, 0, 0, 10],  # red
+    [255, 0, 0, brightness],  # red
+    [255, 255, 0, brightness],  # yellow
+    [0, 255, 0, brightness],  # green
+    [0, 255, 255, brightness],  # cyan
+    [0, 0, 255, brightness],  # blue
+    [255, 0, 255, brightness],  # purple
+    [255, 0, 0, brightness],  # red
 ]
 TIME = 1000
 FADE = True

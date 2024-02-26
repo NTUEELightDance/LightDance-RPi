@@ -152,7 +152,7 @@ void LEDload(Player &Player, json &data_json) {
             for (auto &status_json : frame_json["status"]) {
                 statusList.push_back(LEDStatus(status_json[0], status_json[1],
                                                status_json[2],
-                                               (int)status_json[3] * 10));
+                                               (int)status_json[3]));
             }
 
             frameLists[id].push_back(
@@ -207,7 +207,7 @@ void OFload(Player &Player, json &data_json) {
 
             const OFStatus currentStatus(
                 status_json[partName][0], status_json[partName][1],
-                status_json[partName][2], (int)status_json[partName][3] * 10);
+                status_json[partName][2], (int)status_json[partName][3]);
             status[id] = currentStatus;
             frameStatus.push_back(make_pair(partName, currentStatus));
         }

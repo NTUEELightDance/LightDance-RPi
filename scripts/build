@@ -11,7 +11,7 @@ git submodule update --init --recursive
 # build controller
 cd $WORKSPACE/controller
 mkdir -p build && cd build
-cmake -DUMBRELLA=OFF .. && make -j4 install
+cmake -DUMBRELLA=OFF .. && make install
 
 # install controller binaries to /usr/local/bin
 cd $WORKSPACE/controller
