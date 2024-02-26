@@ -8,11 +8,9 @@
 #include <fstream>
 #include <iostream>
 
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
-
 #include "LEDPlayer.h"
 #include "const.h"
+#include "nlohmann/json.hpp"
 #include "player.h"
 
 /*
@@ -64,6 +62,7 @@ have a mismatch. (e.g. load LED OF.json).
 
 */
 using namespace std;
+using json = nlohmann::json;
 
 int main(int argc, char *argv[]) {
     setuid(1000);
@@ -118,42 +117,39 @@ int main(int argc, char *argv[]) {
     // string dancerName = path.substr(fileNameStart, path.find_last_of(".") -
     // fileNameStart);
     string dancerName = "DANCER";
-    boost::property_tree::ptree controlJsonFile;
+    json controlJsonFile;
     if (loadControl) {
         ifstream infile(controlPath.c_str());
         if (!infile) {
             cerr << "Cannot open file: " << controlPath << endl;
             exit(1);
         }
-        boost::property_tree::read_json(infile, controlJsonFile);
+        infile >> controlJsonFile;
         infile.close();
     }
-    boost::property_tree::ptree LEDJsonFile;
+    json LEDJsonFile;
     if (loadLED) {
         ifstream infile(LEDpath.c_str());
         if (!infile) {
             cerr << "Cannot open file: " << LEDpath << endl;
             exit(1);
         }
-        boost::property_tree::read_json(infile, LEDJsonFile);
+        infile >> LEDJsonFile;
         infile.close();
     }
-    boost::property_tree::ptree OFJsonFile;
+    json OFJsonFile;
     if (loadOF) {
         ifstream infile(OFpath.c_str());
         if (!infile) {
             cerr << "Cannot open file: " << OFpath << endl;
             exit(1);
         }
-        boost::property_tree::read_json(infile, OFJsonFile);
+        infile >> OFJsonFile;
         infile.close();
     }
 
     string outputFileName = basePath + "data/dancer.dat";
     if (loadControl) {
-        
-        boost::property_tree::write_json(std::cout, controlJsonFile);
-
         Player dancer;
         dancer.setDancer(dancerName, controlJsonFile);
         cout << "Dancer control data loaded successfully\n";
@@ -166,12 +162,11 @@ int main(int argc, char *argv[]) {
     }
 
     Player dancerData;
-    // if (!restorePlayer(dancerData, outputFileName.c_str())) {
-    //     cerr << "Please load dancer's control data first !" << endl;
-    //     exit(1);
-    // };
+    if (!restorePlayer(dancerData, outputFileName.c_str())) {
+        cerr << "Please load dancer's control data first !" << endl;
+        exit(1);
+    };
     if (loadLED) {
-        boost::property_tree::write_json(std::cout, LEDJsonFile);
         LEDload(dancerData, LEDJsonFile);
         cout << "LED data loaded successfully\n";
         cout << "Stored at: " << outputFileName << endl;
@@ -183,7 +178,6 @@ int main(int argc, char *argv[]) {
         // return 0;
     }
     if (loadOF) {
-        boost::property_tree::write_json(std::cout, OFJsonFile);
         OFload(dancerData, OFJsonFile);
         cout << "OF data loaded successfully\n";
         cout << "Stored at: " << outputFileName << endl;

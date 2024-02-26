@@ -11,8 +11,7 @@
 #include <sstream>
 #include <unordered_map>
 
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include "nlohmann/json.hpp"
 
 // serialize
 #include <boost/archive/text_iarchive.hpp>
@@ -23,13 +22,12 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/version.hpp>
 
-
 #include "LEDPlayer.h"
 #include "OFPlayer.h"
 #include "const.h"
 
 using namespace std;
-using namespace boost;
+using json = nlohmann::json;
 
 struct LEDStripeSetting {
     LEDStripeSetting(){};
@@ -47,7 +45,7 @@ class Player {
     Player() : LEDloaded(false), OFloaded(false){};
     Player(const string &_dancerName)
         : dancerName(_dancerName), LEDloaded(false), OFloaded(false){};
-    bool setDancer(const string &_dancerName, property_tree::ptree &dancerData);
+    bool setDancer(const string &_dancerName, json &dancerData);
     string list() const;
     string getDancerName();
     template <class Archive>
@@ -70,8 +68,8 @@ class Player {
     // serialization
     friend class boost::serialization::access;
     friend ostream &operator<<(ostream &ostream, const Player &player);
-    friend void LEDload(Player &Player, property_tree::ptree &data_json);
-    friend void OFload(Player &Player, property_tree::ptree &data_json);
+    friend void LEDload(Player &Player, json &data_json);
+    friend void OFload(Player &Player, json &data_json);
 };
 
 void savePlayer(const Player &savePlayer, const char *filename);
