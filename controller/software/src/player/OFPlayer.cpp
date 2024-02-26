@@ -255,8 +255,6 @@ void OFPlayer::loop(StateMachine *fsm) {
 #ifdef PLAYER_DEBUG
     ofstream logFile("/tmp/of.log");
 #endif
-    // *finished = false;
-
     while (true) {
         timeval lastTime = currentTime;
         gettimeofday(&currentTime, NULL);
@@ -295,7 +293,7 @@ void OFPlayer::loop(StateMachine *fsm) {
                 break;
             }
 #endif
-            if (frameId == frameList.size() - 1) {
+            if (frameId == static_cast<int>(frameList.size() - 1)) {
                 break;
             }
             // fprintf(stderr, "[OF] Time: %s, FPS: %4.2f\n",

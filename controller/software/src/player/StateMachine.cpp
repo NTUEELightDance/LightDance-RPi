@@ -100,8 +100,7 @@ void StateMachine::EX_Stop() {
 void StateMachine::EN_Play() {
 
     fprintf(stderr, "[FSM] ENTERING PLAY\n");
-    fprintf(stderr,"[FSM] delayTime[%d]\n",data.delayTime);
-    timeval tv;    //delay
+    fprintf(stderr,"[FSM] delayTime[%ld]\n",data.delayTime);
     while (data.delayTime>0)
     {   
         timeval tv = getCalculatedTime(data.baseTime);

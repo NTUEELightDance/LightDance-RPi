@@ -268,11 +268,11 @@ void LEDPlayer::darkAll(){
         
     vector<vector<LEDStatus>> statusLists;
        	statusLists.clear();
-            for (unsigned int i = 0; i < frameIds.size(); i++) {
-                // dark all
-                statusLists.push_back(vector<LEDStatus>(stripShapes[i], LEDStatus()));
-            }
-            controller.sendAll(castStatusLists(statusLists));
+        for (unsigned int i = 0; i < frameIds.size(); i++) {
+            // dark all
+            statusLists.push_back(vector<LEDStatus>(stripShapes[i], LEDStatus()));
+        }
+        controller.sendAll(castStatusLists(statusLists));
         cerr<<"[LEDPlayer] Dark All\n";
 	    return; 
 }
@@ -285,9 +285,9 @@ void LEDPlayer::loop(StateMachine *fsm) {
 #endif
     //cerr<<"[LED Loop]Current State: "<<fsm->getCurrentState()<<"\n";
     while (true) {  
-	    timeval lastTime = currentTime;
         gettimeofday(&currentTime, NULL);
-        float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
+        //timeval lastTime = currentTime;
+        //float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
 	    //cerr<<"[LED Loop] fps: "<<fps<<"\n";
 	    //cerr<<"[LED Loop] CurrentState: "<<fsm->getCurrentState()<<endl;
         if (fsm->getCurrentState() == S_STOP) {
@@ -324,7 +324,7 @@ void LEDPlayer::loop(StateMachine *fsm) {
                 }
 
                 const LEDFrame &frame = frameList[frameId];
-                if (frame.fade && (frameId + 1) < frameList.size()) {
+                if (frame.fade && (frameId + 1) < static_cast<int>(frameList.size())) {
                     const long startTime = frameList[frameId].start;    // ms
                     const long endTime = frameList[frameId + 1].start;  // ms
                     const float rate =
@@ -361,10 +361,8 @@ void LEDPlayer::loop(StateMachine *fsm) {
         }
     }
     cerr << "[LED] finish\n";
-   // controller.finish();
 #ifdef PLAYER_DEBUG
     logFile << "[LED] finish\n";
     logFile.close();
 #endif
-    //fsm->setState(S_STOP);
 }
