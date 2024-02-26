@@ -73,23 +73,23 @@ inline bool restart() {
     printf("restart\n");
     dancer_fd = tryGetLock(path.c_str());
  if (dancer_fd == -1) {
-        cerr << "[Error] Dancer is playing! Please stop it first!\n";
+        cerr << "[Common] Dancer is playing! Please stop it first!\n";
         return 0;
     } else if (dancer_fd == -2) {
-        cerr << "[Error] dancer.dat file not found!\n";
+        cerr << "[Common] dancer.dat file not found!\n";
         return 0;
     }
 
     if (!restorePlayer(player, path.c_str())) {
         // fprintf(stderr, "restorePlayer ERROR\n");
-        cerr << "[Error] Can't restorePlayer!\n";
+        cerr << "[Common] Can't restorePlayer!\n";
         return false;
     }
     led_player = player.myLEDPlayer;
     led_player.init();
     of_player = player.myOFPlayer;
     of_player.init();
-    cerr << "Player loaded\n";
+    cerr << "[Common] Player loaded\n";
     return true;
    }
 inline void resume( StateMachine* fsm ){
@@ -99,7 +99,7 @@ inline void resume( StateMachine* fsm ){
 	//of_loop.detach();
 	// pthread_create(&led_loop, NULL,&LEDPlayer::loop_helper, &led_player, fsm);
 	// pthread_create(&of_loop, NULL,&OFPlayer::loop_helper, &of_player , fsm);
-	 cerr << "[LED LOOP] thread running\n";
+	 cerr << "[Common] thread running\n";
 	 return;
    }
 
@@ -115,43 +115,41 @@ inline int parse_command(StateMachine* fsm,std::string str) {
     for (int i = 0; i < 3; i++) {
         if (cmd[0] == cmds[i]) {
             if (i == C_PLAY) {	
-	    if(fsm->getCurrentState()==S_PLAY){
-		cerr<<"[LOOP]Event Ignored\n";
-		write_fifo(false);
-		return -1;
-	    }
-            fsm->data.delayTime=0;
-            gettimeofday(&fsm->data.baseTime, NULL);//for delay display
-	    if(fsm->getCurrentState()==S_PAUSE && cmd[1]=="0"&& cmd[2] == "-1" && cmd[4] == "0"){
-                write_fifo(true);
-                cmd_recv=C_RESUME;
-		cerr<<"[parse]RESUME\n";
-                return cmd_recv;
-            }
-            else if (cmd.size() >= 3 && cmd[cmd.size() - 2] == "-d") {
-                fsm->data.delayTime = std::stoi(cmd[cmd.size() - 1]);//*1000;//saved as us
-                if (cmd.size() > 3) {
-                    startusec = std::stoi(cmd[1])*1000;
+	            if(fsm->getCurrentState()==S_PLAY) {
+		            write_fifo(false);
+		            return -1;
+	            }
+                fsm->data.delayTime=0;
+                gettimeofday(&fsm->data.baseTime, NULL);//for delay display
+	            if(fsm->getCurrentState()==S_PAUSE && cmd[1]=="0"&& cmd[2] == "-1" && cmd[4] == "0"){
+                    write_fifo(true);
+                    cmd_recv=C_RESUME;
+		            cerr<<"[Common] RESUME\n";
+                    return cmd_recv;
+                } else if (cmd.size() >= 3 && cmd[cmd.size() - 2] == "-d") {
+                    fsm->data.delayTime = std::stoi(cmd[cmd.size() - 1]);//*1000;//saved as us
+                    if (cmd.size() > 3) {
+                        startusec = std::stoi(cmd[1])*1000;
+                    }
+                    if (cmd.size() > 4) {
+                        fsm->data.stopTime = std::stoi(cmd[2]);
+                        fsm->data.stopTimeAssigned = true;
+                    }
+                } else {
+                    if (cmd.size()>1) {
+                        startusec = std::stoi(cmd[1])*1000;
+		            }
+                    if (cmd.size() > 2) {
+                        fsm->data.stopTime = std::stoi(cmd[2]);
+                        fsm->data.stopTimeAssigned = true;
+                    }
                 }
-                if (cmd.size() > 4) {
-                    fsm->data.stopTime = std::stoi(cmd[2]);
-                    fsm->data.stopTimeAssigned = true;
-                }
-            } else {
-                if (cmd.size()>1) {
-                    startusec = std::stoi(cmd[1])*1000;
-		}
-                if (cmd.size() > 2) {
-                    fsm->data.stopTime = std::stoi(cmd[2]);
-                    fsm->data.stopTimeAssigned = true;
-                }
-            }
-	    fprintf(stderr,"startusec[%d]\n",startusec);
-            fsm->data.playedTime.tv_sec = startusec / 1000000;
-            fsm->data.playedTime.tv_usec = startusec % 1000000;
+	            //fprintf(stderr,"[Common] startusec[%d]\n",startusec);
+                fsm->data.playedTime.tv_sec = startusec / 1000000;
+                fsm->data.playedTime.tv_usec = startusec % 1000000;
             }
             cmd_recv=i;
-	    printf("command parsed\n");
+	        printf("command parsed\n");
             write_fifo(true);
             return cmd_recv;
         }

@@ -81,7 +81,7 @@ void saveOFPlayer(OFPlayer &player, const char *filename) {
     // make an archive
     ofstream ofs(filename);
     if (!ofs) {
-        cerr << "File Not Found! ( " << filename << " )" << endl;
+        cerr << "[OFPlayer] File Not Found! ( " << filename << " )" << endl;
         return;
     }
     boost::archive::text_oarchive oa(ofs);
@@ -92,7 +92,7 @@ bool restoreOFPlayer(OFPlayer &player, const char *filename) {
     // open the archive
     ifstream ifs(filename);
     if (!ifs) {
-        cerr << "File Not Found! ( " << filename << " )" << endl;
+        cerr << "[OFPlayer] File Not Found! ( " << filename << " )" << endl;
         return false;
     }
     boost::archive::text_iarchive ia(ifs);
@@ -226,7 +226,6 @@ void OFPlayer::setLightStatus(vector<OFStatus> &statusList, int r, int g, int b,
 
 void OFPlayer::delayDisplay(const bool *delayingDisplay) {
     vector<OFStatus> statusList;
-
     // Let OF lightall for 1/5 times of delayTime
     if (*delayingDisplay) {
         setLightStatus(statusList,100, 0, 0, 255);
@@ -248,6 +247,7 @@ void OFPlayer::darkAll(){
   controller.sendAll(castStatusList(statusList));
   return;
 }
+
 void OFPlayer::loop(StateMachine *fsm) {
     timeval currentTime;
     vector<OFStatus> statusList;
@@ -261,28 +261,26 @@ void OFPlayer::loop(StateMachine *fsm) {
         timeval lastTime = currentTime;
         gettimeofday(&currentTime, NULL);
         float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
-	cerr<<"[OF Loop] fps:"<<fps<<"\n";
+	    cerr<<"[OFPlayer] fps:"<<fps<<"\n";
         if (fsm->getCurrentState() == S_STOP) {
             // TODO: finish darkall
             //setLightStatus(statusList, 0, 0, 0, 0);
             //controller.sendAll(castStatusList(statusList));
             break;
         }
-	if(fsm->getCurrentState() == S_PAUSE) {
-	    break;
-	}
+	    if(fsm->getCurrentState() == S_PAUSE) {
+	        break;
+	    }
         if (fsm->getCurrentState() == S_PLAY) {
             const long elapsedTime = getElapsedTime(fsm->data.baseTime, currentTime);
             const long elapsedTimeInMs = elapsedTime / 1000l;
             statusList.clear();
-
             // find status
             frameId = findFrameId(elapsedTimeInMs);
             if (frameId == -1) break;
             statusList = findFrameStatus(elapsedTimeInMs);
-
             controller.sendAll(castStatusList(statusList));
-	    cerr << "[OF Loop] Status Sent\n";
+	        cerr << "[OFPlayer] Status Sent\n";
 #ifdef PLAYER_DEBUG
             char buf[1024];
             sprintf(buf, "[OF] Time: %s Frame: %d / %d\n", parseMicroSec(elapsedTime).c_str(),
@@ -293,7 +291,6 @@ void OFPlayer::loop(StateMachine *fsm) {
                         statusList[i].g, statusList[i].b, statusList[i].a);
             }
             logFile << buf;
-
             if (frameId == frameList.size() - 1) {
                 break;
             }
@@ -301,14 +298,12 @@ void OFPlayer::loop(StateMachine *fsm) {
             if (frameId == frameList.size() - 1) {
                 break;
             }
-
             // fprintf(stderr, "[OF] Time: %s, FPS: %4.2f\n",
             //         parseMicroSec(elapsedTime).c_str(), fps);
-
             this_thread::yield();
         }
     }
-    cerr << "[OF] finish\n";
+    cerr << "[OFPlayer] finish\n";
 
 #ifdef PLAYER_DEBUG
     logFile << "[OF] finish\n";

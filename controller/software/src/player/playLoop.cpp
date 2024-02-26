@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
             fprintf(stderr, "%s already exists\n", rd_fifo);
         }
     } else
-        fprintf(stderr, "%s created\n", rd_fifo);
+    fprintf(stderr, "%s created\n", rd_fifo);
     rd_fd = open(rd_fifo, O_RDONLY | O_NONBLOCK);
     if (rd_fd == -1) perror("open");
     char cmd_buf[MAXLEN];
@@ -76,9 +76,9 @@ int main(int argc, char *argv[]){
         n = read(rd_fd, cmd_buf, MAXLEN);
         std::string cmd_str = cmd_buf;
         if (n > 0) {
-            fprintf(stderr,"[LOOP] parsing command\n");
+            fprintf(stderr,"[playLoop] parsing command\n");
 	    int cmd = parse_command(playingState,cmd_buf);
-            fprintf(stderr, "[LOOP] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
+            fprintf(stderr, "[playLoop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
 	    if(cmd==-1)continue;
             playingState->transition(cmd);//trans?
         }

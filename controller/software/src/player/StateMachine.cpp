@@ -26,20 +26,20 @@ int StateMachine::getCurrentState(){
 void StateMachine::transition(int cmd){
 
     if (TransitionTable[currentState][cmd]==CANNOT_HAPPEN){
-        cerr<<"[FSM]Invalid Transition"<<endl;
+        cerr<<"[FSM] Invalid Transition"<<endl;
     }
     else if(TransitionTable[currentState][cmd]!=EVENT_IGNORE){
        
-        fprintf(stderr,"[FSM]Start Transition\n");
-        fprintf(stderr,"[FSM]currentState:%d\n",currentState);
+        fprintf(stderr,"[FSM] Start Transition\n");
+        fprintf(stderr,"[FSM] currentState:%d\n",currentState);
 	(this->*EX_func[currentState])();
         currentState=TransitionTable[currentState][cmd];
-	fprintf(stderr,"[FSM]nextState: %d\n",currentState);
+	fprintf(stderr,"[FSM] nextState: %d\n",currentState);
         (this->*EN_func[currentState])();
-	fprintf(stderr,"[FSM]Finish Transition\n");
+	fprintf(stderr,"[FSM] Finish Transition\n");
     }
     else{
-    	cerr<<"[FSM]Event Ignored\n";
+    	cerr<<"[FSM] Event Ignored\n";
     }
 
     return;
@@ -99,57 +99,50 @@ void StateMachine::EX_Stop() {
 // Entry functions
 void StateMachine::EN_Play() {
 
-    fprintf(stderr, "ENTERING PLAY\n");
-    fprintf(stderr,"[DELAY]delayTime[%d]\n",data.delayTime);
+    fprintf(stderr, "[FSM] ENTERING PLAY\n");
+    fprintf(stderr,"[FSM] delayTime[%d]\n",data.delayTime);
     timeval tv;    //delay
     while (data.delayTime>0)
-    {
-        
+    {   
         timeval tv = getCalculatedTime(data.baseTime);
        	long delayed_us = tv.tv_sec * 1000000 + tv.tv_usec;
-	delayed_us/=1000;
+	    delayed_us/=1000;
         of_player.delayDisplay(&data.delayDisplay);
         led_player.delayDisplay(&data.delayDisplay);
-        cerr << "[DELAY] in loop\n";
-	//fprintf(stderr,"delayDisplay[%d],delayed_us[%d],delayTime[%d]\n",data.delayDisplay,delayed_us,data.delayTime);
+	    //fprintf(stderr,"delayDisplay[%d],delayed_us[%d],delayTime[%d]\n",data.delayDisplay,delayed_us,data.delayTime);
         if (delayed_us > data.delayTime / 5l&&data.delayDisplay){
-	    data.delayDisplay = false;
-       	   // cerr << "[DELAY]display off\n" << endl;
-	}
+	        data.delayDisplay = false;
+       	    cerr << "[FSM] display off\n" << endl;
+	    }
         if (delayed_us > data.delayTime) {
-            cerr << "[DELAY]delay out\n" << endl;
-            fprintf(stderr, "break\n");
+            cerr << "[FSM] delay out\n" ;
             break;
         }
     }
-    cerr << "Delay finished " << endl<< "Start playing" << endl;
+    cerr << "[FSM] Delay finished\n"<< "Start playing\n";
     data.delayTime=0;
     data.baseTime = getCalculatedTime(data.playedTime);
-    cerr << "startTime: " << data.playedTime.tv_sec << " " << data.playedTime.tv_usec << endl;
+    cerr << "[FSM] startTime: " << data.playedTime.tv_sec << " " << data.playedTime.tv_usec <<"\n";
     resume(this);
 }
 
 void StateMachine::EN_Pause() {  
-    fprintf(stderr, "ENTERING PAUSE\n");
+    fprintf(stderr, "[FSM] ENTERING PAUSE\n");
     Loop_Join();
     releaseLock(dancer_fd, path.c_str());
 }
 
 void StateMachine::EN_Stop() {
-    fprintf(stderr, "ENTERING STOP\n");
-   // pthread_cancel(led_loop);
-   // pthread_join(led_loop, NULL);
+    fprintf(stderr, "[FSM] ENTERING STOP\n");
     Loop_Join();
     led_player.darkAll();
     of_player.darkAll();
     led_player.controller.finish();
-    cerr << "[EN_STOP]dark all\n";
-    cerr << "[EN_STOP] finished" << endl;
     releaseLock(dancer_fd, path.c_str());
     data.stopTimeAssigned = data.delayDisplay = false;
     data.stopTime = -1;
-    //fsm->setState(S_STOP);
 }
+
 void StateMachine::Loop_Join(){
     if(led_loop.joinable()) led_loop.join();
     if(of_loop.joinable()) of_loop.join();
@@ -158,7 +151,7 @@ void StateMachine::Loop_Join(){
 timeval StateMachine::getPlayedTime() {
     timeval tv = getCalculatedTime(data.baseTime);
     data.playedTime=tv;
-    fprintf(stderr, "playedTime: %ld %ld\n", tv.tv_sec, tv.tv_usec);
+    fprintf(stderr, "[FSM] playedTime: %ld %ld\n", tv.tv_sec, tv.tv_usec);
     return tv;
 }
 
