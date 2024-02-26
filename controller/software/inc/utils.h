@@ -27,14 +27,14 @@ inline void releaseLock(int fd, char const *fileName) {
     close(fd);
 }
 
-inline string parseMicroSec(long us) {
+inline std::string parseMicroSec(long us) {
     char buf[100];
     int ms = us / 1000;
     int s = ms / 1000;
     int m = s / 60;
     int h = m / 60;
     sprintf(buf, "%02d:%02d:%02d.%03d", h, m % 60, s % 60, ms % 1000);
-    return string(buf);
+    return std::string(buf);
 }
 
 

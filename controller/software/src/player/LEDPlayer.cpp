@@ -215,6 +215,7 @@ vector<vector<int>> LEDPlayer::castStatusLists(
         const vector<LEDStatus> &statusList = statusLists[i];
         for (unsigned int j = 0; j < statusList.size(); j++) {
             const LEDStatus &status = statusList[j];
+	   // if(i==0&&j==0){cerr<<"[LEDPlayer] StatusList"<<" R "<<status.r<<" G "<<status.g<<" B "<<status.b<<"\n";}
             castedLists[i].push_back((status.r << 24) + (status.g << 16) +
                                      (status.b << 8) + (status.a << 0));
         }
@@ -237,16 +238,18 @@ void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
 
     // Let OF lightall for 1/5 times of delayTime
     if (*delayingDisplay) {
+	cerr<<"[LED_DELAY]Now Display\n";
         statusLists.clear();
         for (unsigned int i = 0; i < frameIds.size(); i++) {
             vector<LEDStatus> statusList;
             for (int j = 0; j < stripShapes[i]; j++) {
-                statusList.push_back(LEDStatus(100, 0, 0, 100));
+                statusList.push_back(LEDStatus(100, 0, 0, 255));
             }
             statusLists.push_back(statusList);
         }
         controller.sendAll(castStatusLists(statusLists));
     } else {
+	cerr<<"[LED_DELAY] No Display\n";
         statusLists.clear();
         for (unsigned int i = 0; i < frameIds.size(); i++) {
             statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
@@ -255,45 +258,68 @@ void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
     }
 }
 
+/*void *LEDPlayer::loop_helper(void *context, StateMachine* fsm){
+        LEDPlayer* ledptr=(LEDPlayer *)context;
+        ledptr->loop(fsm);
+	return NULL;
+}*/
+
+void LEDPlayer::darkAll(){
+        
+    vector<vector<LEDStatus>> statusLists;
+       	statusLists.clear();
+            for (unsigned int i = 0; i < frameIds.size(); i++) {
+                // dark all
+                statusLists.push_back(vector<LEDStatus>(stripShapes[i], LEDStatus()));
+            }
+            controller.sendAll(castStatusLists(statusLists));
+        cerr<<"[LEDPlayer]DARKALL SENT\n";
+	    return; 
+}
 void LEDPlayer::loop(StateMachine *fsm) {
+    cerr<<"LED Loop Start.\n";
     timeval currentTime;
     vector<vector<LEDStatus>> statusLists;
 #ifdef PLAYER_DEBUG
     ofstream logFile("/tmp/led.log");
 #endif
+    //cerr<<"[LED Loop]Current State: "<<fsm->getCurrentState()<<"\n";
     while (true) {
-        timeval lastTime = currentTime;
+       
+	timeval lastTime = currentTime;
         gettimeofday(&currentTime, NULL);
         float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
-
-        if (fsm->getCurrentState() == S_STOP||fsm->getCurrentState() == S_PAUSE) {
-            statusLists.clear();
-            for (unsigned int i = 0; i < frameIds.size(); i++) {
-                // dark all
-                statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
-            }
-            controller.sendAll(castStatusLists(statusLists));
-            // controller.finish();
+	cerr<<"[LED Loop] fps: "<<fps<<"\n";
+	cerr<<"[LED Loop] CurrentState: "<<fsm->getCurrentState()<<endl;
+        if (fsm->getCurrentState() == S_STOP) {
+	    cerr<<"[LED Loop] Now Stopped\n";
+	    cerr<<"[LEDLOOP] Break Loop\n";
             break;
         }
-        if (fsm->getCurrentState()==S_PLAY) {
+        if (fsm->getCurrentState() == S_PAUSE){
+	    break;
+        }
+	if (fsm->getCurrentState()==S_PLAY) {
+	    cerr<<"[LED Loop]Now Playing\n";	
             const long elapsedTime =
                 getElapsedTime(fsm->data.baseTime, currentTime);  // us
 
-            // const int currentTimeId = getTimeId(elapsedTime);
-            calculateFrameIds(elapsedTime / 1000l);
+           // const int currentTimeId = getTimeId(elapsedTime);
+	  //  fprintf(stderr,"[LED Loop] ElapsedTime [%d]\n",elapsedTime);
+	    calculateFrameIds(elapsedTime / 1000l);
 
             statusLists.clear();
             bool ended = true;
             for (unsigned int i = 0; i < frameIds.size(); i++) {
                 const int &frameId = frameIds[i];
                 const vector<LEDFrame> &frameList = frameLists[i];
-
+	//	fprintf(stderr,"[LED Loop] frameIDsSize [%d]\n",frameIds.size());
                 if (frameId < 0) {
                     // use dark frame for invalid time or non-exist part
                     statusLists.push_back(vector<LEDStatus>(stripShapes[i]));
                     continue;
                 }
+	//	fprintf(stderr, "[LED Loop] framelistSize [%d], frameId [%d]\n", (int)frameList.size(), frameId);
                 if (frameId != (int)frameList.size() - 1) {
                     ended = false;
                 }
@@ -313,7 +339,7 @@ void LEDPlayer::loop(StateMachine *fsm) {
             }
 
             controller.sendAll(castStatusLists(statusLists));
-
+	   cerr<<"[LED Loop] Status Sent\n";
 #ifdef PLAYER_DEBUG
             char buf[20000];
             sprintf(buf, "[LED] Time: %s\n",
@@ -329,13 +355,14 @@ void LEDPlayer::loop(StateMachine *fsm) {
             logFile << buf;
 #endif
             if (ended) {
-                break;
+            	cerr << "[LED] Ended\n";
+		break;
             }
             this_thread::yield();
         }
     }
     cerr << "[LED] finish\n";
-    controller.finish();
+   // controller.finish();
 #ifdef PLAYER_DEBUG
     logFile << "[LED] finish\n";
     logFile.close();

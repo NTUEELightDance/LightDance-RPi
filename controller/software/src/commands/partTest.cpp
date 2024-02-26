@@ -61,7 +61,7 @@ class PartTest : public Command {
                 cout << "LED index not specified! Using default\n";
             }
         }
-        return Test(PartName, R, G, B, alpha*10, n);
+        return Test(PartName, R, G, B, alpha, n);
     }
 
    private:
@@ -84,7 +84,7 @@ class PartTest : public Command {
         Player player;
         string base_path = BASE_PATH;
         string path = base_path + "data/dancer.dat";
-
+	printf("in test()");
         int dancer_fd = tryGetLock(path.c_str());
         if (dancer_fd == -1) {
             cout << "[Error] Dancer is playing! Please stop it first!\n";

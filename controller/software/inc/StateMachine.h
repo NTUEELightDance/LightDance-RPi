@@ -14,6 +14,7 @@
 #include <vector>
 #include <unordered_map>  
 #include <utility>
+#include <utils.h>
 #include <iostream>
 #define STATE_NUM 3
 using namespace std;
@@ -80,6 +81,7 @@ class StateMachine{
         //void setState(int nextState);
         void setData(timeval _baseTime, timeval _playedTime, long _stopTime, long _delayTime, bool _stopTimeAssigned, bool _isLiveEditting);
         timeval getPlayedTime();
+	void Loop_Join();
 };
 
 

@@ -64,10 +64,11 @@ class OFPlayer {
              const int &_OFnum);
 
     // threading function
+   // void* loop_helper(void* context, StateMachine *fsm);
     void loop(StateMachine *fsm);
     void delayDisplay(const bool *delayingDisplay);
     void init();
-
+    void darkAll();
     template <class Archive>
     void serialize(Archive &archive, const unsigned int version);
     string list() const;

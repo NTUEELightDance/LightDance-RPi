@@ -229,7 +229,7 @@ void OFPlayer::delayDisplay(const bool *delayingDisplay) {
 
     // Let OF lightall for 1/5 times of delayTime
     if (*delayingDisplay) {
-        setLightStatus(statusList, 100, 0, 0, 100);
+        setLightStatus(statusList,100, 0, 0, 255);
         controller.sendAll(castStatusList(statusList));
     } else {
         setLightStatus(statusList, 0, 0, 0, 0);
@@ -237,6 +237,17 @@ void OFPlayer::delayDisplay(const bool *delayingDisplay) {
     }
 }
 
+/*void *OFPlayer::loop_helper(void *context, StateMachine* fsm){
+        OFPlayer* ofptr=(OFPlayer *)context;
+        ofptr->loop(fsm);
+	return NULL;
+}*/
+void OFPlayer::darkAll(){ 
+  vector<OFStatus> statusList;
+  setLightStatus(statusList, 0, 0, 0, 0);
+  controller.sendAll(castStatusList(statusList));
+  return;
+}
 void OFPlayer::loop(StateMachine *fsm) {
     timeval currentTime;
     vector<OFStatus> statusList;
@@ -250,13 +261,16 @@ void OFPlayer::loop(StateMachine *fsm) {
         timeval lastTime = currentTime;
         gettimeofday(&currentTime, NULL);
         float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
-
-        if (fsm->getCurrentState() == S_STOP||fsm->getCurrentState() == S_PAUSE) {
+	cerr<<"[OF Loop] fps:"<<fps<<"\n";
+        if (fsm->getCurrentState() == S_STOP) {
             // TODO: finish darkall
-            setLightStatus(statusList, 0, 0, 0, 0);
-            controller.sendAll(castStatusList(statusList));
+            //setLightStatus(statusList, 0, 0, 0, 0);
+            //controller.sendAll(castStatusList(statusList));
             break;
         }
+	if(fsm->getCurrentState() == S_PAUSE) {
+	    break;
+	}
         if (fsm->getCurrentState() == S_PLAY) {
             const long elapsedTime = getElapsedTime(fsm->data.baseTime, currentTime);
             const long elapsedTimeInMs = elapsedTime / 1000l;
@@ -268,7 +282,7 @@ void OFPlayer::loop(StateMachine *fsm) {
             statusList = findFrameStatus(elapsedTimeInMs);
 
             controller.sendAll(castStatusList(statusList));
-
+	    cerr << "[OF Loop] Status Sent\n";
 #ifdef PLAYER_DEBUG
             char buf[1024];
             sprintf(buf, "[OF] Time: %s Frame: %d / %d\n", parseMicroSec(elapsedTime).c_str(),

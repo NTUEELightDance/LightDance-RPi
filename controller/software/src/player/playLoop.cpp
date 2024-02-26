@@ -21,6 +21,18 @@
 
 #define MAXLEN 100
 
+//enum CMD { C_PLAY, C_PAUSE, C_STOP, C_RESUME };
+extern const std::string cmds[10];
+extern std::thread led_loop, of_loop;
+extern Player player;
+extern LEDPlayer led_player;
+extern OFPlayer of_player;
+extern int dancer_fd;
+extern string path;
+extern const char *rd_fifo;
+extern const char *wr_fifo;
+
+
 int main(int argc, char *argv[]){
     // create player_to_cmd
     if (mkfifo(wr_fifo, 0666) == -1) {
@@ -46,7 +58,7 @@ int main(int argc, char *argv[]){
     // of_playing = false;
     // led_playing = false;
     // timeval playedTime;
-    StateMachine playingState;
+    StateMachine* playingState=new StateMachine();
 
     while (1) {
         /*timeval tv;
@@ -60,27 +72,18 @@ int main(int argc, char *argv[]){
         }*/
         // This means Entering S_PLAY ???
         //pack into EN_PLAY
-        /*if (!delaying && playingState.getCurrentState()!=S_PLAY && led_loop.joinable() && of_loop.joinable()) {
-            cerr << "[Loop] join" << endl;
-            led_loop.join();
-            of_loop.join();
-            // led_playing = of_playing = stopTimeAssigned = delaying = false;
-            // stopped = to_terminate = true;
-            stop(&playingState);
-            cerr << "[Loop] finished" << endl;
-            releaseLock(dancer_fd, path.c_str());
-        }*/
-        
+        // printf("entering while loop\n");        
         n = read(rd_fd, cmd_buf, MAXLEN);
         std::string cmd_str = cmd_buf;
         if (n > 0) {
-            int cmd = parse_command(cmd_buf);
-            fprintf(stderr, "[Loop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
-            playingState.transition(cmd);//trans?
-           
+            fprintf(stderr,"[LOOP] parsing command\n");
+	    int cmd = parse_command(playingState,cmd_buf);
+            fprintf(stderr, "[LOOP] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
+	    if(cmd==-1)continue;
+            playingState->transition(cmd);//trans?
         }
         else{
-           playingState.stating(playingState.getCurrentState());
+           playingState->stating(playingState->getCurrentState());
         }
     }
     close(rd_fd);

@@ -1,0 +1,6 @@
+fatal: destination path '/home/pi/LightDance-RPi/controller/hardware' already exists and is not an empty directory.
+fatal: clone of 'https://github.com/NTUEELightDance/Hardware-Library.git' into submodule path '/home/pi/LightDance-RPi/controller/hardware' failed
+Failed to clone 'controller/hardware'. Retry scheduled
+fatal: destination path '/home/pi/LightDance-RPi/controller/hardware' already exists and is not an empty directory.
+fatal: clone of 'https://github.com/NTUEELightDance/Hardware-Library.git' into submodule path '/home/pi/LightDance-RPi/controller/hardware' failed
+Failed to clone 'controller/hardware' a second time, aborting
