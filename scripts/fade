@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 USERNAME="pi"
 WORKSPACE="/home/pi/LightDance-RPi"
 
