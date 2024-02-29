@@ -256,6 +256,7 @@ void OFPlayer::loop(StateMachine *fsm) {
     ofstream logFile("/tmp/of.log");
 #endif
     while (true) {
+        usleep(30000); // in order to keep 30fps
         timeval lastTime = currentTime;
         gettimeofday(&currentTime, NULL);
         float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);

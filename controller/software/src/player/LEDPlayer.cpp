@@ -285,11 +285,11 @@ void LEDPlayer::loop(StateMachine *fsm) {
 #endif
     //cerr<<"[LED Loop]Current State: "<<fsm->getCurrentState()<<"\n";
     while (true) {  
+        timeval lastTime = currentTime;
         gettimeofday(&currentTime, NULL);
-        //timeval lastTime = currentTime;
-        //float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
-	    //cerr<<"[LED Loop] fps: "<<fps<<"\n";
-	    //cerr<<"[LED Loop] CurrentState: "<<fsm->getCurrentState()<<endl;
+        float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
+	    cerr<<"[LED Loop] fps: "<<fps<<"\n";
+	    // cerr<<"[LED Loop] CurrentState: "<<fsm->getCurrentState()<<endl;
         if (fsm->getCurrentState() == S_STOP) {
 	        cerr<<"[LEDPlayer] Now Stopped\n";
 	        cerr<<"[LEDPlayer] Break Loop\n";
