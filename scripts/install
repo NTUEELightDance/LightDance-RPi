@@ -6,6 +6,8 @@ WORKSPACE="/home/pi/LightDance-RPi"
 git config --global user.email "ntuee@ntu.edu.tw"
 git config --global user.name "lightdance"
 
+sudo timedatectl set-ntp no
+
 # copy authorized_keys
 mkdir -p /home/$USERNAME/.ssh
 cp $WORKSPACE/authorized_keys /home/$USERNAME/.ssh/
