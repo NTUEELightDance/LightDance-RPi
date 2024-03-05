@@ -279,16 +279,14 @@ void LEDPlayer::darkAll(){
 void LEDPlayer::loop(StateMachine *fsm) {
     cerr<<"[LEDPlayer] Entering Loop\n";
     timeval currentTime;
+    gettimeofday(&currentTime, NULL);
     vector<vector<LEDStatus>> statusLists;
 #ifdef PLAYER_DEBUG
     ofstream logFile("/tmp/led.log");
 #endif
     //cerr<<"[LED Loop]Current State: "<<fsm->getCurrentState()<<"\n";
     while (true) {  
-        timeval lastTime = currentTime;
-        gettimeofday(&currentTime, NULL);
-        float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
-	    cerr<<"[LED Loop] fps: "<<fps<<"\n";
+        
 	    // cerr<<"[LED Loop] CurrentState: "<<fsm->getCurrentState()<<endl;
         if (fsm->getCurrentState() == S_STOP) {
 	        cerr<<"[LEDPlayer] Now Stopped\n";
@@ -338,14 +336,14 @@ void LEDPlayer::loop(StateMachine *fsm) {
             }
 
             controller.sendAll(castStatusLists(statusLists));
-	        //cerr<<"[LED Loop] Status Sent\n";
 #ifdef PLAYER_DEBUG
+	        cerr<<"[LED Loop] Status Sent\n";
             char buf[20000];
             sprintf(buf, "[LED] Time: %s\n",
                     parseMicroSec(elapsedTime).c_str());
-            for (int i = 0; i < statusLists.size(); i++) {
+            for (int i = 0; i < (int)statusLists.size(); i++) {
                 sprintf(buf + strlen(buf), "LED%2d:\n", i);
-                for (int j = 0; j < statusLists[i].size(); j++) {
+                for (int j = 0; j < (int)statusLists[i].size(); j++) {
                     sprintf(buf + strlen(buf), "\r%3d:[%3d,%3d,%3d,%3d]\n", j,
                             statusLists[i][j].r, statusLists[i][j].g,
                             statusLists[i][j].b, statusLists[i][j].a);
@@ -359,6 +357,19 @@ void LEDPlayer::loop(StateMachine *fsm) {
             }
             this_thread::yield();
         }
+
+        timeval lastTime = currentTime;
+        gettimeofday(&currentTime, NULL);
+        long elapsed = getElapsedTime(lastTime, currentTime);
+        if(UPDATE_INTERVAL - elapsed > 0){
+            usleep((useconds_t)(UPDATE_INTERVAL - elapsed));
+        }
+#ifdef PLAYER_DEBUG
+        gettimeofday(&currentTime, NULL);
+        elapsed = getElapsedTime(lastTime, currentTime);
+        float fps = 1000000.0 / (float)elapsed;
+	    cerr<<"[LED Loop] fps: "<<fps<<"\n";
+#endif
     }
     cerr << "[LED] finish\n";
 #ifdef PLAYER_DEBUG

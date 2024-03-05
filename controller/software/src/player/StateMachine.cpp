@@ -32,11 +32,11 @@ void StateMachine::transition(int cmd){
        
         fprintf(stderr,"[FSM] Start Transition\n");
         fprintf(stderr,"[FSM] currentState:%d\n",currentState);
-	(this->*EX_func[currentState])();
+	    (this->*EX_func[currentState])();
         currentState=TransitionTable[currentState][cmd];
-	fprintf(stderr,"[FSM] nextState: %d\n",currentState);
+	    fprintf(stderr,"[FSM] nextState: %d\n",currentState);
         (this->*EN_func[currentState])();
-	fprintf(stderr,"[FSM] Finish Transition\n");
+	    fprintf(stderr,"[FSM] Finish Transition\n");
     }
     else{
     	cerr<<"[FSM] Event Ignored\n";
@@ -63,11 +63,6 @@ void StateMachine::ST_Play() {
         (this->*EX_func[currentState])();
         currentState= S_STOP;
         (this->*EN_func[currentState])();
-       /* cerr << "[Loop] join" << endl;
-        led_loop.join();
-        of_loop.join();
-        cerr << "[Loop] finished" << endl;
-        releaseLock(dancer_fd, path.c_str());*/
     }
 }
 
@@ -76,7 +71,6 @@ void StateMachine::ST_Pause() {
 }
 
 void StateMachine::ST_Stop() {
-
   //  led_player.controller.finish();
 }
 
@@ -143,8 +137,21 @@ void StateMachine::EN_Stop() {
 }
 
 void StateMachine::Loop_Join(){
-    if(led_loop.joinable()) led_loop.join();
-    if(of_loop.joinable()) of_loop.join();
+    if(led_loop.joinable()){
+        led_loop.join();
+        cerr << "[FSM] led_loop joined" << endl;
+    }
+    else{
+        cerr << "[FSM] led_loop not joinable" << endl;
+    }
+    if(of_loop.joinable()){
+        of_loop.join();
+        cerr << "[FSM] of_loop joined" << endl;
+    }
+    else{
+        cerr << "[FSM] of_loop not joinable" << endl;
+    }
+    return;
 }
 
 timeval StateMachine::getPlayedTime() {

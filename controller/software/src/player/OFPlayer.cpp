@@ -250,17 +250,14 @@ void OFPlayer::darkAll(){
 
 void OFPlayer::loop(StateMachine *fsm) {
     timeval currentTime;
+    gettimeofday(&currentTime, NULL);
     vector<OFStatus> statusList;
 
 #ifdef PLAYER_DEBUG
     ofstream logFile("/tmp/of.log");
 #endif
     while (true) {
-        usleep(30000); // in order to keep 30fps
-        timeval lastTime = currentTime;
-        gettimeofday(&currentTime, NULL);
-        float fps = 1000000.0 / getElapsedTime(lastTime, currentTime);
-	    cerr<<"[OFPlayer] fps:"<<fps<<"\n";
+        
         if (fsm->getCurrentState() == S_STOP) {
             // TODO: finish darkall
             //setLightStatus(statusList, 0, 0, 0, 0);
@@ -279,20 +276,17 @@ void OFPlayer::loop(StateMachine *fsm) {
             if (frameId == -1) break;
             statusList = findFrameStatus(elapsedTimeInMs);
             controller.sendAll(castStatusList(statusList));
-	        cerr << "[OFPlayer] Status Sent\n";
 #ifdef PLAYER_DEBUG
+	        cerr << "[OFPlayer] Status Sent\n";
             char buf[1024];
             sprintf(buf, "[OF] Time: %s Frame: %d / %d\n", parseMicroSec(elapsedTime).c_str(),
                     frameId, (int)frameList.size() - 1);
 
-            for (int i = 0; i < statusList.size(); i++) {
+            for (int i = 0; i < (int)statusList.size(); i++) {
                 sprintf(buf + strlen(buf), "OF%2d: [%3d,%3d,%3d,%3d]\n", i, statusList[i].r,
                         statusList[i].g, statusList[i].b, statusList[i].a);
             }
             logFile << buf;
-            if (frameId == frameList.size() - 1) {
-                break;
-            }
 #endif
             if (frameId == static_cast<int>(frameList.size() - 1)) {
                 break;
@@ -301,6 +295,20 @@ void OFPlayer::loop(StateMachine *fsm) {
             //         parseMicroSec(elapsedTime).c_str(), fps);
             this_thread::yield();
         }
+
+        timeval lastTime = currentTime;
+        gettimeofday(&currentTime, NULL);
+        long elapsed = getElapsedTime(lastTime, currentTime);
+        if(UPDATE_INTERVAL - elapsed > 0){
+            // in order to keep 30fps
+            usleep((useconds_t)(UPDATE_INTERVAL - elapsed));
+        }
+#ifdef PLAYER_DEBUG
+        gettimeofday(&currentTime, NULL);
+        elapsed = getElapsedTime(lastTime, currentTime);
+        float fps = 1000000.0 / (float)elapsed;
+	    cerr<<"[OFPlayer] fps:"<<fps<<"\n";
+#endif
     }
     cerr << "[OFPlayer] finish\n";
 

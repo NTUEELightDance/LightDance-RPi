@@ -12,13 +12,6 @@ set(INSTALL ${CMAKE_SOURCE_DIR}/bin)
 set(HARDWARE_INCLUDES ../hardware/inc)
 set(HARDWARE_LIBRARIES hardware)
 
-# umbrella
-option(UMBRELLA "compile for umbrella" OFF)
-if(UMBRELLA)
-  message("-- Compiling for umbrella...")
-  add_definitions(-DUMBRELLA)
-endif()
-
 # hardware debug
 option(HARDWARE_DEBUG "compile with hardware debug" OFF)
 if(HARDWARE_DEBUG)

@@ -11,7 +11,7 @@ git submodule update --init --recursive
 # build controller
 cd $WORKSPACE/controller
 mkdir -p build && cd build
-cmake -DPLAYER_DEBUG=OFF .. && make install
+cmake -DPLAYER_DEBUG=ON .. && make install
 
 # install controller binaries to /usr/local/bin
 cd $WORKSPACE/controller

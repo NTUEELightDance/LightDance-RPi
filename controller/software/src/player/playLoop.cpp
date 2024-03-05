@@ -77,9 +77,9 @@ int main(int argc, char *argv[]){
         std::string cmd_str = cmd_buf;
         if (n > 0) {
             fprintf(stderr,"[playLoop] parsing command\n");
-	    int cmd = parse_command(playingState,cmd_buf);
+	        int cmd = parse_command(playingState,cmd_buf);
             fprintf(stderr, "[playLoop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
-	    if(cmd==-1)continue;
+	        if(cmd == -1) continue;
             playingState->transition(cmd);//trans?
         }
         else{
