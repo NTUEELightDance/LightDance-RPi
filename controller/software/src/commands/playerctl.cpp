@@ -51,7 +51,7 @@ class Play : public Command {
                 bool needDelay = dExist || delayExist;
                 if (needDelay) {
                     delayTime = getCmdOptionInt(argv, argv + argc,
-                                                dExist ? "-d" : "--delay");  // default sec
+                                                dExist ? "-d" : "--delay");  // default ms
                     string flagUse = dExist ? "-d" : "--delay";
                     if (delayTime.size() == 0) {
                         cerr << "Error in " << flagUse << " option.";

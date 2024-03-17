@@ -110,7 +110,7 @@ class Client:
                     
                 print("[Info] Adjusting time")
                 commands = payload.split()
-                commands[4] = str(int(commands[4]) - round(time.time()))
+                commands[4] = str(int(commands[4]) - round(time.time()*1000))   # delay_time use (ms)
                 payload = " ".join(commands)
                 print(f"[Info] Adjusted command: {payload}")
 

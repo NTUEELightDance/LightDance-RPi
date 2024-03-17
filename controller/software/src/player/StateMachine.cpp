@@ -99,7 +99,7 @@ void StateMachine::EN_Play() {
     {   
         timeval tv = getCalculatedTime(data.baseTime);
        	long delayed_us = tv.tv_sec * 1000000 + tv.tv_usec;
-	    delayed_us/=1000;
+	    // delayed_us/=1000;
         of_player.delayDisplay(&data.delayDisplay);
         led_player.delayDisplay(&data.delayDisplay);
 	    //fprintf(stderr,"delayDisplay[%d],delayed_us[%d],delayTime[%d]\n",data.delayDisplay,delayed_us,data.delayTime);
