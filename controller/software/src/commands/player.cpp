@@ -146,6 +146,8 @@ void LEDload(Player &Player, json &data_json) {
         for (const json &frame_json : frames_json) {
             if (frame_json["status"].size() != len) {
                 // TODO: print size mismatch warning
+                cerr << "[player] Size mismatch in LED data for " << partName << endl;
+                cerr << "[player] Control.json: " << len << " LED.json: " << frame_json["status"].size() << endl;
                 continue;
             }
             statusList.clear();
