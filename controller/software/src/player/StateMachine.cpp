@@ -171,3 +171,57 @@ void StateMachine::setData(timeval _baseTime, timeval _playedTime, long _stopTim
     data.isLiveEditting = _isLiveEditting;
 }
 
+int parse_command(StateMachine* fsm,std::string str) {
+    if (str.length() == 1){
+	    write_fifo(false); 
+	    return -1;
+    }
+    std::vector<std::string> cmd = split(str, " ");
+    string cmds[3]= {"play", "pause", "stop"};
+    int cmd_recv=-1;
+    long startusec=0;
+    for (int i = 0; i < 3; i++) {
+        if (cmd[0] == cmds[i]) {
+            if (i == C_PLAY) {	
+	            if(fsm->getCurrentState()==S_PLAY) {
+		            write_fifo(false);
+		            return -1;
+	            }
+                fsm->data.delayTime=0;
+                gettimeofday(&fsm->data.baseTime, NULL);//for delay display
+	            if(fsm->getCurrentState()==S_PAUSE && cmd[1]=="0"&& cmd[2] == "-1" && cmd[4] == "0"){
+                    write_fifo(true);
+                    cmd_recv=C_RESUME;
+		            cerr<<"[Common] RESUME\n";
+                    return cmd_recv;
+                } else if (cmd.size() >= 3 && cmd[cmd.size() - 2] == "-d") {
+                    fsm->data.delayTime = std::stoi(cmd[cmd.size() - 1]);//*1000;//saved as us
+                    if (cmd.size() > 3) {
+                        startusec = std::stoi(cmd[1])*1000;
+                    }
+                    if (cmd.size() > 4) {
+                        fsm->data.stopTime = std::stoi(cmd[2]);
+                        fsm->data.stopTimeAssigned = true;
+                    }
+                } else {
+                    if (cmd.size()>1) {
+                        startusec = std::stoi(cmd[1])*1000;
+		            }
+                    if (cmd.size() > 2) {
+                        fsm->data.stopTime = std::stoi(cmd[2]);
+                        fsm->data.stopTimeAssigned = true;
+                    }
+                }
+	            //fprintf(stderr,"[Common] startusec[%d]\n",startusec);
+                fsm->data.playedTime.tv_sec = startusec / 1000000;
+                fsm->data.playedTime.tv_usec = startusec % 1000000;
+            }
+            cmd_recv=i;
+	        printf("command parsed\n");
+            write_fifo(true);
+            return cmd_recv;
+        }
+    }
+    write_fifo(false); 
+    return -1;
+}
