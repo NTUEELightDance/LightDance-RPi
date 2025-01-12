@@ -106,7 +106,7 @@ inline void resume( StateMachine* fsm ){
 	 return;
    }
 
-int parse_command(StateMachine* fsm,std::string str) {
+extern int parse_command(StateMachine* fsm,std::string str) {
     if (str.length() == 1){
 	    write_fifo(false); 
 	    return -1;
