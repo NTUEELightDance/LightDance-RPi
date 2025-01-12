@@ -12,7 +12,7 @@
 #include <string>
 #include <thread>
 #include <vector>
-#include <unordered_map>  
+#include <unordered_map>
 #include <utility>
 #include <utils.h>
 #include <iostream>

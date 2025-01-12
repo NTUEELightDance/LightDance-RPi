@@ -22,7 +22,8 @@ extern int dancer_fd;
 extern string path ;
 extern const char *rd_fifo;
 extern const char *wr_fifo;
-inline void write_fifo(bool success) {
+
+void write_fifo(bool success) {
     int wr_fd;
     std::string msg;
 
@@ -36,7 +37,7 @@ inline void write_fifo(bool success) {
     close(wr_fd);
 }
 
-inline const std::vector<std::string> split(const std::string &str, const std::string &pattern) {
+const std::vector<std::string> split(const std::string &str, const std::string &pattern) {
     std::vector<std::string> result;
     std::string::size_type begin, end;
 
@@ -57,7 +58,7 @@ inline const std::vector<std::string> split(const std::string &str, const std::s
     return result;
 }
 
-inline timeval getCalculatedTime(timeval subtrahend) {
+timeval getCalculatedTime(timeval subtrahend) {
     timeval currentTime;
     gettimeofday(&currentTime, NULL);
     timeval time;
@@ -69,7 +70,8 @@ inline timeval getCalculatedTime(timeval subtrahend) {
     }
     return time;
 }
-inline bool restart() {
+
+bool restart() {
     printf("restart\n");
     dancer_fd = tryGetLock(path.c_str());
  if (dancer_fd == -1) {
@@ -92,7 +94,8 @@ inline bool restart() {
     cerr << "[Common] Player loaded\n";
     return true;
    }
-inline void resume( StateMachine* fsm ){
+
+void resume( StateMachine* fsm ){
 	led_loop = std::thread(&LEDPlayer::loop, &led_player, fsm);
 	of_loop = std::thread(&OFPlayer::loop, &of_player, fsm);
 	//led_loop.detach();
@@ -103,7 +106,7 @@ inline void resume( StateMachine* fsm ){
 	 return;
    }
 
-inline int parse_command(StateMachine* fsm,std::string str) {
+int parse_command(StateMachine* fsm,std::string str) {
     if (str.length() == 1){
 	    write_fifo(false); 
 	    return -1;
