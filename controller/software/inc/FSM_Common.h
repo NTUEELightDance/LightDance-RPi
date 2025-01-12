@@ -23,7 +23,7 @@ extern string path ;
 extern const char *rd_fifo;
 extern const char *wr_fifo;
 
-void write_fifo(bool success) {
+inline void write_fifo(bool success) {
     int wr_fd;
     std::string msg;
 
