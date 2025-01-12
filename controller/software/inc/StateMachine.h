@@ -85,5 +85,5 @@ class StateMachine{
 };
 
 
-int parse_command(string cmd);
+int parse_command(StateMachine * m, string cmd);
 #endif
