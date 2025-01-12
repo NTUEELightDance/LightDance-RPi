@@ -37,7 +37,7 @@ inline void write_fifo(bool success) {
     close(wr_fd);
 }
 
-const std::vector<std::string> split(const std::string &str, const std::string &pattern) {
+inline const std::vector<std::string> split(const std::string &str, const std::string &pattern) {
     std::vector<std::string> result;
     std::string::size_type begin, end;
 
@@ -58,7 +58,7 @@ const std::vector<std::string> split(const std::string &str, const std::string &
     return result;
 }
 
-timeval getCalculatedTime(timeval subtrahend) {
+inline timeval getCalculatedTime(timeval subtrahend) {
     timeval currentTime;
     gettimeofday(&currentTime, NULL);
     timeval time;
@@ -71,7 +71,7 @@ timeval getCalculatedTime(timeval subtrahend) {
     return time;
 }
 
-bool restart() {
+inline bool restart() {
     printf("restart\n");
     dancer_fd = tryGetLock(path.c_str());
  if (dancer_fd == -1) {
@@ -95,7 +95,7 @@ bool restart() {
     return true;
    }
 
-void resume( StateMachine* fsm ){
+inline void resume( StateMachine* fsm ){
 	led_loop = std::thread(&LEDPlayer::loop, &led_player, fsm);
 	of_loop = std::thread(&OFPlayer::loop, &of_player, fsm);
 	//led_loop.detach();
@@ -106,7 +106,7 @@ void resume( StateMachine* fsm ){
 	 return;
    }
 
-int parse_command(StateMachine* fsm,std::string str) {
+inline int parse_command(StateMachine* fsm,std::string str) {
     if (str.length() == 1){
 	    write_fifo(false); 
 	    return -1;
