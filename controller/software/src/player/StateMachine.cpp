@@ -1,5 +1,6 @@
 # include <StateMachine.h>
 # include <FSM_Common.h>
+# include <cstdio>
 
 //enum CMD { C_PLAY, C_PAUSE, C_STOP, C_RESUME };
 extern const std::string cmds[10];
@@ -12,6 +13,7 @@ extern string path;
 extern const char *rd_fifo;
 extern const char *wr_fifo;
 StateMachine::StateMachine(){
+    printf("StateMachine: Constructor\n");
     timeval tv;
     tv.tv_sec=tv.tv_usec=0;  
     setData(tv,tv,-1,0,false,false);
