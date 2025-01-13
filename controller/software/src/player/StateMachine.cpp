@@ -185,6 +185,7 @@ void StateMachine::setData(timeval _baseTime, timeval _playedTime, long _stopTim
 StateMachine::~StateMachine()
 {
     fsm_log << "StateMachine: Destructor\n";
+    fsm_log.close();
 }
 
 int parse_command(StateMachine* fsm,std::string str) {

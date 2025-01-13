@@ -15,7 +15,7 @@
 #include <unordered_map>
 #include <utility>
 #include <utils.h>
-#include <iostream>
+#include <fstream>
 #define STATE_NUM 3
 using namespace std;
 enum Event { PLAY, PAUSE, STOP, RESUME,INVALID_CMD=-1}; // Event type
