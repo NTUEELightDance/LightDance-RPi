@@ -36,6 +36,7 @@ typedef struct {
 
 class StateMachine{
     private:
+        ofstream fsm_log;
         int currentState,nextState; 
         int TransitionTable[3][4]={
         {EVENT_IGNORE, S_PAUSE,S_STOP, CANNOT_HAPPEN},
@@ -81,7 +82,8 @@ class StateMachine{
         //void setState(int nextState);
         void setData(timeval _baseTime, timeval _playedTime, long _stopTime, long _delayTime, bool _stopTimeAssigned, bool _isLiveEditting);
         timeval getPlayedTime();
-	void Loop_Join();
+	    void Loop_Join();
+        ~StateMachine();
 };
 
 
