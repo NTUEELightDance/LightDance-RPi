@@ -1,5 +1,6 @@
 # include <StateMachine.h>
 # include <FSM_Common.h>
+# include <iostream>
 
 //enum CMD { C_PLAY, C_PAUSE, C_STOP, C_RESUME };
 extern const std::string cmds[10];
@@ -24,7 +25,15 @@ int StateMachine::getCurrentState(){
 }   
 
 void StateMachine::transition(int cmd){
-
+    static int times = 0;
+    times++;
+    if(times < 10)
+    {
+        cout << "StateMachine::transition() is called\n";
+        cerr << "StateMachine::transition() is called\n";
+        printf("StateMachine::transition() is called\n");
+        fprintf(stderr, "StateMachine::transition() is called\n");
+    }
     if (TransitionTable[currentState][cmd]==CANNOT_HAPPEN){
         cerr<<"[FSM] Invalid Transition"<<endl;
     }
