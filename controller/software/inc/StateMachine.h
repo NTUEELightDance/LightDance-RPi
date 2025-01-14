@@ -16,6 +16,7 @@
 #include <utility>
 #include <utils.h>
 #include <iostream>
+#include <fstream>
 #define STATE_NUM 3
 using namespace std;
 enum Event { PLAY, PAUSE, STOP, RESUME,INVALID_CMD=-1}; // Event type
@@ -36,6 +37,7 @@ typedef struct {
 
 class StateMachine{
     private:
+        fstream fsm_log;
         int currentState,nextState; 
         int TransitionTable[3][4]={
         {EVENT_IGNORE, S_PAUSE,S_STOP, CANNOT_HAPPEN},

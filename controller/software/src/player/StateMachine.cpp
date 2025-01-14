@@ -17,23 +17,17 @@ StateMachine::StateMachine(){
     tv.tv_sec=tv.tv_usec=0;  
     setData(tv,tv,-1,0,false,false);
     currentState = nextState = S_STOP;
+    fprintf(stderr, "StateMachine::StateMachine()\n");
 }
 
 
 int StateMachine::getCurrentState(){
+    //fprintf(stderr, "StateMachine::getCurrentState()\n");
     return currentState;
 }   
 
 void StateMachine::transition(int cmd){
-    static int times = 0;
-    times++;
-    if(times < 10)
-    {
-        cout << "StateMachine::transition() is called\n";
-        cerr << "StateMachine::transition() is called\n";
-        printf("StateMachine::transition() is called\n");
-        fprintf(stderr, "StateMachine::transition() is called\n");
-    }
+    
     if (TransitionTable[currentState][cmd]==CANNOT_HAPPEN){
         cerr<<"[FSM] Invalid Transition"<<endl;
     }
@@ -60,13 +54,11 @@ void StateMachine::transition(int cmd){
 }*/
 
 void StateMachine::ST_Play() {
-   // std::cout << "In state PLAY\n";
     timeval tv;
     
     tv = getCalculatedTime(data.baseTime);
     long played_us = tv.tv_sec * 1000000 + tv.tv_usec;
     played_us/=1000;	    
-   // fprintf(stderr,"[FSM::PLAY] playedTime[%d],stopTime[%d]\n",played_us,data.stopTime);
     if (played_us > this->data.stopTime && this->data.stopTime != -1) {
 
         (this->*EX_func[currentState])();
@@ -76,30 +68,28 @@ void StateMachine::ST_Play() {
 }
 
 void StateMachine::ST_Pause() {
-   //cerr<<"[ST_PAUSE]\n"; 
 }
 
 void StateMachine::ST_Stop() {
-  //  led_player.controller.finish();
 }
 
-// Exit functions
-void StateMachine::EX_Play() {//EXIT S_PLAY: store playedTime
+void StateMachine::EX_Play() {
+    fprintf(stderr, "exit STATE_PLAY\n");
     this->data.playedTime = getCalculatedTime(data.baseTime);
     return;
 }
 
 void StateMachine::EX_Pause() {	
+    fprintf(stderr, "exit STATE_PAUSE\n");
     restart();
 }
 
 void StateMachine::EX_Stop() {
+    fprintf(stderr, "exit STATE_STOP\n");
     restart();
-   // data.playedTime.tv_sec=0;
-   // data.playedTime.tv_usec=0;
     data.delayDisplay=true;
 }
-// Entry functions
+
 void StateMachine::EN_Play() {
 
     fprintf(stderr, "[FSM] ENTERING PLAY\n");
