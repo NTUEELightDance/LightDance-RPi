@@ -149,7 +149,7 @@ class Play : public Command {
             return 1;
         }
 
-        printf("playerctl: sendToPlayLoop(%s)\n", msg.c_str());
+        //printf("playerctl: sendToPlayLoop(%s)\n", msg.c_str());
 
         n = sprintf(buf, "%s", msg.c_str());
 
