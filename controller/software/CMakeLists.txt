@@ -46,7 +46,7 @@ add_library(playerLIB STATIC
   ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp
   ${SOURCE}/commands/player.cpp )
   # ${SOURCE}/commands/player.cpp ${SOURCE}/player/StateMachine.cpp)
-  add_library(StateMachineLIB STATIC ${SOURCE}/player/StateMachine.cpp ${SOURCE}/player/FSM_Common.cpp)
+  add_library(StateMachineLIB STATIC ${SOURCE}/player/state_machine.cpp)
 # target_include_directories(playerLIB PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(playerLIB StateMachineLIB ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 target_link_libraries(StateMachineLIB playerLIB ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
