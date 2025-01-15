@@ -25,7 +25,6 @@ StateMachine::StateMachine(){
 
 
 int StateMachine::getCurrentState(){
-<<<<<<< HEAD
     static int times = 0;
     times++;
     times%=1000;
