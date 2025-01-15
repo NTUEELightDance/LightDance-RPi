@@ -25,7 +25,11 @@ StateMachine::StateMachine(){
 
 
 int StateMachine::getCurrentState(){
-    fsm_log << "StateMachien::getCurrentState\n";
+    static int times = 0;
+    times++;
+    times%=1000;
+    if(times == 1)
+        fsm_log << "StateMachien::getCurrentState\n";
     return currentState;
 }   
 
