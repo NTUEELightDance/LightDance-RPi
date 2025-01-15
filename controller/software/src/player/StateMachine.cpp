@@ -28,8 +28,8 @@ int StateMachine::getCurrentState(){
     static int times = 0;
     times++;
     times%=1000;
-    if(times == 1)
-        fsm_log << "StateMachien::getCurrentState\n";
+    //if(times == 1)
+    //    fsm_log << "StateMachien::getCurrentState\n";
     return currentState;
 }   
 
