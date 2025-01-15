@@ -16,6 +16,12 @@ extern const char *rd_fifo;
 extern const char *wr_fifo;
 StateMachine::StateMachine(){
     fsm_log.open("state_machine.log", ios::trunc);
+    if(!fsm_log.is_open()){
+        cerr << "Failed to open state_machine.log" << endl;
+    }
+    else{
+        cerr << "state_machine.log opened" << endl;
+    }
     fsm_log << "StateMachine::Constructor\n";
     timeval tv;
     tv.tv_sec=tv.tv_usec=0;  
