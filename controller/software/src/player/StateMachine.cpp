@@ -5,8 +5,8 @@
 using namespace std;
 
 //enum CMD { C_PLAY, C_PAUSE, C_STOP, C_RESUME };
-extern const std::string cmds[10];
-extern std::thread led_loop, of_loop;
+extern const string cmds[10];
+extern thread led_loop, of_loop;
 extern Player player;
 extern LEDPlayer led_player;
 extern OFPlayer of_player;
@@ -63,7 +63,7 @@ void StateMachine::transition(int cmd){
 
 void StateMachine::ST_Play() {
     //fsm_log << "StateMachine::ST_Play()\n";
-   // std::cout << "In state PLAY\n";
+   // cout << "In state PLAY\n";
     timeval tv;
     
     tv = getCalculatedTime(data.baseTime);
@@ -193,12 +193,12 @@ StateMachine::~StateMachine()
     //fsm_log.close();
 }
 
-int parse_command(StateMachine* fsm,std::string str) {
+int parse_command(StateMachine* fsm,string str) {
     if (str.length() == 1){
 	    write_fifo(false); 
 	    return -1;
     }
-    std::vector<std::string> cmd = split(str, " ");
+    vector<string> cmd = split(str, " ");
     string cmds[3]= {"play", "pause", "stop"};
     int cmd_recv=-1;
     long startusec=0;
@@ -217,20 +217,20 @@ int parse_command(StateMachine* fsm,std::string str) {
 		            cerr<<"[Common] RESUME\n";
                     return cmd_recv;
                 } else if (cmd.size() >= 3 && cmd[cmd.size() - 2] == "-d") {
-                    fsm->data.delayTime = std::stoi(cmd[cmd.size() - 1]);//*1000;//saved as us
+                    fsm->data.delayTime = stoi(cmd[cmd.size() - 1]);//*1000;//saved as us
                     if (cmd.size() > 3) {
-                        startusec = std::stoi(cmd[1])*1000;
+                        startusec = stoi(cmd[1])*1000;
                     }
                     if (cmd.size() > 4) {
-                        fsm->data.stopTime = std::stoi(cmd[2]);
+                        fsm->data.stopTime = stoi(cmd[2]);
                         fsm->data.stopTimeAssigned = true;
                     }
                 } else {
                     if (cmd.size()>1) {
-                        startusec = std::stoi(cmd[1])*1000;
+                        startusec = stoi(cmd[1])*1000;
 		            }
                     if (cmd.size() > 2) {
-                        fsm->data.stopTime = std::stoi(cmd[2]);
+                        fsm->data.stopTime = stoi(cmd[2]);
                         fsm->data.stopTimeAssigned = true;
                     }
                 }
