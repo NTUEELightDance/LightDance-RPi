@@ -15,8 +15,8 @@ extern string path;
 extern const char *rd_fifo;
 extern const char *wr_fifo;
 StateMachine::StateMachine(){
-    fsm_log.open("state_machine.log", ios::trunc);
-    fsm_log << "StateMachine::Constructor\n";
+    //fsm_log.open("state_machine.log", ios::trunc);
+    //fsm_log << "StateMachine::Constructor\n";
     timeval tv;
     tv.tv_sec=tv.tv_usec=0;  
     setData(tv,tv,-1,0,false,false);
@@ -30,11 +30,12 @@ int StateMachine::getCurrentState(){
     times%=1000;
     //if(times == 1)
     //    fsm_log << "StateMachien::getCurrentState\n";
+        //fsm_log << "StateMachien::getCurrentState\n";
     return currentState;
 }   
 
 void StateMachine::transition(int cmd){
-    fsm_log << "StateMachine::transition()\n";
+    //fsm_log << "StateMachine::transition()\n";
     if (TransitionTable[currentState][cmd]==CANNOT_HAPPEN){
         cerr<<"[FSM] Invalid Transition"<<endl;
     }
@@ -61,7 +62,7 @@ void StateMachine::transition(int cmd){
 }*/
 
 void StateMachine::ST_Play() {
-    fsm_log << "StateMachine::ST_Play()\n";
+    //fsm_log << "StateMachine::ST_Play()\n";
    // std::cout << "In state PLAY\n";
     timeval tv;
     
@@ -82,7 +83,7 @@ void StateMachine::ST_Pause() {
 }
 
 void StateMachine::ST_Stop() {
-    fsm_log << "StateMachine::ST_Stop()";
+    //fsm_log << "StateMachine::ST_Stop()";
   //  led_player.controller.finish();
 }
 
@@ -176,7 +177,7 @@ timeval StateMachine::getPlayedTime() {
 }
 
 void StateMachine::setData(timeval _baseTime, timeval _playedTime, long _stopTime, long _delayTime, bool _stopTimeAssigned, bool _isLiveEditting){
-    fsm_log << "StateMachine::setData()\n";
+    //fsm_log << "StateMachine::setData()\n";
     data.baseTime = _baseTime;
     data.playedTime = _playedTime;
     data.stopTime = _stopTime;
@@ -188,8 +189,8 @@ void StateMachine::setData(timeval _baseTime, timeval _playedTime, long _stopTim
 
 StateMachine::~StateMachine()
 {
-    fsm_log << "StateMachine: Destructor\n";
-    fsm_log.close();
+    //fsm_log << "StateMachine: Destructor\n";
+    //fsm_log.close();
 }
 
 int parse_command(StateMachine* fsm,std::string str) {
