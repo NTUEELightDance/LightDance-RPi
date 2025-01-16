@@ -129,7 +129,7 @@ inline int parse_command(StateMachine* fsm,std::string str) {
                 } else if (cmd.size() >= 3 && cmd[cmd.size() - 2] == "-d") {
                     fsm->data.delayTime = std::stoi(cmd[cmd.size() - 1]);//*1000;//saved as us
                     if (cmd.size() > 3) {
-                        startusec = std::stoi(cmd[1])*1000;
+                        startusec = std::stoi(cmd[1]);
                     }
                     if (cmd.size() > 4) {
                         fsm->data.stopTime = std::stoi(cmd[2]);
@@ -137,7 +137,7 @@ inline int parse_command(StateMachine* fsm,std::string str) {
                     }
                 } else {
                     if (cmd.size()>1) {
-                        startusec = std::stoi(cmd[1])*1000;
+                        startusec = std::stoi(cmd[1]);
 		            }
                     if (cmd.size() > 2) {
                         fsm->data.stopTime = std::stoi(cmd[2]);
