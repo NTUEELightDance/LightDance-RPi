@@ -5,7 +5,7 @@
 #include <iostream>
 #include <thread> 
 #include <const.h>
-#include <StateMachine.h>
+#include <oriStateMachine.h>
 #include <LEDPlayer.h>
 #include <OFPlayer.h>
 #include <player.h>
