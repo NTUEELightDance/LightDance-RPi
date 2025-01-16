@@ -288,17 +288,17 @@ void LEDPlayer::loop(StateMachine *fsm) {
     while (true) {  
         
 	    // cerr<<"[LED Loop] CurrentState: "<<fsm->getCurrentState()<<endl;
-        if (fsm->getCurrentState() == S_STOP) {
+        if (fsm->getCurrentState() == STATE_STOP) {
 	        cerr<<"[LEDPlayer] Now Stopped\n";
 	        cerr<<"[LEDPlayer] Break Loop\n";
             break;
         }
-        if (fsm->getCurrentState() == S_PAUSE){
+        if (fsm->getCurrentState() == STATE_PAUSE){
 	        cerr<<"[LEDPlayer] Now Paused\n";
 	        cerr<<"[LEDPlayer] Break Loop\n";
             break;
         }
-	    if (fsm->getCurrentState()==S_PLAY) {
+	    if (fsm->getCurrentState()==STATE_PLAY) {
 	        //cerr<<"[LED Loop]Now Playing\n";	
             const long elapsedTime =
                 getElapsedTime(fsm->data.baseTime, currentTime);  // us

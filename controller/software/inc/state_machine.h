@@ -34,6 +34,8 @@ public:
     StateMachine();
     void processEvent(EVENT event);
     STATE getState() const;
+
+friend class LEDPlayer;
 };
 
 #endif // _STATE_MACHINE_H_
