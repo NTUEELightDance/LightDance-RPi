@@ -15,27 +15,18 @@ extern string path;
 extern const char *rd_fifo;
 extern const char *wr_fifo;
 StateMachine::StateMachine(){
-    fsm_log.open("state_machine.log", ios::trunc);
-    fsm_log << "StateMachine::Constructor\n";
     timeval tv;
-    tv.tv_sec=tv.tv_usec=0;  
+    tv.tv_sec=tv.tv_usec=0;
     setData(tv,tv,-1,0,false,false);
     currentState = nextState = S_STOP;
 }
 
 
 int StateMachine::getCurrentState(){
-    static int times = 0;
-    times++;
-    times%=1000;
-    //if(times == 1)
-    //    fsm_log << "StateMachien::getCurrentState\n";
-        //fsm_log << "StateMachien::getCurrentState\n";
     return currentState;
 }   
 
 void StateMachine::transition(int cmd){
-    //fsm_log << "StateMachine::transition()\n";
     if (TransitionTable[currentState][cmd]==CANNOT_HAPPEN){
         cerr<<"[FSM] Invalid Transition"<<endl;
     }
@@ -62,8 +53,6 @@ void StateMachine::transition(int cmd){
 }*/
 
 void StateMachine::ST_Play() {
-    //fsm_log << "StateMachine::ST_Play()\n";
-   // cout << "In state PLAY\n";
     timeval tv;
     
     tv = getCalculatedTime(data.baseTime);
@@ -83,7 +72,6 @@ void StateMachine::ST_Pause() {
 }
 
 void StateMachine::ST_Stop() {
-    //fsm_log << "StateMachine::ST_Stop()";
   //  led_player.controller.finish();
 }
 
@@ -150,7 +138,6 @@ void StateMachine::EN_Stop() {
 }
 
 void StateMachine::Loop_Join(){
-    fsm_log << "StateMachine::Loop_Join()\n";
     if(led_loop.joinable()){
         led_loop.join();
         cerr << "[FSM] led_loop joined" << endl;
@@ -169,7 +156,6 @@ void StateMachine::Loop_Join(){
 }
 
 timeval StateMachine::getPlayedTime() {
-    fsm_log << "StateMachine::getPlayedTime()\n";
     timeval tv = getCalculatedTime(data.baseTime);
     data.playedTime=tv;
     fprintf(stderr, "[FSM] playedTime: %ld %ld\n", tv.tv_sec, tv.tv_usec);
@@ -177,7 +163,6 @@ timeval StateMachine::getPlayedTime() {
 }
 
 void StateMachine::setData(timeval _baseTime, timeval _playedTime, long _stopTime, long _delayTime, bool _stopTimeAssigned, bool _isLiveEditting){
-    //fsm_log << "StateMachine::setData()\n";
     data.baseTime = _baseTime;
     data.playedTime = _playedTime;
     data.stopTime = _stopTime;
@@ -189,12 +174,9 @@ void StateMachine::setData(timeval _baseTime, timeval _playedTime, long _stopTim
 
 StateMachine::~StateMachine()
 {
-    //fsm_log << "StateMachine: Destructor\n";
-    //fsm_log.close();
 }
 
 int parse_command(StateMachine* fsm,string str) {
-    fsm->fsm_log << "parse_command(" << str << ")\n";
     if (str.length() == 1){
 	    write_fifo(false); 
 	    return -1;
