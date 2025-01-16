@@ -22,10 +22,22 @@ enum EVENT
     EVENT_NULL
 };
 
+struct playLoop_Data
+{
+    timeval baseTime;
+    timeval playedTime;
+    long stopTime;
+    long delayTime;
+    bool stopTimeAssigned;
+    bool delayDisplay;
+    bool isLiveEditting;
+};
+
 class StateMachine
 {
 private: 
     STATE m_state;
+    playLoop_Data data;
     static const STATE m_transition_table[NUM_OF_STATES][NUM_OF_EVENTS];
     void exitState(STATE state) const;
     void enterState(STATE state) const;
