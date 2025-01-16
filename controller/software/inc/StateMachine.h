@@ -70,7 +70,7 @@ class StateMachine{
             &StateMachine::EN_Pause,
             &StateMachine::EN_Stop
         };
-        public:
+    public:
         enum { EVENT_IGNORE = 0xef, CANNOT_HAPPEN = 0xff };
         playLoop_Data data; 
         StateMachine(); //init from initial state, maybe need to add more init parameters?
@@ -84,6 +84,8 @@ class StateMachine{
         timeval getPlayedTime();
 	    void Loop_Join();
         ~StateMachine();
+    
+    friend int parse_command(StateMachine * fsm, string cmd);
 };
 
 

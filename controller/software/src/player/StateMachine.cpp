@@ -15,8 +15,8 @@ extern string path;
 extern const char *rd_fifo;
 extern const char *wr_fifo;
 StateMachine::StateMachine(){
-    //fsm_log.open("state_machine.log", ios::trunc);
-    //fsm_log << "StateMachine::Constructor\n";
+    fsm_log.open("state_machine.log", ios::trunc);
+    fsm_log << "StateMachine::Constructor\n";
     timeval tv;
     tv.tv_sec=tv.tv_usec=0;  
     setData(tv,tv,-1,0,false,false);
@@ -194,6 +194,7 @@ StateMachine::~StateMachine()
 }
 
 int parse_command(StateMachine* fsm,string str) {
+    fsm->fsm_log << "parse_command(" << str << ")\n";
     if (str.length() == 1){
 	    write_fifo(false); 
 	    return -1;
