@@ -39,8 +39,18 @@ private:
     STATE m_state;
     playLoop_Data data;
     static const STATE m_transition_table[NUM_OF_STATES][NUM_OF_EVENTS];
-    void exitState(STATE state) const;
-    void enterState(STATE state) const;
+    void exitState(STATE state);
+    void execState(STATE state);
+    void enterState(STATE state);
+    void exitSTOP();
+    void exitPLAY();
+    void exitPAUSE();
+    void execSTOP();
+    void execPLAY();
+    void execPAUSE();
+    void enterSTOP();
+    void enterPLAY();
+    void enterPAUSE();
 
 public: 
     StateMachine();
@@ -50,5 +60,7 @@ public:
 friend class LEDPlayer;
 friend class OFPlayer;
 };
+
+EVENT parse_event(char *str);
 
 #endif // _STATE_MACHINE_H_

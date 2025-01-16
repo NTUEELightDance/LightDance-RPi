@@ -16,7 +16,7 @@
 #include "OFPlayer.h"
 #include "player.h"
 #include "utils.h"
-#include "StateMachine.h"
+#include "state_machine.h"
 //#include "FSM_Common.h"
 
 #define MAXLEN 100
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
     // of_playing = false;
     // led_playing = false;
     // timeval playedTime;
-    StateMachine* playingState=new StateMachine();
+    StateMachine* fsm = new StateMachine();
 
     while (1) {
         /*timeval tv;
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
         if (n > 0) {
             fprintf(stderr,"[playLoop] parsing command\n");
             //FSM_Common used here
-	        int cmd = parse_command(playingState,cmd_buf);
+	        int cmd = parse_command(fsm,cmd_buf);
             fprintf(stderr, "[playLoop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
 	        if(cmd == -1) continue;
             playingState->transition(cmd);//trans?
