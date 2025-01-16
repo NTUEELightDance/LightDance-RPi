@@ -48,6 +48,7 @@ public:
     STATE getState() const;
 
 friend class LEDPlayer;
+friend class OFPlayer;
 };
 
 #endif // _STATE_MACHINE_H_

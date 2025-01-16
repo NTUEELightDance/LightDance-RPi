@@ -258,16 +258,16 @@ void OFPlayer::loop(StateMachine *fsm) {
 #endif
     while (true) {
         
-        if (fsm->getCurrentState() == S_STOP) {
+        if (fsm->getState() == STATE_STOP) {
             // TODO: finish darkall
             //setLightStatus(statusList, 0, 0, 0, 0);
             //controller.sendAll(castStatusList(statusList));
             break;
         }
-	    if(fsm->getCurrentState() == S_PAUSE) {
+	    if(fsm->getState() == STATE_PAUSE) {
 	        break;
 	    }
-        if (fsm->getCurrentState() == S_PLAY) {
+        if (fsm->getState() == STATE_PLAY) {
             const long elapsedTime = getElapsedTime(fsm->data.baseTime, currentTime);
             const long elapsedTimeInMs = elapsedTime / 1000l;
             statusList.clear();
@@ -316,5 +316,5 @@ void OFPlayer::loop(StateMachine *fsm) {
     logFile << "[OF] finish\n";
     logFile.close();
 #endif
-    //fsm->setState(S_STOP);
+    //fsm->setState(STATE_STOP);
 }

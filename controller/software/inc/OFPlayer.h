@@ -27,7 +27,7 @@
 #include <boost/serialization/version.hpp>
 
 #include "OFController.h"
-#include "StateMachine.h"
+#include "state_machine.h"
 #include "const.h"
 
 using namespace std;
