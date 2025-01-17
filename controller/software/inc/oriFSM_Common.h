@@ -3,7 +3,7 @@
 
 #include <sys/time.h>
 #include <iostream>
-#include <thread> 
+#include <thread>
 #include <const.h>
 #include <oriStateMachine.h>
 #include <LEDPlayer.h>
@@ -11,16 +11,15 @@
 #include <player.h>
 #include <string>
 
-
-enum CMD { C_PLAY, C_PAUSE, C_STOP, C_RESUME };
-extern const std::string cmds[10];
+//enum CMD { C_PLAY, C_PAUSE, C_STOP, C_RESUME };
+//extern const std::string cmds[10];
 extern std::thread led_loop, of_loop;
 extern Player player;
 extern LEDPlayer led_player;
 extern OFPlayer of_player;
 extern int dancer_fd;
 extern string path ;
-extern const char *rd_fifo;
+//extern const char *rd_fifo;
 extern const char *wr_fifo;
 
 inline void write_fifo(bool success) {

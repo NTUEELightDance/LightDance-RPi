@@ -1,4 +1,5 @@
 #include "state_machine.h"
+#include <machine_tools.h>
 
 const STATE StateMachine::m_transition_table[NUM_OF_STATES][NUM_OF_EVENTS] = 
 {
@@ -63,9 +64,106 @@ void StateMachine::enterState(STATE state)
 
 void StateMachine::exitSTOP() 
 {
+    restart();
+    data.delayDisplay = true;
+}
+
+void StateMachine::exitPLAY() 
+{
+    data.playedTime = getCalculatedTime(data.baseTime);
+}
+
+void StateMachine::exitPAUSE()
+{
+    restart();
+}
+
+void StateMachine::execSTOP() 
+{
+}
+
+void StateMachine::execPLAY() 
+{
+    timeval tv;
+    tv = getCalculatedTime(data.baseTime);
+    long played_us = tv.tv_sec * 1000000 + tv.tv_usec;
+    played_us /= 1000;
+    if (played_us > this->data.stopTime && this->data.stopTime != -1) 
+    {
+        exitState(m_state);
+        m_state = STATE_STOP;
+        enterState(m_state);
+    }
+}
+
+void StateMachine::execPAUSE() 
+{
+}
+
+void StateMachine::enterSTOP() 
+{
+    Loop_Join();
+    led_player.darkAll();
+    of_player.darkAll();
+    led_player.controller.finish();
+    releaseLock(dancer_fd, path.c_str());
+    data.stopTimeAssigned = data.delayDisplay = false;
+    data.stopTime = -1;
+}
+
+void StateMachine::enterPLAY() 
+{
+    while (data.delayTime > 0)
+    {
+        timeval tv = getCalculatedTime(data.baseTime);
+        long delayed_us = tv.tv_sec * 1000000 + tv.tv_usec;
+        of_player.delayDisplay(&data.delayDisplay);
+        led_player.delayDisplay(&data.delayDisplay);
+        if (delayed_us > data.delayTime / 5l && data.delayDisplay) 
+        {
+            data.delayDisplay = false;
+            cerr << "[FSM] display off\n" << endl;
+        }
+        if (delayed_us > data.delayTime) 
+        {
+            cerr << "[FSM] delay out\n";
+            break;
+        }
+    }
+    cerr << "[FSM] Delay finished\n" << "Start playing\n";
+    data.delayTime = 0;
+    data.baseTime = getCalculatedTime(data.playedTime);
+    cerr << "[FSM] startTime: " << data.playedTime.tv_sec << " " << data.playedTime.tv_usec << "\n";
+    resume(this);
+}
+
+void StateMachine::enterPAUSE() 
+{
+    Loop_Join();
+    releaseLock(dancer_fd, path.c_str());
 }
 
 StateMachine::StateMachine(): m_state(STATE_STOP)
 {
     data = {0, 0, -1, 0, false, false};
+}
+
+void StateMachine::processEvent(EVENT event) 
+{
+    STATE next_state = m_transition_table[m_state][event];
+    if (next_state != STATE_NULL) 
+    {
+        exitState(m_state);
+        m_state = next_state;
+        enterState(m_state);
+    }
+    else 
+    {
+        cerr << "Invalid event\n";
+    }
+}
+
+STATE StateMachine::getState() const 
+{
+    return m_state;
 }
