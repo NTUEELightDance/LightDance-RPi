@@ -29,30 +29,30 @@ extern LEDPlayer led_player;
 extern OFPlayer of_player;
 extern int dancer_fd;
 extern string path;
-const char *rd_fifo = "/tmp/cmd_to_player";
-const char *wr_fifo = "/tmp/player_to_cmd";
+const char *my_rd_fifo = "/tmp/cmd_to_player";
+const char *my_wr_fifo = "/tmp/player_to_cmd";
 
 
 int main(int argc, char *argv[]){
     // create player_to_cmd
-    if (mkfifo(wr_fifo, 0666) == -1) {
+    if (mkfifo(my_wr_fifo, 0666) == -1) {
         if (errno != EEXIST) {
-            fprintf(stderr, "Cannot create %s\n", wr_fifo);
+            fprintf(stderr, "Cannot create %s\n", my_wr_fifo);
         } else {
-            fprintf(stderr, "%s already exists\n", wr_fifo);
+            fprintf(stderr, "%s already exists\n", my_wr_fifo);
         }
     } else
-        fprintf(stderr, "%s created\n", wr_fifo);
+        fprintf(stderr, "%s created\n", my_wr_fifo);
     int rd_fd, n;
-    if (mkfifo(rd_fifo, 0666) == -1) {
+    if (mkfifo(my_rd_fifo, 0666) == -1) {
         if (errno != EEXIST) {
-            fprintf(stderr, "Cannot create %s\n", rd_fifo);
+            fprintf(stderr, "Cannot create %s\n", my_rd_fifo);
         } else {
-            fprintf(stderr, "%s already exists\n", rd_fifo);
+            fprintf(stderr, "%s already exists\n", my_rd_fifo);
         }
     } else
-    fprintf(stderr, "%s created\n", rd_fifo);
-    rd_fd = open(rd_fifo, O_RDONLY | O_NONBLOCK);
+    fprintf(stderr, "%s created\n", my_rd_fifo);
+    rd_fd = open(my_rd_fifo, O_RDONLY | O_NONBLOCK);
     if (rd_fd == -1) perror("open");
     char cmd_buf[MAXLEN];
     // of_playing = false;
