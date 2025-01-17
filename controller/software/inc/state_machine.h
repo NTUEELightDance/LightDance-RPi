@@ -56,47 +56,13 @@ private:
 public: 
     StateMachine();
     void processEvent(EVENT event);
+    void execCurrState();
     STATE getState() const;
 
 friend class LEDPlayer;
 friend class OFPlayer;
 };
 
-EVENT parse_event(char *str)
-{
-    if(strlen(str) == 0)
-    {
-        write_fifo(false);
-        return EVENT_NULL;
-    }
-    stringstream ss(str);
-    string cmd;
-    ss >> cmd;
-    if(cmd == "play")
-    {
-        write_fifo(true);
-        return EVENT_PLAY;
-    }
-    else if(cmd == "stop")
-    {
-        write_fifo(true);
-        return EVENT_STOP;
-    }
-    else if(cmd == "pause")
-    {
-        write_fifo(true);
-        return EVENT_PAUSE;
-    }
-    else if(cmd == "resume")
-    {
-        write_fifo(true);
-        return EVENT_RESUME;
-    }
-    else
-    {
-        write_fifo(false);
-        return EVENT_NULL;
-    }
-}
+EVENT parse_event(char *str);
 
 #endif // _STATE_MACHINE_H_

@@ -78,13 +78,13 @@ int main(int argc, char *argv[]){
         if (n > 0) {
             fprintf(stderr,"[playLoop] parsing command\n");
             //FSM_Common used here
-	        int cmd = parse_command(fsm,cmd_buf);
+	        EVENT cmd = parse_event(cmd_buf);
             fprintf(stderr, "[playLoop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
 	        if(cmd == -1) continue;
-            playingState->transition(cmd);//trans?
+            fsm->processEvent(cmd);//trans?
         }
         else{
-           playingState->stating(playingState->getCurrentState());
+           fsm->execCurrState();
         }
     }
     close(rd_fd);

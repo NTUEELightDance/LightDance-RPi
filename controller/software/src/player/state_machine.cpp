@@ -163,7 +163,49 @@ void StateMachine::processEvent(EVENT event)
     }
 }
 
+void StateMachine::execCurrState() 
+{
+    execState(m_state);
+}
+
 STATE StateMachine::getState() const 
 {
     return m_state;
+}
+
+EVENT parse_event(char *str)
+{
+    if(strlen(str) == 0)
+    {
+        write_fifo(false);
+        return EVENT_NULL;
+    }
+    stringstream ss(str);
+    string cmd;
+    ss >> cmd;
+    if(cmd == "play")
+    {
+        write_fifo(true);
+        return EVENT_PLAY;
+    }
+    else if(cmd == "stop")
+    {
+        write_fifo(true);
+        return EVENT_STOP;
+    }
+    else if(cmd == "pause")
+    {
+        write_fifo(true);
+        return EVENT_PAUSE;
+    }
+    else if(cmd == "resume")
+    {
+        write_fifo(true);
+        return EVENT_RESUME;
+    }
+    else
+    {
+        write_fifo(false);
+        return EVENT_NULL;
+    }
 }
