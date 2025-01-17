@@ -4,6 +4,9 @@
 #include <sys/time.h>
 #include <sstream>
 
+extern char* rd_fifo;
+extern char* wr_fifo;
+
 enum STATE
 {
     STATE_STOP, 
