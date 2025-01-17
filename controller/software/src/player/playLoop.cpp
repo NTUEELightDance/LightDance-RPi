@@ -29,8 +29,8 @@ extern LEDPlayer led_player;
 extern OFPlayer of_player;
 extern int dancer_fd;
 extern string path;
-extern const char *rd_fifo;
-extern const char *wr_fifo;
+const char *rd_fifo = "/tmp/cmd_to_player";
+const char *wr_fifo = "/tmp/player_to_cmd";
 
 
 int main(int argc, char *argv[]){
