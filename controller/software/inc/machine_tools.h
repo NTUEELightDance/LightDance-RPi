@@ -16,7 +16,7 @@ Player player;
 LEDPlayer led_player;
 OFPlayer of_player;
 int dancer_fd;
-string path = string(BASE_PATH) + "data/dancer.dat";
+const string path_to_dat = string(BASE_PATH) + "data/dancer.dat";
 
 
 void write_fifo(bool success) {
@@ -69,7 +69,7 @@ timeval getCalculatedTime(timeval subtrahend) {
 
 bool restart() {
     fprintf(stderr, "%srestart\n", TAG);
-    dancer_fd = tryGetLock(path.c_str());
+    dancer_fd = tryGetLock(path_to_dat.c_str());
  if (dancer_fd == -1) {
         cerr << "[Common] Dancer is playing! Please stop it first!\n";
         return 0;
@@ -78,7 +78,7 @@ bool restart() {
         return 0;
     }
 
-    if (!restorePlayer(player, path.c_str())) {
+    if (!restorePlayer(player, path_to_dat.c_str())) {
         // fprintf(stderr, "restorePlayer ERROR\n");
         cerr << "[Common] Can't restorePlayer!\n";
         return false;
