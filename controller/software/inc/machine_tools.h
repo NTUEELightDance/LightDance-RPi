@@ -15,8 +15,6 @@ LEDPlayer led_player;
 OFPlayer of_player;
 int dancer_fd;
 string path = string(BASE_PATH) + "data/dancer.dat";
-const char *rd_fifo = "/tmp/cmd_to_player";
-const char *wr_fifo = "/tmp/player_to_cmd";
 
 
 void write_fifo(bool success) {
