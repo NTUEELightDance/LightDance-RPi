@@ -9,7 +9,7 @@
 #include <const.h>
 #include <utils.h>
 
-static const char *TAG = "[MachineTools]: ";
+//const char *TAG = "[MachineTools]: ";
 
 std::thread led_loop, of_loop;
 Player player;
