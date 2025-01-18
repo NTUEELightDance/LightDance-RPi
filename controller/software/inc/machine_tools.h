@@ -9,6 +9,8 @@
 #include <const.h>
 #include <utils.h>
 
+const char *TAG = "[MachineTools]: ";
+
 std::thread led_loop, of_loop;
 Player player;
 LEDPlayer led_player;
@@ -66,7 +68,7 @@ timeval getCalculatedTime(timeval subtrahend) {
 }
 
 bool restart() {
-    printf("restart\n");
+    fprintf(stderr, "%srestart\n", TAG);
     dancer_fd = tryGetLock(path.c_str());
  if (dancer_fd == -1) {
         cerr << "[Common] Dancer is playing! Please stop it first!\n";

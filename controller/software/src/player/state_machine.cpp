@@ -1,7 +1,7 @@
 #include "state_machine.h"
 #include <machine_tools.h>
 
-char *TAG = "[StateMachine]: ";
+const char *TAG = "[StateMachine]: ";
 
 const STATE StateMachine::m_transition_table[NUM_OF_STATES][NUM_OF_EVENTS] = 
 {
@@ -200,21 +200,25 @@ EVENT parse_event(char *str)
     if(cmd == "play")
     {
         write_fifo(true);
+        fprintf(stderr, "%sParsed play\n", TAG);
         return EVENT_PLAY;
     }
     else if(cmd == "stop")
     {
         write_fifo(true);
+        fprintf(stderr, "%sParsed stop\n", TAG);
         return EVENT_STOP;
     }
     else if(cmd == "pause")
     {
         write_fifo(true);
+        fprintf(stderr, "%sParsed pause\n", TAG);
         return EVENT_PAUSE;
     }
     else if(cmd == "resume")
     {
         write_fifo(true);
+        fprintf(stderr, "%sParsed resume\n", TAG);
         return EVENT_RESUME;
     }
     else
