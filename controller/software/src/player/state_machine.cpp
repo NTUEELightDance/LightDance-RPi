@@ -1,7 +1,7 @@
 #include "state_machine.h"
 #include <machine_tools.h>
 
-static const char *TAG = "[StateMachine]: ";
+const char *TAG = "[StateMachine]: ";
 
 const STATE StateMachine::m_transition_table[NUM_OF_STATES][NUM_OF_EVENTS] = 
 {
