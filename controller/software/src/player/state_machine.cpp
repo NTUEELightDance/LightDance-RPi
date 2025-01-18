@@ -161,12 +161,14 @@ void StateMachine::processEvent(EVENT event)
     if(event < 0 || event >= NUM_OF_EVENTS)
     {
         fprintf(stderr, "%sInvalid event: %d\n", TAG, event);
+        write_fifo(false);
         return;
     }
     STATE next_state = m_transition_table[m_state][event];
     if (next_state != STATE_NULL) 
     {
         fprintf(stderr, "%sProcess event: %d. \n", TAG, event);
+        write_fifo(true);
         exitState(m_state);
         m_state = next_state;
         enterState(m_state);
@@ -174,6 +176,7 @@ void StateMachine::processEvent(EVENT event)
     else 
     {
         fprintf(stderr, "%sProcess invalid event. Current state: %d, event got: %d. \n", TAG, m_state, event);
+        write_fifo(false);
     }
 }
 
@@ -191,7 +194,7 @@ EVENT parse_event(char *str)
 {
     if(strlen(str) == 0)
     {
-        write_fifo(false);
+        //write_fifo(false);
         return EVENT_NULL;
     }
     stringstream ss(str);
@@ -199,31 +202,31 @@ EVENT parse_event(char *str)
     ss >> cmd;
     if(cmd == "play")
     {
-        write_fifo(true);
+        //write_fifo(true);
         fprintf(stderr, "%sParsed play\n", TAG);
         return EVENT_PLAY;
     }
     else if(cmd == "stop")
     {
-        write_fifo(true);
+        //write_fifo(true);
         fprintf(stderr, "%sParsed stop\n", TAG);
         return EVENT_STOP;
     }
     else if(cmd == "pause")
     {
-        write_fifo(true);
+        //write_fifo(true);
         fprintf(stderr, "%sParsed pause\n", TAG);
         return EVENT_PAUSE;
     }
     else if(cmd == "resume")
     {
-        write_fifo(true);
+        //write_fifo(true);
         fprintf(stderr, "%sParsed resume\n", TAG);
         return EVENT_RESUME;
     }
     else
     {
-        write_fifo(false);
+        //write_fifo(false);
         return EVENT_NULL;
     }
 }

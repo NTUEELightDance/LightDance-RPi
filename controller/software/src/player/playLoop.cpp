@@ -79,7 +79,7 @@ int main(int argc, char *argv[]){
             //FSM_Common used here
 	        EVENT cmd = parse_event(cmd_buf);
             fprintf(stderr, "[playLoop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
-	        if(cmd == -1) continue;
+	        if(cmd == EVENT_NULL) continue;
             fsm->processEvent(cmd);//trans?
         }
         else{
