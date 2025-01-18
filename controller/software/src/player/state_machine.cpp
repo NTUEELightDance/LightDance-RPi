@@ -1,6 +1,8 @@
 #include "state_machine.h"
 #include <machine_tools.h>
 
+char *TAG = "[StateMachine]: ";
+
 const STATE StateMachine::m_transition_table[NUM_OF_STATES][NUM_OF_EVENTS] = 
 {
 {STATE_PLAY, STATE_NULL, STATE_NULL, STATE_NULL}, 
@@ -64,21 +66,24 @@ void StateMachine::enterState(STATE state)
 
 void StateMachine::exitSTOP() 
 {
+    fprintf(stderr, "%sexitSTOP\n", TAG);
     restart();
     data.delayDisplay = true;
 }
 
 void StateMachine::exitPLAY() 
 {
+    fprintf(stderr, "%sexitPLAY\n", TAG);
     data.playedTime = getCalculatedTime(data.baseTime);
 }
 
 void StateMachine::exitPAUSE()
 {
+    fprintf(stderr, "%sexitPAUSE\n", TAG);
     restart();
 }
 
-void StateMachine::execSTOP() 
+void StateMachine::execSTOP()
 {
 }
 
@@ -102,6 +107,7 @@ void StateMachine::execPAUSE()
 
 void StateMachine::enterSTOP() 
 {
+    fprintf(stderr, "%senterSTOP\n", TAG);
     Loop_Join();
     led_player.darkAll();
     of_player.darkAll();
@@ -113,6 +119,7 @@ void StateMachine::enterSTOP()
 
 void StateMachine::enterPLAY() 
 {
+    fprintf(stderr, "%senterPLAY\n", TAG);
     while (data.delayTime > 0)
     {
         timeval tv = getCalculatedTime(data.baseTime);
@@ -139,6 +146,7 @@ void StateMachine::enterPLAY()
 
 void StateMachine::enterPAUSE() 
 {
+    fprintf(stderr, "%senterPAUSE\n", TAG);
     Loop_Join();
     releaseLock(dancer_fd, path.c_str());
 }
@@ -150,16 +158,22 @@ StateMachine::StateMachine(): m_state(STATE_STOP)
 
 void StateMachine::processEvent(EVENT event) 
 {
+    if(event < 0 || event >= NUM_OF_EVENTS)
+    {
+        fprintf(stderr, "%sInvalid event: %d\n", TAG, event);
+        return;
+    }
     STATE next_state = m_transition_table[m_state][event];
     if (next_state != STATE_NULL) 
     {
+        fprintf(stderr, "%sProcess event: %d. \n", TAG, event);
         exitState(m_state);
         m_state = next_state;
         enterState(m_state);
     }
     else 
     {
-        cerr << "Invalid event\n";
+        fprintf(stderr, "%sProcess invalid event. Current state: %d, event got: %d. \n", TAG, m_state, event);
     }
 }
 
