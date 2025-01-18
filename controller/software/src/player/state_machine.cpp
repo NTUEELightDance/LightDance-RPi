@@ -112,7 +112,7 @@ void StateMachine::enterSTOP()
     led_player.darkAll();
     of_player.darkAll();
     led_player.controller.finish();
-    releaseLock(dancer_fd, path.c_str());
+    releaseLock(dancer_fd, path_to_dat.c_str());
     data.stopTimeAssigned = data.delayDisplay = false;
     data.stopTime = -1;
 }
@@ -148,7 +148,7 @@ void StateMachine::enterPAUSE()
 {
     fprintf(stderr, "%senterPAUSE\n", TAG);
     Loop_Join();
-    releaseLock(dancer_fd, path.c_str());
+    releaseLock(dancer_fd, path_to_dat.c_str());
 }
 
 StateMachine::StateMachine(): m_state(STATE_STOP)
