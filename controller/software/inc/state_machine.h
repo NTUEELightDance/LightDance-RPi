@@ -62,6 +62,6 @@ friend class LEDPlayer;
 friend class OFPlayer;
 };
 
-EVENT parse_event(char *str);
+EVENT parse_event(const char *str);
 
 #endif // _STATE_MACHINE_H_

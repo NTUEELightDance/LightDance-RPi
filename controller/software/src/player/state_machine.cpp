@@ -190,7 +190,7 @@ STATE StateMachine::getState() const
     return m_state;
 }
 
-EVENT parse_event(char *str)
+EVENT parse_event(const char *str)
 {
     if(strlen(str) == 0)
     {

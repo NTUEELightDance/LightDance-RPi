@@ -11,6 +11,7 @@
 #include <cstring>
 #include <thread>
 #include <vector>
+#include <sstream>
 
 #include "LEDPlayer.h"
 #include "OFPlayer.h"
@@ -59,28 +60,17 @@ int main(int argc, char *argv[]){
     // timeval playedTime;
     StateMachine* fsm = new StateMachine();
 
-    while (1) {
-        /*timeval tv;
-        tv = getCalculatedTime(baseTime);
-        // This may be packed into ST_PLAY
-        if (playingState.getCurrentState() == S_PLAY && !delaying) {
-            long played_us = tv.tv_sec * 1000000 + tv.tv_usec;
-            if (played_us > playingState.data.stopTime && playingState.data.stopTime != -1) {
-                stop(&playingState);
-            }
-        }*/
-        // This means Entering S_PLAY ???
-        //pack into EN_PLAY
-        // printf("entering while loop\n");        
+    while (1) {     
         n = read(rd_fd, cmd_buf, MAXLEN);
-        std::string cmd_str = cmd_buf;
         if (n > 0) {
+            stringstream ss(cmd_buf);
+            string cmd;
+            ss >> cmd;
             fprintf(stderr,"[playLoop] parsing command\n");
-            //FSM_Common used here
-	        EVENT cmd = parse_event(cmd_buf);
-            fprintf(stderr, "[playLoop] cmd_buf: %s, cmd: %d\n", cmd_buf, cmd);
-	        if(cmd == EVENT_NULL) continue;
-            fsm->processEvent(cmd);//trans?
+	        EVENT event = parse_event(cmd.c_str());
+            fprintf(stderr, "[playLoop] cmd_buf: %s, event: %d\n", cmd_buf, event);
+	        if(event == EVENT_NULL) continue;
+            fsm->processEvent(event);
         }
         else{
            fsm->execCurrState();
