@@ -18,21 +18,6 @@ OFPlayer of_player;
 int dancer_fd;
 const string path_to_dat = string(BASE_PATH) + "data/dancer.dat";
 
-
-void write_fifo(bool success) {
-    int wr_fd;
-    std::string msg;
-
-    wr_fd = open(wr_fifo, O_WRONLY);
-    if (success) {
-        msg = "0";
-    } else {
-        msg = "1";
-    }
-    write(wr_fd, msg.c_str(), msg.length() + 1);
-    close(wr_fd);
-}
-
 const std::vector<std::string> split(const std::string &str, const std::string &pattern) {
     std::vector<std::string> result;
     std::string::size_type begin, end;

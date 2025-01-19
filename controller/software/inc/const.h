@@ -6,7 +6,7 @@
 #define LED_NUM 8
 #define UPDATE_INTERVAL 30000 //microseconds(us)
 
-#define rd_fifo "/tmp/cmd_to_player"
-#define wr_fifo "/tmp/player_to_cmd"
+#define FIFO_CMD_TO_PLAYER "/tmp/cmd_to_player"
+#define FIFO_PLAYER_TO_CMD "/tmp/player_to_cmd"
 
 #endif

@@ -54,7 +54,7 @@ private:
 
 public: 
     StateMachine();
-    void processEvent(EVENT event);
+    bool processEvent(EVENT event);
     void execCurrState();
     STATE getState() const;
 
