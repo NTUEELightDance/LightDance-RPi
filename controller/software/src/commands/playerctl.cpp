@@ -127,7 +127,10 @@ class Play : public Command {
     int play(long start, long end, bool needDelay, vector<int> delayTime) {
         stringstream cmd;
         // cout << delayTime[0] << endl;
-        cmd << "play " << start << " " << end << " -d "
+
+        // cmd << "play " << start << " " << end << " -d "
+        //     << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0);
+        cmd << "play -ss " << start << " -to " << end << " -d "
             << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0);
 
         string mycmd = cmd.str();
