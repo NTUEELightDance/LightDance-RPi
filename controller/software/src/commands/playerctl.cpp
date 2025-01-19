@@ -28,86 +28,95 @@ class Play : public Command {
             return 0;
         }
         if (argc == 1) {
-            cout << "Missing command.\n";
-            cout << "It should be either \"play\" or \"pause\" or \"stop\" or "
+            cerr << "Missing command.\n";
+            cerr << "It should be either \"play\" or \"pause\" or \"stop\" or "
                     "\"restart\" or \"quit\".\n";
-            cout << "Please use \"-h\" for help." << endl;
+            cerr << "Please use \"-h\" for help." << endl;
             return 1;
         }
         if (argc >= 2) {
             string cmd = argv[1];
             transform(cmd.begin(), cmd.end(), cmd.begin(),
                       [](unsigned char c) { return tolower(c); });
-            if (set<string>{"pause", "quit", "restart", "stop"}.count(cmd) > 0) {
+            if (set<string>{"pause", "quit", "restart", "stop"}.count(cmd) >
+                0) {
                 sendToPlayLoop(cmd);
             }
             if (cmd.compare("play") == 0) {
-                vector<float> ftime;
                 vector<int> delayTime;  // ms
                 bool sExist = cmdOptionExists(argv, argv + argc, "-s");
                 bool secExist = cmdOptionExists(argv, argv + argc, "--sec");
                 bool dExist = cmdOptionExists(argv, argv + argc, "-d");
                 bool delayExist = cmdOptionExists(argv, argv + argc, "--delay");
                 bool needDelay = dExist || delayExist;
+
+                // get delayTime
                 if (needDelay) {
-                    delayTime = getCmdOptionInt(argv, argv + argc,
-                                                dExist ? "-d" : "--delay");  // default ms
-                    string flagUse = dExist ? "-d" : "--delay";
+                    delayTime = getCmdOptionInt(
+                        argv, argv + argc,
+                        dExist ? "-d" : "--delay");  // default ms
+                    string delayFlag = dExist ? "-d" : "--delay";
+
                     if (delayTime.size() == 0) {
-                        cerr << "Error in " << flagUse << " option.";
-                        cerr << "It should have <time> after " << flagUse << " flag." << endl;
+                        cerr << "Error in " << delayFlag << " option.";
+                        cerr << "It should have <time> after " << delayFlag
+                             << " flag." << endl;
                         return 1;
                     }
                 }
+
+                // get params for play()
+                vector<long> time;
+                vector<float> timeSec;
+                vector<long> timeMsec;
+                string secFlag;
+
                 if (sExist || secExist) {
-                    ftime = getCmdOptionFloat(argv, argv + argc, sExist ? "-s" : "--sec");
-                    string flagUse = sExist ? "-s" : "--sec";
-                    for (auto i : ftime) {
-                        // cerr << "hi" << i << endl;
-                        if (long(i * secAdjust) < -1.0) {
-                            cerr << "It might be overflowed.\nPlease check "
-                                    "your input!."
-                                 << endl;
-                            return 1;
-                        }
-                    }
-                    if (ftime.size() == 1) {
-                        return play(long(ftime[0] * secAdjust), -1, needDelay, delayTime);
-                    } else if (ftime.size() == 2) {
-                        return play(long(ftime[0] * secAdjust), long(ftime[1] * secAdjust),
-                                    needDelay, delayTime);
-                    } else {
-                        if (argc == 2) {
-                            cerr << "Error in " << flagUse << " option.";
-                            cerr << "It should have <time> after " << flagUse << " flag." << endl;
-                            return 1;
-                        }
-                        cerr << "Error in " << flagUse
-                             << " option.\nPlease use \"-h\" for "
-                                "help."
-                             << endl;
-                        return 1;
-                    }
-                }
-                vector<long> time = getCmdOptionLong(argv, argv + argc, "play");
-                for (auto i : time) {
-                    if (i < -1) {
-                        cerr << "It might be overflowed.\nPlease check your "
-                                "input!."
-                             << endl;
-                        return 1;
-                    }
-                }
-                if (time.size() == 1) {
-                    return play(time[0] * msecAdjust, -1, needDelay, delayTime);
-                } else if (time.size() == 2) {
-                    return play(time[0] * msecAdjust, time[1] * msecAdjust, needDelay, delayTime);
+                    timeSec = getCmdOptionFloat(argv, argv + argc,
+                                                sExist ? "-s" : "--sec");
+                    time.resize(timeSec.size());
+                    for (int i = 0; i < time.size(); i++)
+                        time[i] = timeSec[i] * secAdjust;
                 } else {
-                    return play(0, -1, needDelay, delayTime);
-                    // cerr << "Error in command play.\n";
-                    // cerr << "It should be \"play <start time(long)(option)> <end "
-                    //         "time(long)(option)>\".\n";
-                    // cerr << "Please use \"-h\" for help." << endl;
+                    timeMsec = getCmdOptionLong(argv, argv + argc, "play");
+                    time.resize(timeMsec.size());
+                    for (int i = 0; i < time.size(); i++)
+                        time[i] = timeMsec[i] * msecAdjust;
+                }
+
+                // check time range
+                for (const auto& i : time) {
+                    if (i < -1.0) {
+                        cerr << "It might be overflowed.\nPlease check "
+                                "your input!."
+                             << endl;
+                        return 1;
+                    }
+                }
+
+                // call play()
+                secFlag = (sExist ? "s" : (secExist ? "sec" : "play"));
+
+                if (time.size() == 0) {
+                    if (secFlag == "play") {
+                        return play(0, -1, needDelay, delayTime);
+                    } else {
+                        cerr << "Error in " << secFlag << " option." << '\t';
+                        cerr << "It should have <time> after " << secFlag
+                             << " flag." << endl;
+                        return 1;
+                    }
+                } else if (time.size() == 1) {
+                    return play(time[0], -1, needDelay, delayTime);
+                } else if (time.size() == 2) {
+                    return play(time[0], time[1], needDelay, delayTime);
+                } else {
+                    cerr << "Error in " << secFlag
+                         << " option.\nPlease use \"-h\" for "
+                            "help."
+                         << endl;
+
+                    return 1;
                 }
             }
         }
@@ -120,6 +129,7 @@ class Play : public Command {
         // cout << delayTime[0] << endl;
         cmd << "play " << start << " " << end << " -d "
             << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0);
+
         string mycmd = cmd.str();
         sendToPlayLoop(mycmd);
         cout << mycmd << endl;
@@ -129,7 +139,6 @@ class Play : public Command {
         int fd;
         int n;
         char buf[1024];
-
         mkfifo("/tmp/cmd_to_player", 0666);
         if ((fd = open("/tmp/cmd_to_player", O_WRONLY)) < 0) {
             perror("Open FIFO Failed");
@@ -137,6 +146,7 @@ class Play : public Command {
         }
 
         n = sprintf(buf, "%s", msg.c_str());
+
         // printf("Send message: %s\n", buf);
         if (write(fd, buf, n + 1) < 0) {
             perror("Write FIFO Failed");
