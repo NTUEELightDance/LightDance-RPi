@@ -14,8 +14,8 @@
 #include "command.h"
 
 using namespace std;
-#define secAdjust 1000000
-#define msecAdjust 1000
+#define secAdjust 1000
+#define msecAdjust 1
 class Play : public Command {
    public:
     Play() : Command() {
@@ -66,7 +66,7 @@ class Play : public Command {
                 }
 
                 // get params for play()
-                vector<long> time;
+                vector<long> time;  // in ms
                 vector<float> timeSec;
                 vector<long> timeMsec;
                 string secFlag;
