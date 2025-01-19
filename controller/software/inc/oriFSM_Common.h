@@ -106,5 +106,4 @@ inline void resume( StateMachine* fsm ){
    }
 
 
-
 #endif

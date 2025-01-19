@@ -19,11 +19,10 @@
 #include "utils.h"
 #include "state_machine.h"
 #include "const.h"
-//#include "FSM_Common.h"
 
 #define MAXLEN 100
 
-//enum CMD { C_PLAY, C_PAUSE, C_STOP, C_RESUME };
+// enum CMD { C_PLAY, C_PAUSE, C_STOP, C_RESUME };
 extern const std::string cmds[10];
 extern std::thread led_loop, of_loop;
 extern Player player;
@@ -32,8 +31,7 @@ extern OFPlayer of_player;
 extern int dancer_fd;
 extern string path;
 
-
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
     // create player_to_cmd
     if (mkfifo(wr_fifo, 0666) == -1) {
         if (errno != EEXIST) {
@@ -51,7 +49,7 @@ int main(int argc, char *argv[]){
             fprintf(stderr, "%s already exists\n", rd_fifo);
         }
     } else
-    fprintf(stderr, "%s created\n", rd_fifo);
+        fprintf(stderr, "%s created\n", rd_fifo);
     rd_fd = open(rd_fifo, O_RDONLY | O_NONBLOCK);
     if (rd_fd == -1) perror("open");
     char cmd_buf[MAXLEN];
