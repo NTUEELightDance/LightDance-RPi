@@ -273,7 +273,7 @@ void LEDPlayer::darkAll(){
             statusLists.push_back(vector<LEDStatus>(stripShapes[i], LEDStatus()));
         }
         controller.sendAll(castStatusLists(statusLists));
-        cerr<<"[LEDPlayer] Dark All\n";
+        //cerr<<"[LEDPlayer] Dark All\n";
 	    return; 
 }
 void LEDPlayer::loop(StateMachine *fsm) {

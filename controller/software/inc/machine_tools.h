@@ -70,24 +70,23 @@ timeval getCalculatedTime(timeval subtrahend) {
 bool restart() {
     fprintf(stderr, "%srestart\n", TAG);
     dancer_fd = tryGetLock(path_to_dat.c_str());
- if (dancer_fd == -1) {
-        cerr << "[Common] Dancer is playing! Please stop it first!\n";
+    if (dancer_fd == -1) {
+        fprintf(stderr, "%sDancer is playing! Please stop it first!\n", TAG);
         return 0;
     } else if (dancer_fd == -2) {
-        cerr << "[Common] dancer.dat file not found!\n";
+        fprintf(stderr, "%sdancer.dat cannot found\n", TAG);
         return 0;
     }
 
     if (!restorePlayer(player, path_to_dat.c_str())) {
-        // fprintf(stderr, "restorePlayer ERROR\n");
-        cerr << "[Common] Can't restorePlayer!\n";
+        fprintf(stderr, "%scannot restore player\n", TAG);
         return false;
     }
     led_player = player.myLEDPlayer;
     led_player.init();
     of_player = player.myOFPlayer;
     of_player.init();
-    cerr << "[Common] Player loaded\n";
+    fprintf(stderr, "%sPlayer loaded\n", TAG);
     return true;
    }
 

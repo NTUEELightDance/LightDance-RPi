@@ -25,13 +25,12 @@ enum EVENT
 
 struct playLoop_Data
 {
-    timeval baseTime;
-    timeval playedTime;
-    long stopTime;
-    long delayTime;
-    bool stopTimeAssigned;
-    bool delayDisplay;
-    bool isLiveEditting;
+    timeval baseTime; //time when play starts
+    timeval playedTime; //time interval of played
+    long stopTime; //time when play stops
+    long delayTime; //time interval of delay
+    bool stopTimeAssigned; //if stopTime is assigned
+    bool delayDisplay; //if light R in 1/5 time of delay
 };
 
 class StateMachine
