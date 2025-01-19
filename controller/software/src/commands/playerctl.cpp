@@ -136,6 +136,8 @@ class Play : public Command {
             return 1;
         }
 
+        printf("playerctl: sendToPlayLoop(%s)\n", msg.c_str());
+
         n = sprintf(buf, "%s", msg.c_str());
         // printf("Send message: %s\n", buf);
         if (write(fd, buf, n + 1) < 0) {
