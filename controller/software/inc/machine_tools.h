@@ -8,6 +8,7 @@
 #include <player.h>
 #include <const.h>
 #include <utils.h>
+#include <timeval_tools.h>
 
 extern const char *TAG;
 
@@ -90,17 +91,17 @@ void Loop_Join()
 {
     if(led_loop.joinable()){
         led_loop.join();
-        cerr << "[Common] led_loop joined\n";
+        fprintf(stderr, "%sled_loop joined\n", TAG);
     }
     else{
-        cerr << "[Common] led_loop not joinable\n";
+        fprintf(stderr, "%sled_loop cannot join\n", TAG);
     }
     if(of_loop.joinable()){
         of_loop.join();
-        cerr << "[Common] of_loop joined\n";
+        fprintf(stderr, "%sof_loop joined\n", TAG);
     }
     else{
-        cerr << "[Common] of_loop not joinable\n";
+        fprintf(stderr, "%sof_loop cannot join\n", TAG);
     }
     return;
 }

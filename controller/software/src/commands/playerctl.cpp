@@ -168,10 +168,7 @@ class Play : public Command {
         }
 
         read(res_fd, res_buf, 1024);
-        if (res_buf[0] == '0')
-            printf("Success!\n");
-        else
-            printf("Failed!\n");
+        printf("%s\n", res_buf);
         close(fd);  // should be comment in formal version
         return 0;
     }

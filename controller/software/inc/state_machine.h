@@ -9,6 +9,7 @@ enum STATE
     STATE_STOP, 
     STATE_PLAY, 
     STATE_PAUSE, 
+    STATE_DELAY, 
     NUM_OF_STATES, 
     STATE_NULL
 };
@@ -25,12 +26,13 @@ enum EVENT
 
 struct playLoop_Data
 {
-    timeval baseTime; //time when play starts
-    timeval playedTime; //time interval of played
-    long stopTime; //time when play stops
-    long delayTime; //time interval of delay
+    timeval enter_play_time; // time when last enterplay
+    timeval start_time; //time to start playing 
+    timeval played_time; //time interval of played 
+    timeval stop_time; //time to stop playing 
+    timeval delay_time; //time interval of delay 
     bool stopTimeAssigned; //if stopTime is assigned
-    bool delayDisplay; //if light R in 1/5 time of delay
+    float delay_display_ratio; //if light R in the fractional time of delay
 };
 
 class StateMachine
@@ -45,23 +47,33 @@ private:
     void exitSTOP();
     void exitPLAY();
     void exitPAUSE();
+    void exitDELAY();
     void execSTOP();
     void execPLAY();
     void execPAUSE();
+    void execDELAY();
     void enterSTOP();
     void enterPLAY();
     void enterPAUSE();
+    void enterDELAY();
 
 public: 
     StateMachine();
+    ~StateMachine();
     bool processEvent(EVENT event);
     void execCurrState();
     STATE getState() const;
+    void setStartTime(timeval _baseTime, timeval _delay);
+    void setStopTime(timeval _stopTime);
+    void setDelayTime(timeval _delayTime);
+    timeval getStartTime() const;
 
 friend class LEDPlayer;
 friend class OFPlayer;
 };
 
 EVENT parse_event(const char *str);
+std::string stateToStr(STATE state);
+std::string eventToStr(EVENT event);
 
 #endif // _STATE_MACHINE_H_

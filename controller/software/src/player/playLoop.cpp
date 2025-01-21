@@ -31,21 +31,6 @@ extern OFPlayer of_player;
 extern int dancer_fd;
 extern string path;
 
-void response_to_cmd(bool success) 
-{
-    int wr_fd;
-    std::string msg;
-
-    wr_fd = open(FIFO_PLAYER_TO_CMD, O_WRONLY);
-    if (success) {
-        msg = "0";
-    } else {
-        msg = "1";
-    }
-    write(wr_fd, msg.c_str(), msg.length() + 1);
-    close(wr_fd);
-}
-
 int main(int argc, char *argv[]) {
     // create player_to_cmd
     if (mkfifo(FIFO_PLAYER_TO_CMD, 0666) == -1) {
@@ -82,18 +67,43 @@ int main(int argc, char *argv[]) {
             fprintf(stderr,"[playLoop] parsing command\n");
 	        EVENT event = parse_event(cmd.c_str());
             fprintf(stderr, "[playLoop] cmd_buf: %s, event: %d\n", cmd_buf, event);
+            
+            FILE *fifo = fopen(FIFO_PLAYER_TO_CMD, "w");
             if(event == EVENT_NULL){
-                response_to_cmd(false);
+                fprintf(fifo, "Unknown command: %s", cmd.c_str());
                 continue;
             }
-            if(fsm->processEvent(event))
+            if(event == EVENT_PLAY)
             {
-                response_to_cmd(true);
+                string flag;
+                for(; ss >> flag; !ss.eof())
+                {
+                    if(flag == "-ss")
+                    {
+                        long start;
+                        ss >> start;
+                        fprintf(fifo, "start: %ld", start);
+                    }
+                    else if(flag == "-to")
+                    {
+                        long end;
+                        ss >> end;
+                        fprintf(fifo, "end: %ld", end);
+                    }
+                    else if(flag == "-d")
+                    {
+                        long delay;
+                        ss >> delay;
+                        fprintf(fifo, "delay: %ld", delay);
+                    }
+                }
             }
-            else
+            if(!fsm->processEvent(event))
             {
-                response_to_cmd(false);
+                fprintf(fifo, "%s failed", eventToStr(event).c_str());
+                fprintf(fifo, "Current state: %s", stateToStr(fsm->getState()).c_str());
             }
+            fclose(fifo);
         }
         else{
            fsm->execCurrState();

@@ -268,7 +268,7 @@ void OFPlayer::loop(StateMachine *fsm) {
 	        break;
 	    }
         if (fsm->getState() == STATE_PLAY) {
-            const long elapsedTime = getElapsedTime(fsm->data.baseTime, currentTime);
+            const long elapsedTime = getElapsedTime(fsm->getStartTime(), currentTime);
             const long elapsedTimeInMs = elapsedTime / 1000l;
             statusList.clear();
             // find status
