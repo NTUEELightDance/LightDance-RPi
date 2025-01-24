@@ -104,8 +104,8 @@ int main(int argc, char *argv[]) {
             }
             if(!fsm->processEvent(event))
             {
-                fprintf(fifo, "%s failed", eventToStr(event).c_str());
-                fprintf(fifo, "Current state: %s", stateToStr(fsm->getState()).c_str());
+                fprintf(fifo, "%s failed\n", eventToStr(event).c_str());
+                fprintf(fifo, "Current state: %s\n", stateToStr(fsm->getState()).c_str());
             }
             fclose(fifo);
         }
