@@ -230,7 +230,7 @@ void LEDPlayer::init() {
     fill(frameIds.begin(), frameIds.end(), -1);
 
     controller.init(stripShapes);
-    printf("LEDPlayer init, Num: %d\n", (int)stripShapes.size());
+    fprintf(stderr, "LEDPlayer init, Num: %d\n", (int)stripShapes.size());
 }
 
 void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
