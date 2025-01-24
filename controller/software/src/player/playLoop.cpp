@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
                     {
                         long start; // milliseconds
                         ss >> start;
-                        fprintf(fifo, "start: %ld", start);
+                        fprintf(fifo, "start: %ld\n", start);
                         fsm->setStartTime(millisec_to_timeval(start));
 
                     }
@@ -90,14 +90,14 @@ int main(int argc, char *argv[]) {
                     {
                         long end; // milliseconds
                         ss >> end;
-                        fprintf(fifo, "end: %ld", end);
+                        fprintf(fifo, "end: %ld\n", end);
                         fsm->setStopTime(millisec_to_timeval(end));
                     }
                     else if(flag == "-d")
                     {
                         long delay; // milliseconds
                         ss >> delay;
-                        fprintf(fifo, "delay: %ld", delay);
+                        fprintf(fifo, "delay: %ld\n", delay);
                         fsm->setDelayTime(millisec_to_timeval(delay));
                     }
                 }
