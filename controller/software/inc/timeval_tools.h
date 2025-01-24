@@ -106,6 +106,10 @@ inline int fprint_timeval(FILE *__restrict __stream, const timeval &time)
 
 inline timeval millisec_to_timeval(long msec)
 {
+    if(msec < 0)
+    {
+        return TIME_NULL;
+    }
     timeval time;
     time.tv_sec = msec / 1000;
     time.tv_usec = (msec % 1000) * 1000;
