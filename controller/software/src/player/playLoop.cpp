@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
             ss >> cmd;
             fprintf(stderr,"[playLoop] parsing command\n");
 	        EVENT event = parse_event(cmd.c_str());
-            fprintf(stderr, "[playLoop] cmd_buf: %s, event: %d\n", cmd_buf, event);
+            fprintf(stderr, "[playLoop] cmd_buf: %s, event: %s\n", cmd_buf, eventToStr(event).c_str());
             
             FILE *fifo = fopen(FIFO_PLAYER_TO_CMD, "w");
             if(event == EVENT_NULL){

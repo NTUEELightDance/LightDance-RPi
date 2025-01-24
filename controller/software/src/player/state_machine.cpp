@@ -191,10 +191,10 @@ bool StateMachine::processEvent(EVENT event)
     STATE next_state = m_transition_table[m_state][event];
     if (next_state == STATE_NULL) 
     {
-        fprintf(stderr, "%sProcess invalid event. Current state: %d, event got: %d. \n", TAG, m_state, event);
+        fprintf(stderr, "%sProcess invalid event. Current state: %d, event got: %s\n", TAG, m_state, eventToStr(event).c_str());
         return false;
     }
-    fprintf(stderr, "%sProcess event: %d. \n", TAG, event);
+    fprintf(stderr, "%sProcess event: %s. \n", TAG, eventToStr(event).c_str());
     exitState(m_state);
     m_state = next_state;
     enterState(m_state);
