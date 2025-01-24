@@ -104,4 +104,12 @@ int fprint_timeval(FILE *__restrict __stream, const timeval &time)
     return fprintf(__stream, "%ld.%06ld", time.tv_sec, time.tv_usec);
 }
 
+timeval millisec_to_timeval(long msec)
+{
+    timeval time;
+    time.tv_sec = msec / 1000;
+    time.tv_usec = (msec % 1000) * 1000;
+    return time;
+}
+
 #endif

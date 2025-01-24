@@ -2,7 +2,7 @@
 #include <machine_tools.h>
 #include <timeval_tools.h>
 
-#define DATA_RESET {TIME_NULL, TIME_NULL, TIME_ZERO, TIME_NULL, TIME_ZERO, false, 0}
+#define DATA_RESET playLoop_Data({TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_NULL, TIME_ZERO, 0.0})
 
 const char *TAG = "[StateMachine]: ";
 
@@ -86,7 +86,7 @@ void StateMachine::exitPLAY()
     // record the time interval since start_time to maintain played_time
     timeval curr_time;
     gettimeofday(&curr_time, NULL);
-    data.played_time += (curr_time - data.start_time);
+    data.curr_time_stamp += curr_time - data.time_enter_play;
 }
 
 void StateMachine::exitPAUSE()
@@ -110,7 +110,7 @@ void StateMachine::execPLAY()
     timeval curr_time;
     gettimeofday(&curr_time, NULL);
     // check if stop time is reached
-    if (curr_time-data.start_time > data.stop_time && data.stop_time != TIME_NULL) 
+    if (curr_time > data.stop_time_stamp && data.stop_time_stamp != TIME_NULL) 
     {
         exitState(m_state);
         m_state = STATE_STOP;
@@ -127,7 +127,7 @@ void StateMachine::execDELAY()
     // check if time to play, if start time is NULL, play immediately
     timeval curr_time;
     gettimeofday(&curr_time, NULL);
-    if(curr_time > data.start_time || data.start_time == TIME_NULL)
+    if(curr_time > data.time_enter_play)
     {
         exitState(m_state);
         m_state = STATE_PLAY;
@@ -150,7 +150,6 @@ void StateMachine::enterSTOP()
 void StateMachine::enterPLAY() 
 {
     fprintf(stderr, "%senterPLAY\n", TAG);
-    gettimeofday(&(data.enter_play_time), NULL);
     resume(this);
 }
 
@@ -164,14 +163,12 @@ void StateMachine::enterPAUSE()
 void StateMachine::enterDELAY() 
 {
     fprintf(stderr, "%senterDELAY\n", TAG);
-    // set start time
-    data.start_time = data.start_time + data.delay_time;
     resume(this);
 }
 
 StateMachine::StateMachine(): m_state(STATE_STOP)
 {
-    data = {0, 0, -1, 0, false, false};
+    data = DATA_RESET;
 }
 
 StateMachine::~StateMachine()
@@ -192,8 +189,6 @@ bool StateMachine::processEvent(EVENT event)
         return false;
     }
     fprintf(stderr, "%sProcess event: %d. \n", TAG, event);
-    // update base time 
-    gettimeofday(&(data.base_time), NULL);
     exitState(m_state);
     m_state = next_state;
     enterState(m_state);
@@ -205,19 +200,14 @@ void StateMachine::execCurrState()
     execState(m_state);
 }
 
-STATE StateMachine::getState() const 
+void StateMachine::setStartTime(timeval _start_time_stamp) 
 {
-    return m_state;
+    data.start_time_stamp = _start_time_stamp;
 }
 
-void StateMachine::setStartTime(timeval _baseTime, timeval _delay = TIME_ZERO) 
+void StateMachine::setStopTime(timeval _stop_time_stamp) 
 {
-    data.start_time = _baseTime + _delay;
-}
-
-void StateMachine::setStopTime(timeval _stopTime) 
-{
-    data.stop_time = _stopTime;
+    data.stop_time_stamp = _stop_time_stamp;
 }
 
 void StateMachine::setDelayTime(timeval _delayTime) 
@@ -227,7 +217,12 @@ void StateMachine::setDelayTime(timeval _delayTime)
 
 timeval StateMachine::getStartTime() const 
 {
-    return data.start_time;
+    return data.time_enter_play;
+}
+
+STATE StateMachine::getState() const 
+{
+    return m_state;
 }
 
 EVENT parse_event(const char *str)

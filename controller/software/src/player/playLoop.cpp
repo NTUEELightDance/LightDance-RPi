@@ -12,6 +12,7 @@
 #include <thread>
 #include <vector>
 #include <sstream>
+#include <timeval_tools.h>
 
 #include "LEDPlayer.h"
 #include "OFPlayer.h"
@@ -62,7 +63,7 @@ int main(int argc, char *argv[]) {
         n = read(rd_fd, cmd_buf, MAXLEN);
         if (n > 0) { // command received
             stringstream ss(cmd_buf);
-            string cmd;
+            string cmd, flag;
             ss >> cmd;
             fprintf(stderr,"[playLoop] parsing command\n");
 	        EVENT event = parse_event(cmd.c_str());
@@ -75,26 +76,29 @@ int main(int argc, char *argv[]) {
             }
             if(event == EVENT_PLAY)
             {
-                string flag;
                 for(; ss >> flag; !ss.eof())
                 {
                     if(flag == "-ss")
                     {
-                        long start;
+                        long start; // milliseconds
                         ss >> start;
                         fprintf(fifo, "start: %ld", start);
+                        fsm->setStartTime(millisec_to_timeval(start));
+
                     }
                     else if(flag == "-to")
                     {
-                        long end;
+                        long end; // milliseconds
                         ss >> end;
                         fprintf(fifo, "end: %ld", end);
+                        fsm->setStopTime(millisec_to_timeval(end));
                     }
                     else if(flag == "-d")
                     {
-                        long delay;
+                        long delay; // milliseconds
                         ss >> delay;
                         fprintf(fifo, "delay: %ld", delay);
+                        fsm->setDelayTime(millisec_to_timeval(delay));
                     }
                 }
             }

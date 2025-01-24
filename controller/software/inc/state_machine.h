@@ -26,13 +26,12 @@ enum EVENT
 
 struct playLoop_Data
 {
-    timeval enter_play_time; // time when last enterplay
-    timeval start_time; //time to start playing 
-    timeval played_time; //time interval of played 
-    timeval stop_time; //time to stop playing 
-    timeval delay_time; //time interval of delay 
-    bool stopTimeAssigned; //if stopTime is assigned
-    float delay_display_ratio; //if light R in the fractional time of delay
+    timeval time_enter_play;    // time when entering play state
+    timeval start_time_stamp;   // specified time stamp to start
+    timeval curr_time_stamp;    // current time stamp played, correct when not in play state
+    timeval stop_time_stamp;    // specified time stamp to stop, TIME_NULL means not specified
+    timeval delay_time;         // specified delay time
+    float delay_display_ratio;  // ratio of display red time to delay time
 };
 
 class StateMachine
@@ -62,10 +61,10 @@ public:
     ~StateMachine();
     bool processEvent(EVENT event);
     void execCurrState();
+    void setStartTime(timeval _start_time_stamp);
+    void setStopTime(timeval _stop_time_stamp);
+    void setDelayTime(timeval _delay_time);
     STATE getState() const;
-    void setStartTime(timeval _baseTime, timeval _delay);
-    void setStopTime(timeval _stopTime);
-    void setDelayTime(timeval _delayTime);
     timeval getStartTime() const;
 
 friend class LEDPlayer;
