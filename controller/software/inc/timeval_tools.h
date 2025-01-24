@@ -7,7 +7,7 @@
 #define TIME_NULL timeval{-1, -1}
 #define TIME_ZERO timeval{0, 0}
 
-bool operator<(const timeval &lhs, const timeval &rhs)
+inline bool operator<(const timeval &lhs, const timeval &rhs)
 {
     if (lhs.tv_sec < rhs.tv_sec)
     {
@@ -21,7 +21,7 @@ bool operator<(const timeval &lhs, const timeval &rhs)
     return false;
 }
 
-bool operator>(const timeval &lhs, const timeval &rhs)
+inline bool operator>(const timeval &lhs, const timeval &rhs)
 {
     if (lhs.tv_sec > rhs.tv_sec)
     {
@@ -35,7 +35,7 @@ bool operator>(const timeval &lhs, const timeval &rhs)
     return false;
 }
 
-timeval operator+(const timeval &lhs, const timeval &rhs)
+inline timeval operator+(const timeval &lhs, const timeval &rhs)
 {
     timeval sum;
     sum.tv_sec = lhs.tv_sec + rhs.tv_sec;
@@ -48,7 +48,7 @@ timeval operator+(const timeval &lhs, const timeval &rhs)
     return sum;
 }
 
-timeval operator-(const timeval &lhs, const timeval &rhs)
+inline timeval operator-(const timeval &lhs, const timeval &rhs)
 {
     timeval diff;
     diff.tv_sec = lhs.tv_sec - rhs.tv_sec;
@@ -61,7 +61,7 @@ timeval operator-(const timeval &lhs, const timeval &rhs)
     return diff;
 }
 
-timeval operator*(const timeval &lhs, const int &rhs)
+inline timeval operator*(const timeval &lhs, const int &rhs)
 {
     timeval product;
     product.tv_sec = lhs.tv_sec * rhs;
@@ -74,7 +74,7 @@ timeval operator*(const timeval &lhs, const int &rhs)
     return product;
 }
 
-timeval operator/(const timeval &lhs, const int &rhs)
+inline timeval operator/(const timeval &lhs, const int &rhs)
 {
     timeval quotient;
     quotient.tv_sec = lhs.tv_sec / rhs;
@@ -82,29 +82,29 @@ timeval operator/(const timeval &lhs, const int &rhs)
     return quotient;
 }
 
-bool operator==(const timeval &lhs, const timeval &rhs)
+inline bool operator==(const timeval &lhs, const timeval &rhs)
 {
     return lhs.tv_sec == rhs.tv_sec && lhs.tv_usec == rhs.tv_usec;
 }
 
-bool operator!=(const timeval &lhs, const timeval &rhs)
+inline bool operator!=(const timeval &lhs, const timeval &rhs)
 {
     return lhs.tv_sec != rhs.tv_sec || lhs.tv_usec != rhs.tv_usec;
 }
 
-timeval operator+=(timeval &lhs, const timeval &rhs)
+inline timeval operator+=(timeval &lhs, const timeval &rhs)
 {
     lhs.tv_sec += rhs.tv_sec;
     lhs.tv_usec += rhs.tv_usec;
     return lhs;
 }
 
-int fprint_timeval(FILE *__restrict __stream, const timeval &time)
+inline int fprint_timeval(FILE *__restrict __stream, const timeval &time)
 {
     return fprintf(__stream, "%ld.%06ld", time.tv_sec, time.tv_usec);
 }
 
-timeval millisec_to_timeval(long msec)
+inline timeval millisec_to_timeval(long msec)
 {
     timeval time;
     time.tv_sec = msec / 1000;
