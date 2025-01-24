@@ -164,6 +164,9 @@ void StateMachine::enterPAUSE()
 void StateMachine::enterDELAY() 
 {
     fprintf(stderr, "%senterDELAY\n", TAG);
+    fprintf(stderr, "%sDelay time: ", TAG);
+    fprint_timeval(stderr, data.delay_time);
+    fprintf(stderr, "\n");
     //resume(this);
 }
 
