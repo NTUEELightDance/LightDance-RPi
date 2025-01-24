@@ -164,7 +164,7 @@ void StateMachine::enterPAUSE()
 void StateMachine::enterDELAY() 
 {
     fprintf(stderr, "%senterDELAY\n", TAG);
-    resume(this);
+    //resume(this);
 }
 
 StateMachine::StateMachine(): m_state(STATE_STOP)
