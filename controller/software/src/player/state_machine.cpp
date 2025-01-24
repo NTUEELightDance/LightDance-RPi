@@ -97,6 +97,7 @@ void StateMachine::exitPAUSE()
 
 void StateMachine::exitDELAY()
 {
+    fprintf(stderr, "%sexitDELAY\n", TAG);
     data.delay_display_ratio = 0;
     data.delay_time = TIME_ZERO;
 }
@@ -168,11 +169,13 @@ void StateMachine::enterDELAY()
 
 StateMachine::StateMachine(): m_state(STATE_STOP)
 {
+    fprintf(stderr, "%sConstructor\n", TAG);
     data = DATA_RESET;
 }
 
 StateMachine::~StateMachine()
 {
+    fprintf(stderr, "%sDestructor\n", TAG);
 }
 
 bool StateMachine::processEvent(EVENT event) 
