@@ -73,7 +73,7 @@ inline timeval getCalculatedTime(timeval subtrahend) {
 inline bool restart() {
     printf("restart\n");
     dancer_fd = tryGetLock(path.c_str());
- if (dancer_fd == -1) {
+    if (dancer_fd == -1) {
         cerr << "[Common] Dancer is playing! Please stop it first!\n";
         return 0;
     } else if (dancer_fd == -2) {
@@ -92,7 +92,7 @@ inline bool restart() {
     of_player.init();
     cerr << "[Common] Player loaded\n";
     return true;
-   }
+}
 
 inline void resume( StateMachine* fsm ){
 	led_loop = std::thread(&LEDPlayer::loop, &led_player, fsm);
