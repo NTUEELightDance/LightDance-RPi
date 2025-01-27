@@ -59,7 +59,7 @@ inline timeval operator-(const timeval &lhs, const timeval &rhs)
     return diff;
 }
 
-inline timeval operator*(const timeval &lhs, const int &rhs)
+inline timeval operator*(const timeval &lhs, double rhs)
 {
     timeval product;
     product.tv_sec = lhs.tv_sec * rhs;
@@ -72,7 +72,7 @@ inline timeval operator*(const timeval &lhs, const int &rhs)
     return product;
 }
 
-inline timeval operator/(const timeval &lhs, const int &rhs)
+inline timeval operator/(const timeval &lhs, double rhs)
 {
     timeval quotient;
     quotient.tv_sec = lhs.tv_sec / rhs;
