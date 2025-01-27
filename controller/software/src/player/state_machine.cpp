@@ -2,7 +2,6 @@
 #include <machine_tools.h>
 #include <timeval_tools.h>
 
-#define DEFAULT_DELAY_DISPLAY_RATIO 0.2
 #define DATA_RESET playLoop_Data({TIME_ZERO, TIME_NULL, TIME_ZERO, DEFAULT_DELAY_DISPLAY_RATIO, TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_ZERO})
 
 const char *TAG = "[StateMachine]: ";
