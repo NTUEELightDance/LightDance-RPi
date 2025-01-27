@@ -62,8 +62,8 @@ inline timeval operator-(const timeval &lhs, const timeval &rhs)
 inline timeval operator*(const timeval &lhs, double rhs)
 {
     timeval product;
-    product.tv_sec = lhs.tv_sec * rhs;
-    product.tv_usec = lhs.tv_usec * rhs;
+    product.tv_sec = rhs * lhs.tv_sec;
+    product.tv_usec = rhs * lhs.tv_usec;
     if (product.tv_usec >= 1000000)
     {
         product.tv_sec += product.tv_usec / 1000000;
