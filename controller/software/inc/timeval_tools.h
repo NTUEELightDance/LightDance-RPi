@@ -17,7 +17,6 @@ inline bool operator<(const timeval &lhs, const timeval &rhs)
     {
         return lhs.tv_usec < rhs.tv_usec;
     }
-    fprintf(stderr, "%sInvalid timeval comparison of '<'\n", "[timeval_tools]: ");
     return false;
 }
 
@@ -31,7 +30,6 @@ inline bool operator>(const timeval &lhs, const timeval &rhs)
     {
         return lhs.tv_usec > rhs.tv_usec;
     }
-    fprintf(stderr, "%sInvalid timeval comparison of '>'\n", "[timeval_tools]: ");
     return false;
 }
 
