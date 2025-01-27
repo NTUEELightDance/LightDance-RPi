@@ -135,6 +135,10 @@ void StateMachine::execDELAY()
     {
         delayDisplay(false);
     }
+    else
+    {
+        delayDisplay(true);
+    }
     if(curr_time > data.enter_delay_time + data.delay_duration)
     {
         // record the overall start time
@@ -178,8 +182,6 @@ void StateMachine::enterDELAY()
     fprint_timeval(stderr, data.delay_duration);
     fprintf(stderr, "\n");
     gettimeofday(&data.enter_delay_time, NULL);
-    if(data.delay_display_ratio > 0 && data.delay_duration != TIME_ZERO)
-        delayDisplay(true);
     //resume(this);
 }
 
