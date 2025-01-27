@@ -112,7 +112,7 @@ void StateMachine::execPLAY()
 {
     timeval curr_time;
     gettimeofday(&curr_time, NULL);
-    data.curr_time_stamp = curr_time - data.start_time - data.total_pause_time;
+    data.curr_time_stamp = curr_time - data.start_time - data.total_pause_time + data.start_time_stamp;
     // check if stop time is reached
     if (data.curr_time_stamp > data.stop_time_stamp && data.stop_time_stamp != TIME_NULL) 
     {
