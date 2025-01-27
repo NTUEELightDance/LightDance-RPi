@@ -61,22 +61,19 @@ inline timeval operator-(const timeval &lhs, const timeval &rhs)
 
 inline timeval operator*(const timeval &lhs, double rhs)
 {
+    unsigned long result_usec = rhs * (lhs.tv_sec * 1000000 + lhs.tv_usec);
     timeval product;
-    product.tv_sec = rhs * lhs.tv_sec;
-    product.tv_usec = rhs * lhs.tv_usec;
-    if (product.tv_usec >= 1000000)
-    {
-        product.tv_sec += product.tv_usec / 1000000;
-        product.tv_usec %= 1000000;
-    }
+    product.tv_sec = result_usec / 1000000;
+    product.tv_usec = result_usec % 1000000;
     return product;
 }
 
 inline timeval operator/(const timeval &lhs, double rhs)
 {
+    unsigned long result_usec = (lhs.tv_sec * 1000000 + lhs.tv_usec) / rhs;
     timeval quotient;
-    quotient.tv_sec = lhs.tv_sec / rhs;
-    quotient.tv_usec = lhs.tv_usec / rhs;
+    quotient.tv_sec = result_usec / 1000000;
+    quotient.tv_usec = result_usec % 1000000;
     return quotient;
 }
 
