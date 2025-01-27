@@ -4,6 +4,8 @@
 #include <sys/time.h>
 #include <sstream>
 
+#define DEFAULT_DELAY_DISPLAY_RATIO 0.2
+
 enum STATE
 {
     STATE_STOP, 
@@ -26,13 +28,17 @@ enum EVENT
 
 struct playLoop_Data
 {
-    timeval time_enter_play;    // time when entering play state
-    timeval time_enter_delay;   // time when entering delay state
-    timeval start_time_stamp;   // specified time stamp to start
-    timeval curr_time_stamp;    // current time stamp played, correct when not in play state
-    timeval stop_time_stamp;    // specified time stamp to stop, TIME_NULL means not specified
-    timeval delay_time;         // specified delay time
-    float delay_display_ratio;  // ratio of display red time to delay time
+    // specified
+    timeval start_time_stamp;
+    timeval stop_time_stamp;
+    timeval delay_duration;
+    float delay_display_ratio;
+    // private record
+    timeval start_time;
+    timeval enter_delay_time;
+    timeval enter_pause_time;
+    timeval total_pause_time;
+    timeval curr_time_stamp;
 };
 
 class StateMachine
@@ -62,11 +68,11 @@ public:
     ~StateMachine();
     bool processEvent(EVENT event);
     void execCurrState();
+    timeval getCurrTimeStamp() const;
     void setStartTime(timeval _start_time_stamp);
     void setStopTime(timeval _stop_time_stamp);
-    void setDelayTime(timeval _delay_time);
-    STATE getState() const;
-    timeval getStartTime() const;
+    void setDelayTime(timeval _delay_time, float _delay_display_ratio = DEFAULT_DELAY_DISPLAY_RATIO);
+    STATE getCurrState() const;
 
 friend class LEDPlayer;
 friend class OFPlayer;

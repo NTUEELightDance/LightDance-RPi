@@ -2,7 +2,8 @@
 #include <machine_tools.h>
 #include <timeval_tools.h>
 
-#define DATA_RESET playLoop_Data({TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_NULL, TIME_ZERO, 0.0})
+#define DEFAULT_DELAY_DISPLAY_RATIO 0.2
+#define DATA_RESET playLoop_Data({TIME_ZERO, TIME_NULL, TIME_ZERO, DEFAULT_DELAY_DISPLAY_RATIO, TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_ZERO})
 
 const char *TAG = "[StateMachine]: ";
 
@@ -86,20 +87,22 @@ void StateMachine::exitPLAY()
     // record the time interval since start_time to maintain played_time
     timeval curr_time;
     gettimeofday(&curr_time, NULL);
-    data.curr_time_stamp += curr_time - data.time_enter_play;
 }
 
 void StateMachine::exitPAUSE()
 {
     fprintf(stderr, "%sexitPAUSE\n", TAG);
+    timeval curr_time;
+    gettimeofday(&curr_time, NULL);
+    data.total_pause_time += curr_time - data.enter_pause_time;
     restart();
 }
 
 void StateMachine::exitDELAY()
 {
     fprintf(stderr, "%sexitDELAY\n", TAG);
-    data.delay_display_ratio = 0;
-    data.delay_time = TIME_ZERO;
+    data.delay_display_ratio = DEFAULT_DELAY_DISPLAY_RATIO;
+    data.delay_duration = TIME_ZERO;
 }
 
 void StateMachine::execSTOP()
@@ -110,8 +113,9 @@ void StateMachine::execPLAY()
 {
     timeval curr_time;
     gettimeofday(&curr_time, NULL);
+    data.curr_time_stamp = curr_time - data.start_time - data.total_pause_time;
     // check if stop time is reached
-    if (curr_time > data.stop_time_stamp && data.stop_time_stamp != TIME_NULL) 
+    if (data.curr_time_stamp > data.stop_time_stamp && data.stop_time_stamp != TIME_NULL) 
     {
         exitState(m_state);
         m_state = STATE_STOP;
@@ -128,8 +132,10 @@ void StateMachine::execDELAY()
     // check if time to play, if start time is NULL, play immediately
     timeval curr_time;
     gettimeofday(&curr_time, NULL);
-    if(curr_time > data.time_enter_delay + data.delay_time)
+    if(curr_time > data.enter_delay_time + data.delay_duration)
     {
+        // record the overall start time
+        gettimeofday(&data.start_time, NULL);
         exitState(m_state);
         m_state = STATE_PLAY;
         enterState(m_state);
@@ -151,16 +157,13 @@ void StateMachine::enterSTOP()
 void StateMachine::enterPLAY() 
 {
     fprintf(stderr, "%senterPLAY\n", TAG);
-    gettimeofday(&data.time_enter_play, NULL);
-    fprintf(stderr, "%stime_enter_play: ", TAG);
-    fprint_timeval(stderr, data.time_enter_play);
-    fprintf(stderr, "\n");
     resume(this);
 }
 
 void StateMachine::enterPAUSE() 
 {
     fprintf(stderr, "%senterPAUSE\n", TAG);
+    gettimeofday(&data.enter_pause_time, NULL);
     Loop_Join();
     releaseLock(dancer_fd, path_to_dat.c_str());
 }
@@ -169,9 +172,9 @@ void StateMachine::enterDELAY()
 {
     fprintf(stderr, "%senterDELAY\n", TAG);
     fprintf(stderr, "%sDelay time: ", TAG);
-    fprint_timeval(stderr, data.delay_time);
+    fprint_timeval(stderr, data.delay_duration);
     fprintf(stderr, "\n");
-    gettimeofday(&data.time_enter_delay, NULL);
+    gettimeofday(&data.enter_delay_time, NULL);
     //resume(this);
 }
 
@@ -221,17 +224,18 @@ void StateMachine::setStopTime(timeval _stop_time_stamp)
     data.stop_time_stamp = _stop_time_stamp;
 }
 
-void StateMachine::setDelayTime(timeval _delayTime) 
+void StateMachine::setDelayTime(timeval _delayTime, float _delay_display_ratio) 
 {
-    data.delay_time = _delayTime;
+    data.delay_duration = _delayTime;
+    data.delay_display_ratio = _delay_display_ratio;
 }
 
-timeval StateMachine::getStartTime() const 
+timeval StateMachine::getCurrTimeStamp() const 
 {
-    return data.time_enter_play;
+    return data.curr_time_stamp;
 }
 
-STATE StateMachine::getState() const 
+STATE StateMachine::getCurrState() const 
 {
     return m_state;
 }

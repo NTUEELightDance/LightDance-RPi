@@ -96,7 +96,8 @@ int main(int argc, char *argv[]) {
                     else if(flag == "-d")
                     {
                         long delay; // milliseconds
-                        ss >> delay;
+                        float delay_display_ratio;
+                        ss >> delay >> delay_display_ratio;
                         fprintf(fifo, "delay: %ld\n", delay);
                         fsm->setDelayTime(millisec_to_timeval(delay));
                     }
@@ -105,7 +106,7 @@ int main(int argc, char *argv[]) {
             if(!fsm->processEvent(event))
             {
                 fprintf(fifo, "%s failed\n", eventToStr(event).c_str());
-                fprintf(fifo, "Current state: %s\n", stateToStr(fsm->getState()).c_str());
+                fprintf(fifo, "Current state: %s\n", stateToStr(fsm->getCurrState()).c_str());
             }
             fclose(fifo);
         }

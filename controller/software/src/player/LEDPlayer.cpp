@@ -290,20 +290,20 @@ void LEDPlayer::loop(StateMachine *fsm) {
     while (true) {  
         
 	    // cerr<<"[LED Loop] CurrentState: "<<fsm->getState()<<endl;
-        if (fsm->getState() == STATE_STOP) {
+        if (fsm->getCurrState() == STATE_STOP) {
 	        cerr<<"[LEDPlayer] Now Stopped\n";
 	        cerr<<"[LEDPlayer] Break Loop\n";
             break;
         }
-        if (fsm->getState() == STATE_PAUSE){
+        if (fsm->getCurrState() == STATE_PAUSE){
 	        cerr<<"[LEDPlayer] Now Paused\n";
 	        cerr<<"[LEDPlayer] Break Loop\n";
             break;
         }
-	    if (fsm->getState()==STATE_PLAY) {
+	    if (fsm->getCurrState()==STATE_PLAY) {
 	        //cerr<<"[LED Loop]Now Playing\n";	
-            const long elapsedTime =
-                getElapsedTime(fsm->getStartTime(), currentTime);  // us
+            timeval curr_time_stamp = fsm->getCurrTimeStamp();
+            const long elapsedTime = curr_time_stamp.tv_sec * 1000000l + curr_time_stamp.tv_usec;
             //fprintf(stderr, "[LED Loop] ElapsedTime [%d]\n", elapsedTime);
             // const int currentTimeId = getTimeId(elapsedTime);
 	        //  fprintf(stderr,"[LED Loop] ElapsedTime [%d]\n",elapsedTime);
