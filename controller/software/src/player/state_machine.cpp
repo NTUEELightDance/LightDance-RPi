@@ -151,6 +151,7 @@ void StateMachine::enterSTOP()
 void StateMachine::enterPLAY() 
 {
     fprintf(stderr, "%senterPLAY\n", TAG);
+    gettimeofday(&data.time_enter_play, NULL);
     resume(this);
 }
 
