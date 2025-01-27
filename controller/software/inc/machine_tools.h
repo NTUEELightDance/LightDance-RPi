@@ -22,7 +22,7 @@ const string path_to_dat = string(BASE_PATH) + "data/dancer.dat";
 void delayDisplay(bool display)
 {
     led_player.delayDisplay(display);
-    of_player.delayDisplay(&display);
+    of_player.delayDisplay(display);
     return;
 }
 
