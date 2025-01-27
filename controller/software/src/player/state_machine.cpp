@@ -128,7 +128,7 @@ void StateMachine::execDELAY()
     // check if time to play, if start time is NULL, play immediately
     timeval curr_time;
     gettimeofday(&curr_time, NULL);
-    if(curr_time > data.time_enter_play)
+    if(curr_time > data.time_enter_play + data.delay_time)
     {
         exitState(m_state);
         m_state = STATE_PLAY;
