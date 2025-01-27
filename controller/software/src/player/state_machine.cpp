@@ -2,7 +2,7 @@
 #include <machine_tools.h>
 #include <timeval_tools.h>
 
-#define DATA_RESET playLoop_Data({TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_NULL, TIME_ZERO, 0.0})
+#define DATA_RESET playLoop_Data({TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_ZERO, TIME_NULL, TIME_ZERO, 0.0})
 
 const char *TAG = "[StateMachine]: ";
 
@@ -130,12 +130,13 @@ void StateMachine::execDELAY()
     gettimeofday(&curr_time, NULL);
     if(curr_time > data.time_enter_play + data.delay_time)
     {
+        fprintf(stderr, "%s", TAG);
         fprint_timeval(stderr, curr_time);
         fprintf(stderr, " > ");
         fprint_timeval(stderr, data.time_enter_play);
         fprintf(stderr, " + ");
         fprint_timeval(stderr, data.delay_time);
-        fprintf(stderr, "\nshould play\n");
+        fprintf(stderr, "\n%sshould play\n", TAG);
         exitState(m_state);
         m_state = STATE_PLAY;
         enterState(m_state);
@@ -158,6 +159,9 @@ void StateMachine::enterPLAY()
 {
     fprintf(stderr, "%senterPLAY\n", TAG);
     gettimeofday(&data.time_enter_play, NULL);
+    fprintf(stderr, "%stime_enter_play: ", TAG);
+    fprint_timeval(stderr, data.time_enter_play);
+    fprintf(stderr, "\n");
     resume(this);
 }
 
@@ -174,6 +178,7 @@ void StateMachine::enterDELAY()
     fprintf(stderr, "%sDelay time: ", TAG);
     fprint_timeval(stderr, data.delay_time);
     fprintf(stderr, "\n");
+    gettimeofday(&data.time_enter_delay, NULL);
     //resume(this);
 }
 

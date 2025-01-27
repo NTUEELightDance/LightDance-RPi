@@ -27,6 +27,7 @@ enum EVENT
 struct playLoop_Data
 {
     timeval time_enter_play;    // time when entering play state
+    timeval time_enter_delay;   // time when entering delay state
     timeval start_time_stamp;   // specified time stamp to start
     timeval curr_time_stamp;    // current time stamp played, correct when not in play state
     timeval stop_time_stamp;    // specified time stamp to stop, TIME_NULL means not specified
