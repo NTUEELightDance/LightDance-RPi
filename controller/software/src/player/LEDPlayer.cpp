@@ -233,11 +233,11 @@ void LEDPlayer::init() {
     fprintf(stderr, "LEDPlayer init, Num: %d\n", (int)stripShapes.size());
 }
 
-void LEDPlayer::delayDisplay(const bool *delayingDisplay) {
+void LEDPlayer::delayDisplay(bool delayingDisplay) {
     vector<vector<LEDStatus>> statusLists;
 
     // Let OF lightall for 1/5 times of delayTime
-    if (*delayingDisplay) {
+    if (delayingDisplay) {
 	cerr<<"[LEDPlayer] Now Delaying Display\n";
         statusLists.clear();
         for (unsigned int i = 0; i < frameIds.size(); i++) {

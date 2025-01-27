@@ -224,10 +224,10 @@ void OFPlayer::setLightStatus(vector<OFStatus> &statusList, int r, int g, int b,
     }
 }
 
-void OFPlayer::delayDisplay(const bool *delayingDisplay) {
+void OFPlayer::delayDisplay(bool delayingDisplay) {
     vector<OFStatus> statusList;
     // Let OF lightall for 1/5 times of delayTime
-    if (*delayingDisplay) {
+    if (delayingDisplay) {
         setLightStatus(statusList,100, 0, 0, 255);
         controller.sendAll(castStatusList(statusList));
     } else {

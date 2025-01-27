@@ -65,7 +65,7 @@ class LEDPlayer {
     // threading function
     void* loop_helper(void *context, StateMachine* fsm);
     void loop(StateMachine *fsm);
-    void delayDisplay(const bool *delayingDisplay);
+    void delayDisplay(bool delayingDisplay);
     void darkAll();
     template <class Archive>
     void serialize(Archive &archive, const unsigned int version);
