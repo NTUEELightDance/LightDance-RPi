@@ -38,8 +38,7 @@ class Play : public Command {
             string cmd = argv[1];
             transform(cmd.begin(), cmd.end(), cmd.begin(),
                       [](unsigned char c) { return tolower(c); });
-            if (set<string>{"pause", "quit", "restart", "stop"}.count(cmd) >
-                0) {
+            if (set<string>{"pause", "resume", "restart", "stop"}.count(cmd) > 0) {
                 sendToPlayLoop(cmd);
             }
             if (cmd.compare("play") == 0) {
