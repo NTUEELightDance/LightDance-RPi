@@ -101,7 +101,7 @@ inline timeval operator+=(timeval &lhs, const timeval &rhs)
 
 inline int fprint_timeval(FILE *__restrict __stream, const timeval &time)
 {
-    return fprintf(__stream, "%ld.%06ld", time.tv_sec, time.tv_usec);
+    return fprintf(__stream, "%ld.%06lds", time.tv_sec, time.tv_usec);
 }
 
 inline timeval millisec_to_timeval(long msec)

@@ -337,7 +337,6 @@ void LEDPlayer::loop(StateMachine *fsm) {
                     statusLists.push_back(frameList[frameId].statusList);
                 }
             }
-            fprintf(stderr, "[LEDPlayer::loop()] sendAll()\n");
             controller.sendAll(castStatusLists(statusLists));
 #ifdef PLAYER_DEBUG
 	        cerr<<"[LED Loop] Status Sent\n";

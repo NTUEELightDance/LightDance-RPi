@@ -130,6 +130,12 @@ void StateMachine::execDELAY()
     gettimeofday(&curr_time, NULL);
     if(curr_time > data.time_enter_play + data.delay_time)
     {
+        fprint_timeval(stderr, curr_time);
+        fprintf(stderr, " > ");
+        fprint_timeval(stderr, data.time_enter_play);
+        fprintf(stderr, " + ");
+        fprint_timeval(stderr, data.delay_time);
+        fprintf(stderr, "\nshould play\n");
         exitState(m_state);
         m_state = STATE_PLAY;
         enterState(m_state);
