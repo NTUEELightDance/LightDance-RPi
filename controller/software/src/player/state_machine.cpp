@@ -242,6 +242,11 @@ void StateMachine::setDelayTime(timeval _delayTime, float _delay_display_ratio)
 {
     data.delay_duration = _delayTime;
     data.delay_display_ratio = _delay_display_ratio;
+    fprintf(stderr, "%sSet delay time: ", TAG);
+    fprint_timeval(stderr, data.delay_duration);
+    fprintf(stderr, "\n");
+    fprintf(stderr, "%sSet delay display ratio: %f\n", TAG, data.delay_display_ratio);
+    
 }
 
 timeval StateMachine::getCurrTimeStamp() const 
