@@ -134,8 +134,10 @@ void StateMachine::execDELAY()
     if((curr_time - data.enter_delay_time) > data.delay_duration * data.delay_display_ratio)
     {
         fprintf(stderr, "%s", TAG);
-        fprint_timeval(stderr, curr_time - data.enter_delay_time);
-        fprintf(stderr, " > ");
+        //fprint_timeval(stderr, curr_time - data.enter_delay_time);
+        //fprintf(stderr, " > ");
+        fprint_timeval(stderr, data.delay_duration);
+        fprintf(stderr, "*%f=", data.delay_display_ratio);
         fprint_timeval(stderr, data.delay_duration * data.delay_display_ratio);
         fprintf(stderr, "\n");
         delayDisplay(false);
