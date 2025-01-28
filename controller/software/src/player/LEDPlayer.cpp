@@ -238,7 +238,7 @@ void LEDPlayer::delayDisplay(bool delayingDisplay) {
 
     // Let OF lightall for 1/5 times of delayTime
     if (delayingDisplay) {
-	cerr<<"[LEDPlayer] Now Delaying Display\n";
+	// cerr<<"[LEDPlayer] Now Delaying Display\n";
         statusLists.clear();
         for (unsigned int i = 0; i < frameIds.size(); i++) {
             vector<LEDStatus> statusList;
@@ -249,7 +249,7 @@ void LEDPlayer::delayDisplay(bool delayingDisplay) {
         }
         controller.sendAll(castStatusLists(statusLists));
     } else {
-	cerr<<"[LEDPlayer] No Delaying Display\n";
+	// cerr<<"[LEDPlayer] No Delaying Display\n";
         statusLists.clear();
         for (unsigned int i = 0; i < frameIds.size(); i++) {
             statusLists.push_back(vector<LEDStatus>(stripShapes[i]));

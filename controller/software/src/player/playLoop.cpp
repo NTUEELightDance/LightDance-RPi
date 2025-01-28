@@ -101,9 +101,11 @@ int main(int argc, char *argv[]) {
                         if(!ss.eof())
                         {
                             ss >> delay_display_ratio;
+                            fsm->setDelayTime(millisec_to_timeval(delay), delay_display_ratio);
                         }
+                        else
+                            fsm->setDelayTime(millisec_to_timeval(delay));
                         fprintf(fifo, "delay: %ld\n", delay);
-                        fsm->setDelayTime(millisec_to_timeval(delay), delay_display_ratio);
                     }
                 }
             }
