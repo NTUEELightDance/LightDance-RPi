@@ -95,13 +95,12 @@ int main(int argc, char *argv[]) {
                     }
                     else if(flag == "-d")
                     {
-                        long delay; // milliseconds
-                        float delay_display_ratio;
+                        long delay, delay_display; // milliseconds
                         ss >> delay;
                         if(!ss.eof())
                         {
-                            ss >> delay_display_ratio;
-                            fsm->setDelayTime(millisec_to_timeval(delay), delay_display_ratio);
+                            ss >> delay_display;
+                            fsm->setDelayTime(millisec_to_timeval(delay), double(delay_display)/delay);
                         }
                         else
                             fsm->setDelayTime(millisec_to_timeval(delay));
