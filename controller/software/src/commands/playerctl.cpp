@@ -130,7 +130,9 @@ class Play : public Command {
         // cmd << "play " << start << " " << end << " -d "
         //     << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0);
         cmd << "play -ss " << start << " -to " << end << " -d "
-            << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0);
+            << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0) << " "
+            << (delayTime.size() == 2 ? ((long)delayTime[1] * msecAdjust)
+                                      : ((long)delayTime[0] * msecAdjust) / 5l);
 
         string mycmd = cmd.str();
         sendToPlayLoop(mycmd);
