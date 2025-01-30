@@ -38,7 +38,8 @@ class Play : public Command {
             string cmd = argv[1];
             transform(cmd.begin(), cmd.end(), cmd.begin(),
                       [](unsigned char c) { return tolower(c); });
-            if (set<string>{"pause", "resume", "restart", "stop"}.count(cmd) > 0) {
+            if (set<string>{"pause", "resume", "restart", "stop"}.count(cmd) >
+                0) {
                 sendToPlayLoop(cmd);
             }
             if (cmd.compare("play") == 0) {
@@ -74,12 +75,12 @@ class Play : public Command {
                     timeSec = getCmdOptionFloat(argv, argv + argc,
                                                 sExist ? "-s" : "--sec");
                     time.resize(timeSec.size());
-                    for (int i = 0; i < time.size(); i++)
+                    for (size_t i = 0; i < time.size(); i++)
                         time[i] = timeSec[i] * secAdjust;
                 } else {
                     timeMsec = getCmdOptionLong(argv, argv + argc, "play");
                     time.resize(timeMsec.size());
-                    for (int i = 0; i < time.size(); i++)
+                    for (size_t i = 0; i < time.size(); i++)
                         time[i] = timeMsec[i] * msecAdjust;
                 }
 
@@ -130,9 +131,12 @@ class Play : public Command {
         // cmd << "play " << start << " " << end << " -d "
         //     << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0);
         cmd << "play -ss " << start << " -to " << end << " -d "
-            << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0) << " "
-            << (delayTime.size() == 2 ? ((long)delayTime[1] * msecAdjust)
-                                      : ((long)delayTime[0] * msecAdjust) / 5l);
+            << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0);
+        if (needDelay)
+            cmd << " "
+                << (delayTime.size() == 2
+                        ? ((long)delayTime[1] * msecAdjust)
+                        : ((long)delayTime[0] * msecAdjust) / 5l);
 
         string mycmd = cmd.str();
         sendToPlayLoop(mycmd);
