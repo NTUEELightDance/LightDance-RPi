@@ -14,10 +14,8 @@
 #include <sstream>
 #include <timeval_tools.h>
 
-#include "FSM_Common.h"
 #include "LEDPlayer.h"
 #include "OFPlayer.h"
-#include "StateMachine.h"
 #include "player.h"
 #include "utils.h"
 #include "state_machine.h"
