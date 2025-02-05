@@ -45,11 +45,14 @@ include_directories(${INCLUDES} ${HARDWARE_INCLUDES})
 add_library(playerLIB STATIC
   ${SOURCE}/player/LEDPlayer.cpp ${SOURCE}/player/OFPlayer.cpp
   ${SOURCE}/commands/player.cpp )
-  # ${SOURCE}/commands/player.cpp ${SOURCE}/player/StateMachine.cpp)
-  add_library(StateMachineLIB STATIC ${SOURCE}/player/state_machine.cpp)
+
+add_library(StateMachineLIB STATIC ${SOURCE}/player/state_machine.cpp)
+
+add_library(timevalLIB STATIC ${SOURCE}/timeval.cpp)
+
 # target_include_directories(playerLIB PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
-target_link_libraries(playerLIB StateMachineLIB ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
-target_link_libraries(StateMachineLIB playerLIB ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
+target_link_libraries(playerLIB StateMachineLIB timevalLIB ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
+target_link_libraries(StateMachineLIB playerLIB timevalLIB ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
 
 # list
 add_executable(
