@@ -107,12 +107,12 @@ int main(int argc, char *argv[]) {
             }
             if(!fsm->processEvent(event))
             {
-                fprintf(fifo, "%s failed\n", eventToStr(event).c_str());
+                fprintf(fifo, "%s failed", eventToStr(event).c_str());
                 fprintf(fifo, "Current state: %s\n", stateToStr(fsm->getCurrState()).c_str());
             }
             else
             {
-                fprintf(fifo, "%s success\n", eventToStr(event).c_str());
+                fprintf(fifo, "%s success", eventToStr(event).c_str());
             }
             fclose(fifo);
         }
