@@ -48,7 +48,7 @@ add_library(playerLIB STATIC
 
 add_library(StateMachineLIB STATIC ${SOURCE}/player/state_machine.cpp)
 
-add_library(timevalLIB STATIC ${SOURCE}/timeval.cpp)
+add_library(timevalLIB STATIC ${SOURCE}/timeval_tools.cpp)
 
 # target_include_directories(playerLIB PUBLIC ${INCLUDES} ${HARDWARE_INCLUDES})
 target_link_libraries(playerLIB StateMachineLIB timevalLIB ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES})
@@ -76,7 +76,7 @@ target_link_libraries(load ${Boost_LIBRARIES} ${HARDWARE_LIBRARIES} playerLIB)
 # playerctl
 add_executable(playerctl ${SOURCE}/commands/playerctl.cpp)
 # target_include_directories(playerctl PUBLIC ${INCLUDES})
-target_link_libraries(playerctl ${Boost_LIBRARIES})
+target_link_libraries(playerctl timevalLIB ${Boost_LIBRARIES})
 
 # ledtest
 # add_executable(
