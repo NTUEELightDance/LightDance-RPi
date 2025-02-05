@@ -3,25 +3,25 @@
 
 #include <sys/time.h>
 #include <iostream>
-#include <thread> 
+#include <thread>
 #include <const.h>
-#include <StateMachine.h>
+#include <oriStateMachine.h>
 #include <LEDPlayer.h>
 #include <OFPlayer.h>
 #include <player.h>
 #include <string>
 
-
-enum CMD { C_PLAY, C_PAUSE, C_STOP, C_RESUME };
-extern const std::string cmds[10];
+//enum CMD { C_PLAY, C_PAUSE, C_STOP, C_RESUME };
+//extern const std::string cmds[10];
 extern std::thread led_loop, of_loop;
 extern Player player;
 extern LEDPlayer led_player;
 extern OFPlayer of_player;
 extern int dancer_fd;
 extern string path ;
-extern const char *rd_fifo;
+//extern const char *rd_fifo;
 extern const char *wr_fifo;
+
 inline void write_fifo(bool success) {
     int wr_fd;
     std::string msg;
@@ -69,10 +69,11 @@ inline timeval getCalculatedTime(timeval subtrahend) {
     }
     return time;
 }
+
 inline bool restart() {
     printf("restart\n");
     dancer_fd = tryGetLock(path.c_str());
- if (dancer_fd == -1) {
+    if (dancer_fd == -1) {
         cerr << "[Common] Dancer is playing! Please stop it first!\n";
         return 0;
     } else if (dancer_fd == -2) {
@@ -91,7 +92,8 @@ inline bool restart() {
     of_player.init();
     cerr << "[Common] Player loaded\n";
     return true;
-   }
+}
+
 inline void resume( StateMachine* fsm ){
 	led_loop = std::thread(&LEDPlayer::loop, &led_player, fsm);
 	of_loop = std::thread(&OFPlayer::loop, &of_player, fsm);
@@ -103,6 +105,7 @@ inline void resume( StateMachine* fsm ){
 	 return;
    }
 
+<<<<<<< HEAD:controller/software/inc/FSM_Common.h
 inline int parse_command(StateMachine* fsm,std::string str) {
     if (str.length() == 1){
 	    write_fifo(false); 
@@ -157,5 +160,7 @@ inline int parse_command(StateMachine* fsm,std::string str) {
     write_fifo(false); 
     return -1;
 }
+=======
+>>>>>>> test_fsm:controller/software/inc/oriFSM_Common.h
 
 #endif

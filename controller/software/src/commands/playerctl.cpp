@@ -14,8 +14,8 @@
 #include "command.h"
 
 using namespace std;
-#define secAdjust 1000000
-#define msecAdjust 1000
+#define secAdjust 1000
+#define msecAdjust 1
 class Play : public Command {
    public:
     Play() : Command() {
@@ -28,20 +28,25 @@ class Play : public Command {
             return 0;
         }
         if (argc == 1) {
-            cout << "Missing command.\n";
-            cout << "It should be either \"play\" or \"pause\" or \"stop\" or "
+            cerr << "Missing command.\n";
+            cerr << "It should be either \"play\" or \"pause\" or \"stop\" or "
                     "\"restart\" or \"quit\".\n";
-            cout << "Please use \"-h\" for help." << endl;
+            cerr << "Please use \"-h\" for help." << endl;
             return 1;
         }
         if (argc >= 2) {
             string cmd = argv[1];
             transform(cmd.begin(), cmd.end(), cmd.begin(),
                       [](unsigned char c) { return tolower(c); });
+<<<<<<< HEAD
             if (set<string>{"pause", "quit", "restart", "stop"}.count(cmd) >
                 0) {
                 // test
                 cout << "sendToPlayLoop(cmd), cmd = " << cmd << endl;
+=======
+            if (set<string>{"pause", "resume", "restart", "stop"}.count(cmd) >
+                0) {
+>>>>>>> test_fsm
                 sendToPlayLoop(cmd);
             }
             if (cmd.compare("play") == 0) {
@@ -57,10 +62,13 @@ class Play : public Command {
                     delayTime = getCmdOptionInt(
                         argv, argv + argc,
                         dExist ? "-d" : "--delay");  // default ms
+<<<<<<< HEAD
                     // test
                     cout << "delayTime = ";
                     for (const auto& i : delayTime) cout << i << ' ';
                     cout << endl;
+=======
+>>>>>>> test_fsm
                     string delayFlag = dExist ? "-d" : "--delay";
 
                     if (delayTime.size() == 0) {
@@ -72,7 +80,11 @@ class Play : public Command {
                 }
 
                 // get params for play()
+<<<<<<< HEAD
                 vector<long> time;
+=======
+                vector<long> time;  // in ms
+>>>>>>> test_fsm
                 vector<float> timeSec;
                 vector<long> timeMsec;
                 string secFlag;
@@ -81,11 +93,16 @@ class Play : public Command {
                     timeSec = getCmdOptionFloat(argv, argv + argc,
                                                 sExist ? "-s" : "--sec");
                     time.resize(timeSec.size());
+<<<<<<< HEAD
                     for (int i = 0; i < time.size(); i++)
+=======
+                    for (size_t i = 0; i < time.size(); i++)
+>>>>>>> test_fsm
                         time[i] = timeSec[i] * secAdjust;
                 } else {
                     timeMsec = getCmdOptionLong(argv, argv + argc, "play");
                     time.resize(timeMsec.size());
+<<<<<<< HEAD
                     for (int i = 0; i < time.size(); i++)
                         time[i] = timeMsec[i] * msecAdjust;
                 }
@@ -95,6 +112,12 @@ class Play : public Command {
                 for (const auto& i : time) cout << i << ' ';
                 cout << endl;
 
+=======
+                    for (size_t i = 0; i < time.size(); i++)
+                        time[i] = timeMsec[i] * msecAdjust;
+                }
+
+>>>>>>> test_fsm
                 // check time range
                 for (const auto& i : time) {
                     if (i < -1.0) {
@@ -110,8 +133,11 @@ class Play : public Command {
 
                 if (time.size() == 0) {
                     if (secFlag == "play") {
+<<<<<<< HEAD
                         // test
                         cout << "play, time.size() = 0" << endl;
+=======
+>>>>>>> test_fsm
                         return play(0, -1, needDelay, delayTime);
                     } else {
                         cerr << "Error in " << secFlag << " option." << '\t';
@@ -120,12 +146,17 @@ class Play : public Command {
                         return 1;
                     }
                 } else if (time.size() == 1) {
+<<<<<<< HEAD
                     // test
                     cout << "play, time.size() = 1" << endl;
                     return play(time[0], -1, needDelay, delayTime);
                 } else if (time.size() == 2) {
                     // test
                     cout << "play, time.size() = 2" << endl;
+=======
+                    return play(time[0], -1, needDelay, delayTime);
+                } else if (time.size() == 2) {
+>>>>>>> test_fsm
                     return play(time[0], time[1], needDelay, delayTime);
                 } else {
                     cerr << "Error in " << secFlag
@@ -144,8 +175,19 @@ class Play : public Command {
     int play(long start, long end, bool needDelay, vector<int> delayTime) {
         stringstream cmd;
         // cout << delayTime[0] << endl;
-        cmd << "play " << start << " " << end << " -d "
+
+        // cmd << "play " << start << " " << end << " -d "
+        //     << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0);
+        cmd << "play -ss " << start << " -to " << end << " -d "
             << (needDelay ? ((long)delayTime[0] * msecAdjust) : 0);
+<<<<<<< HEAD
+=======
+        if (needDelay)
+            cmd << " "
+                << (delayTime.size() == 2
+                        ? ((long)delayTime[1] * msecAdjust)
+                        : ((long)delayTime[0] * msecAdjust) / 5l);
+>>>>>>> test_fsm
 
         string mycmd = cmd.str();
         sendToPlayLoop(mycmd);
@@ -161,6 +203,8 @@ class Play : public Command {
             perror("Open FIFO Failed");
             return 1;
         }
+
+        //printf("playerctl: sendToPlayLoop(%s)\n", msg.c_str());
 
         n = sprintf(buf, "%s", msg.c_str());
 
@@ -180,10 +224,7 @@ class Play : public Command {
         }
 
         read(res_fd, res_buf, 1024);
-        if (res_buf[0] == '0')
-            printf("Success!\n");
-        else
-            printf("Failed!\n");
+        printf("%s\n", res_buf);
         close(fd);  // should be comment in formal version
         return 0;
     }
