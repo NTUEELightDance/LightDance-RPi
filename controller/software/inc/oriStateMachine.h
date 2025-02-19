@@ -12,10 +12,14 @@
 #include <string>
 #include <thread>
 #include <vector>
-#include <unordered_map>  
+#include <unordered_map>
 #include <utility>
 #include <utils.h>
+<<<<<<< HEAD:controller/software/inc/StateMachine.h
 #include <iostream>
+#include <fstream>
+=======
+>>>>>>> test_fsm:controller/software/inc/oriStateMachine.h
 #define STATE_NUM 3
 using namespace std;
 enum Event { PLAY, PAUSE, STOP, RESUME,INVALID_CMD=-1}; // Event type
@@ -36,6 +40,7 @@ typedef struct {
 
 class StateMachine{
     private:
+        fstream fsm_log;
         int currentState,nextState; 
         int TransitionTable[3][4]={
         {EVENT_IGNORE, S_PAUSE,S_STOP, CANNOT_HAPPEN},
@@ -69,7 +74,7 @@ class StateMachine{
             &StateMachine::EN_Pause,
             &StateMachine::EN_Stop
         };
-        public:
+    public:
         enum { EVENT_IGNORE = 0xef, CANNOT_HAPPEN = 0xff };
         playLoop_Data data; 
         StateMachine(); //init from initial state, maybe need to add more init parameters?
@@ -81,9 +86,11 @@ class StateMachine{
         //void setState(int nextState);
         void setData(timeval _baseTime, timeval _playedTime, long _stopTime, long _delayTime, bool _stopTimeAssigned, bool _isLiveEditting);
         timeval getPlayedTime();
-	void Loop_Join();
+	    void Loop_Join();
+        ~StateMachine();
+    
 };
 
 
-int parse_command(string cmd);
+int parse_command(StateMachine * fsm, string cmd);
 #endif

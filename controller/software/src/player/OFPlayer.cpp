@@ -224,10 +224,10 @@ void OFPlayer::setLightStatus(vector<OFStatus> &statusList, int r, int g, int b,
     }
 }
 
-void OFPlayer::delayDisplay(const bool *delayingDisplay) {
+void OFPlayer::delayDisplay(bool delayingDisplay) {
     vector<OFStatus> statusList;
     // Let OF lightall for 1/5 times of delayTime
-    if (*delayingDisplay) {
+    if (delayingDisplay) {
         setLightStatus(statusList,100, 0, 0, 255);
         controller.sendAll(castStatusList(statusList));
     } else {
@@ -258,17 +258,18 @@ void OFPlayer::loop(StateMachine *fsm) {
 #endif
     while (true) {
         
-        if (fsm->getCurrentState() == S_STOP) {
+        if (fsm->getCurrState() == STATE_STOP) {
             // TODO: finish darkall
             //setLightStatus(statusList, 0, 0, 0, 0);
             //controller.sendAll(castStatusList(statusList));
             break;
         }
-	    if(fsm->getCurrentState() == S_PAUSE) {
+	    if(fsm->getCurrState() == STATE_PAUSE) {
 	        break;
 	    }
-        if (fsm->getCurrentState() == S_PLAY) {
-            const long elapsedTime = getElapsedTime(fsm->data.baseTime, currentTime);
+        if (fsm->getCurrState() == STATE_PLAY) {
+            timeval curr_time_stamp = fsm->getCurrTimeStamp();
+            const long elapsedTime = curr_time_stamp.tv_sec * 1000000l + curr_time_stamp.tv_usec;
             const long elapsedTimeInMs = elapsedTime / 1000l;
             statusList.clear();
             // find status
@@ -316,5 +317,5 @@ void OFPlayer::loop(StateMachine *fsm) {
     logFile << "[OF] finish\n";
     logFile.close();
 #endif
-    //fsm->setState(S_STOP);
+    //fsm->setState(STATE_STOP);
 }
