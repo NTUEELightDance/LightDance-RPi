@@ -185,6 +185,8 @@ StateMachine::StateMachine(): m_state(STATE_STOP)
 {
     fprintf(stderr, "%sConstructor\n", TAG);
     data = DATA_RESET;
+    LEDReady = false;
+    OFReady = false;
 }
 
 StateMachine::~StateMachine()

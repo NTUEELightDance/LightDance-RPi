@@ -360,13 +360,17 @@ void LEDPlayer::loop(StateMachine *fsm) {
             this_thread::yield();
         }
 
-        timeval lastTime = currentTime;
-        gettimeofday(&currentTime, NULL);
-        long elapsed = getElapsedTime(lastTime, currentTime);
-        if(UPDATE_INTERVAL - elapsed > 0){
-            usleep((useconds_t)(UPDATE_INTERVAL - elapsed));
+        {
+            std::lock_guard<std::mutex> lock(fsm->mtx_loop);
+            fsm->LEDReady = true;
         }
+        fsm->cv_loop.notify_one();
+        std::unique_lock<std::mutex> lock(fsm->mtx_loop);
+        fsm->cv_loop.wait(lock, [] { return fsm->OFReady });
+        fsm->OFReady = false;
+
 #ifdef PLAYER_DEBUG
+        timeval lastTime = currentTime;
         gettimeofday(&currentTime, NULL);
         elapsed = getElapsedTime(lastTime, currentTime);
         float fps = 1000000.0 / (float)elapsed;

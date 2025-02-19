@@ -3,6 +3,8 @@
 
 #include <sys/time.h>
 #include <sstream>
+#include <mutex>
+#include <condition_variable>
 
 #define DEFAULT_DELAY_DISPLAY_RATIO 0.2
 
@@ -46,6 +48,10 @@ class StateMachine
 private: 
     STATE m_state;
     playLoop_Data data;
+    std::mutex mtx_loop;
+    std::condition_variable cv_loop;
+    bool LEDReady;
+    bool OFReady;
     static const STATE m_transition_table[NUM_OF_STATES][NUM_OF_EVENTS];
     void exitState(STATE state);
     void execState(STATE state);
